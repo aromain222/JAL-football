@@ -19,7 +19,7 @@ interface NavItem {
   icon: keyof typeof iconMap;
 }
 
-export function AppSidebarNav({ items }: { items: NavItem[] }) {
+export function AppSidebarNav({ items }: { items: readonly NavItem[] }) {
   const pathname = usePathname();
 
   return (

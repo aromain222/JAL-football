@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useTransition } from "react";
 import {
   ArrowRight,
   Bookmark,
@@ -59,6 +59,46 @@ export function ReviewClient({
   const progressLabel = `${reviewedSoFar} of ${totalCount} reviewed`;
   const progressWidth = totalCount ? Math.round((reviewedSoFar / totalCount) * 100) : 100;
 
+  const handleDecision = useCallback(
+    async (decision: ReviewDecision) => {
+      if (!current) return;
+
+      const leavingIndex = currentIndex;
+      const leavingPlayerId = current.player.id;
+      const leavingFitScore = current.fitScore;
+      const leavingNote = note;
+
+      setError(null);
+      setCurrentIndex((value) => value + 1);
+      setOptimisticReviewed((value) => value + 1);
+      setNote("");
+      setDragX(0);
+      setIsDragging(false);
+
+      startTransition(async () => {
+        try {
+          const formData = new FormData();
+          formData.set("needId", need.id);
+          formData.set("playerId", leavingPlayerId);
+          formData.set("fitScore", String(leavingFitScore));
+          formData.set("decision", decision);
+          formData.set("note", leavingNote);
+          await submitReviewAction(formData);
+        } catch (submissionError) {
+          setError(
+            submissionError instanceof Error
+              ? submissionError.message
+              : "Could not save review decision."
+          );
+          setCurrentIndex(leavingIndex);
+          setOptimisticReviewed((value) => Math.max(reviewedCount, value - 1));
+          setNote(leavingNote);
+        }
+      });
+    },
+    [current, currentIndex, need.id, note, reviewedCount, startTransition]
+  );
+
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (!current || isPending) return;
@@ -71,43 +111,6 @@ export function ReviewClient({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [current, handleDecision, isPending]);
-
-  async function handleDecision(decision: ReviewDecision) {
-    if (!current) return;
-
-    const leavingIndex = currentIndex;
-    const leavingPlayerId = current.player.id;
-    const leavingFitScore = current.fitScore;
-    const leavingNote = note;
-
-    setError(null);
-    setCurrentIndex((value) => value + 1);
-    setOptimisticReviewed((value) => value + 1);
-    setNote("");
-    setDragX(0);
-    setIsDragging(false);
-
-    startTransition(async () => {
-      try {
-        const formData = new FormData();
-        formData.set("needId", need.id);
-        formData.set("playerId", leavingPlayerId);
-        formData.set("fitScore", String(leavingFitScore));
-        formData.set("decision", decision);
-        formData.set("note", leavingNote);
-        await submitReviewAction(formData);
-      } catch (submissionError) {
-        setError(
-          submissionError instanceof Error
-            ? submissionError.message
-            : "Could not save review decision."
-        );
-        setCurrentIndex(leavingIndex);
-        setOptimisticReviewed((value) => Math.max(reviewedCount, value - 1));
-        setNote(leavingNote);
-      }
-    });
-  }
 
   function handlePointerDown(event: React.PointerEvent<HTMLDivElement>) {
     pointerStartX.current = event.clientX;
