@@ -39,7 +39,7 @@ export async function insertTeamNeed(params: {
 
   const supabase = createSupabaseServerClient();
   const { data, error } = await supabase
-    .from("team_needs")
+    .from("team_needs" as never)
     .insert({
       id: row.id,
       team_id: row.team_id,
@@ -63,7 +63,7 @@ export async function insertTeamNeed(params: {
       min_starts: row.min_starts,
       min_production_score: row.min_production_score,
       notes: row.notes
-    })
+    } as never)
     .select("*")
     .single();
 
