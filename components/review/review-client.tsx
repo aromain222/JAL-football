@@ -70,7 +70,7 @@ export function ReviewClient({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [current, isPending]);
+  }, [current, handleDecision, isPending]);
 
   async function handleDecision(decision: ReviewDecision) {
     if (!current) return;
@@ -297,7 +297,7 @@ export function ReviewClient({
                     <div className="mt-4 flex flex-wrap gap-2">
                       <Badge variant="default">{current.player.latest_stats?.season ?? "No season"}</Badge>
                       {current.player.measurements?.arm_length_in ? (
-                        <Badge>Arm {current.player.measurements.arm_length_in}"</Badge>
+                        <Badge>Arm {current.player.measurements.arm_length_in}&quot;</Badge>
                       ) : null}
                       {current.player.measurements?.forty_time ? (
                         <Badge variant="accent">
