@@ -11,6 +11,7 @@ import {
 import { insertTeamNeed } from "@/lib/data/mutations";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { getViewerContext } from "@/lib/data/queries";
+import type { Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
 
@@ -30,21 +31,23 @@ export async function createNeedAction(input: z.infer<typeof needSchema>) {
       throw new Error("Sign in again before creating a need.");
     }
 
-    const { data: profile, error: profileError } = await supabase
+    const { data: profileRaw, error: profileError } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", user.id)
       .single();
+    const profile = profileRaw as Profile | null;
 
     if (profileError || !profile) {
       throw new Error("Your staff profile is missing. Sign in with a seeded demo user.");
     }
 
-    const { data: team, error: teamError } = await supabase
+    const { data: teamRaw, error: teamError } = await supabase
       .from("teams")
       .select("*")
       .eq("id", profile.team_id)
       .single();
+    const team = teamRaw as Team | null;
 
     if (teamError || !team) {
       throw new Error("Your team record could not be found.");
