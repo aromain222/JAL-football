@@ -1,11 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  LogOut,
-  ShieldCheck,
-  Sparkles,
-  UsersRound
-} from "lucide-react";
+import { LogOut, ShieldCheck, Sparkles, UsersRound } from "lucide-react";
 import { getViewerContext } from "@/lib/data/queries";
 import { AppSidebarNav } from "@/components/app-sidebar-nav";
 import { Button } from "@/components/ui/button";
@@ -56,8 +51,8 @@ export default async function AppLayout({
               </div>
             </div>
             <div className="mt-6 grid gap-3 rounded-[24px] border border-white/10 bg-white/8 p-4">
-              <p className="text-sm font-medium text-white">Staff workspace</p>
-              <p className="mt-1 text-sm text-cyan-100/75">Signed-in staff access</p>
+              <p className="text-sm font-medium text-white">Board workspace</p>
+              <p className="mt-1 text-sm text-cyan-100/75">Internal access enabled</p>
               <div className="grid grid-cols-2 gap-2">
                 <div className="rounded-2xl border border-white/10 bg-black/10 px-3 py-2">
                   <div className="text-[10px] uppercase tracking-[0.26em] text-cyan-100/65">Mode</div>

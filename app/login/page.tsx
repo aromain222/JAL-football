@@ -10,7 +10,7 @@ export default function LoginPage() {
             Recruit the portal with a faster internal board.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-300">
-            Build position needs, sort players by fit, run swipe review, and move top targets into the right staff stage.
+            Build position needs, sort players by fit, run swipe review, and move top targets through the board.
           </p>
           <div className="mt-10 grid gap-4 sm:grid-cols-3">
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
@@ -23,7 +23,7 @@ export default function LoginPage() {
             </div>
             <div className="rounded-2xl border border-white/10 bg-white/5 p-4">
               <div className="text-3xl font-semibold">5</div>
-              <p className="mt-2 text-sm text-slate-300">Shortlist stages from position coach to commit watch</p>
+              <p className="mt-2 text-sm text-slate-300">Shortlist stages from first pass to final watch</p>
             </div>
           </div>
         </div>

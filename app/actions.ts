@@ -39,7 +39,7 @@ export async function createNeedAction(input: z.infer<typeof needSchema>) {
     const profile = profileRaw as Profile | null;
 
     if (profileError || !profile) {
-      throw new Error("Your staff profile is missing. Sign in with a seeded demo user.");
+      throw new Error("Workspace access is not set up for this account.");
     }
 
     const { data: teamRaw, error: teamError } = await supabase

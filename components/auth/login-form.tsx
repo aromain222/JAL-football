@@ -54,20 +54,20 @@ export function LoginForm() {
         <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-950 text-white">
           <Shield className="h-7 w-7" />
         </div>
-        <CardTitle className="mt-4 text-3xl">Staff Login</CardTitle>
+        <CardTitle className="mt-4 text-3xl">Access Workspace</CardTitle>
         <CardDescription>
-          Sign in to review the transfer board, triage fits, and manage shortlist stages.
+          Sign in to open the board, review players, and manage the shortlist.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input defaultValue="assistant@demofootballops.com" id="email" name="email" type="email" required />
+            <Input id="email" name="email" type="email" required />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input defaultValue="Password123!" id="password" name="password" type="password" required />
+            <Input id="password" name="password" type="password" required />
           </div>
           {error ? <p className="text-sm text-rose-600">{error}</p> : null}
           <Button type="submit" size="lg" disabled={loading}>
