@@ -6,10 +6,12 @@ import {
   DashboardMetrics,
   Player,
   PlayerFitResult,
+  Profile,
   PlayerSourceNote,
   PlayersPageResult,
   ShortlistBoardItem,
   ShortlistItem,
+  Team,
   TeamNeed
 } from "@/lib/types";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
@@ -57,17 +59,19 @@ export async function getViewerContext() {
     return { profile: demoProfile, team: demoTeam };
   }
 
-  const { data: profile } = await supabase
+  const { data: profileRaw } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
     .single();
+  const profile = profileRaw as Profile | null;
 
-  const { data: team } = await supabase
+  const { data: teamRaw } = await supabase
     .from("teams")
     .select("*")
     .eq("id", profile?.team_id ?? demoTeam.id)
     .single();
+  const team = teamRaw as Team | null;
 
   return {
     profile: profile ?? demoProfile,
