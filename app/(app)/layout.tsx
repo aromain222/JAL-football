@@ -17,7 +17,7 @@ const navigation = [
   { href: "/players", label: "Players", icon: "players" },
   { href: "/shortlist", label: "Shortlist", icon: "shortlist" },
   { href: "/identity", label: "Identity", icon: "identity" }
-];
+] as const;
 
 export default async function AppLayout({
   children
