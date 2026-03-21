@@ -1,5 +1,9 @@
 import { Player } from "@/lib/types";
 
+type ProductionPlayer = Pick<Player, "position" | "latest_stats"> & {
+  eligibility_remaining?: number | null;
+};
+
 const schoolConferenceMap: Record<string, string> = {
   "App State": "Sun Belt",
   "Arkansas State": "Sun Belt",
@@ -54,7 +58,14 @@ export function getPlayerDisplayConference(player: Pick<Player, "conference" | "
   return player.conference ?? getConferenceForSchool(player.current_school);
 }
 
-export function getPlayerKeyStats(player: Player) {
+export function formatHeightInFeetInches(heightIn: number | null | undefined) {
+  if (heightIn == null || !Number.isFinite(heightIn)) return "--";
+  const feet = Math.floor(heightIn / 12);
+  const inches = heightIn % 12;
+  return `${feet}'${inches}"`;
+}
+
+export function getPlayerKeyStats(player: ProductionPlayer) {
   const stats = player.latest_stats;
   if (!stats) {
     return ["No season stats", "Profile pending", "Portal eval", "Open board"];
@@ -96,15 +107,133 @@ export function getPlayerKeyStats(player: Player) {
       return [
         `${stats.starts ?? 0} starts`,
         `${stats.rushing_yards ?? 0} rush yds`,
-        `${stats.total_touchdowns ?? 0} TD`,
+        `${stats.rushing_tds ?? stats.total_touchdowns ?? 0} TD`,
         `${stats.games_played ?? 0} games`
+      ];
+    case "QB":
+      return [
+        `${stats.starts ?? 0} starts`,
+        `${stats.passing_yards ?? 0} pass yds`,
+        `${stats.passing_tds ?? stats.total_touchdowns ?? 0} pass TD`,
+        `${stats.games_played ?? 0} games`
+      ];
+    case "OL":
+      return [
+        `${stats.starts ?? 0} starts`,
+        `${stats.games_played ?? 0} games`,
+        `${stats.offensive_snaps ?? 0} off snaps`,
+        `${player.eligibility_remaining} yrs left`
       ];
     default:
       return [
         `${stats.starts ?? 0} starts`,
-        `${stats.offensive_snaps ?? 0} snaps`,
+        `${stats.offensive_snaps ?? stats.defensive_snaps ?? 0} snaps`,
         `${stats.games_played ?? 0} games`,
         `${player.eligibility_remaining} yrs left`
       ];
   }
+}
+
+export function getPlayerProductionMetrics(
+  player: ProductionPlayer,
+  limit = 4
+): Array<{ label: string; value: string }> {
+  const stats = player.latest_stats;
+
+  if (!stats) {
+    return [
+      { label: "Season", value: "No stats" },
+      { label: "Status", value: "Pending import" }
+    ].slice(0, limit);
+  }
+
+  const metricsByPosition: Record<string, Array<{ label: string; value: string }>> = {
+    QB: [
+      { label: "Pass yards", value: formatNumberStat(stats.passing_yards) },
+      { label: "Pass TD", value: formatNumberStat(stats.passing_tds ?? stats.total_touchdowns) },
+      { label: "Games", value: formatNumberStat(stats.games_played) },
+      { label: "Starts", value: formatNumberStat(stats.starts) }
+    ],
+    RB: [
+      { label: "Rush yards", value: formatNumberStat(stats.rushing_yards) },
+      { label: "Rush TD", value: formatNumberStat(stats.rushing_tds ?? stats.total_touchdowns) },
+      { label: "Carries", value: formatNumberStat(stats.rushing_attempts) },
+      { label: "Games", value: formatNumberStat(stats.games_played) }
+    ],
+    WR: [
+      { label: "Rec yards", value: formatNumberStat(stats.receiving_yards) },
+      { label: "Receptions", value: formatNumberStat(stats.receptions) },
+      { label: "Rec TD", value: formatNumberStat(stats.receiving_tds ?? stats.total_touchdowns) },
+      { label: "Games", value: formatNumberStat(stats.games_played) }
+    ],
+    TE: [
+      { label: "Rec yards", value: formatNumberStat(stats.receiving_yards) },
+      { label: "Receptions", value: formatNumberStat(stats.receptions) },
+      { label: "Rec TD", value: formatNumberStat(stats.receiving_tds ?? stats.total_touchdowns) },
+      { label: "Starts", value: formatNumberStat(stats.starts) }
+    ],
+    OL: [
+      { label: "Starts", value: formatNumberStat(stats.starts) },
+      { label: "Games", value: formatNumberStat(stats.games_played) },
+      { label: "Off snaps", value: formatNumberStat(stats.offensive_snaps) },
+      { label: "ST snaps", value: formatNumberStat(stats.special_teams_snaps) }
+    ],
+    EDGE: [
+      { label: "Tackles", value: formatNumberStat(stats.tackles) },
+      { label: "Sacks", value: formatDecimalStat(stats.sacks) },
+      { label: "TFL", value: formatDecimalStat(stats.tackles_for_loss) },
+      { label: "FF", value: formatNumberStat(stats.forced_fumbles) }
+    ],
+    DL: [
+      { label: "Tackles", value: formatNumberStat(stats.tackles) },
+      { label: "Sacks", value: formatDecimalStat(stats.sacks) },
+      { label: "TFL", value: formatDecimalStat(stats.tackles_for_loss) },
+      { label: "Games", value: formatNumberStat(stats.games_played) }
+    ],
+    LB: [
+      { label: "Tackles", value: formatNumberStat(stats.tackles) },
+      { label: "Sacks", value: formatDecimalStat(stats.sacks) },
+      { label: "INT", value: formatNumberStat(stats.interceptions) },
+      { label: "TFL", value: formatDecimalStat(stats.tackles_for_loss) }
+    ],
+    CB: [
+      { label: "INT", value: formatNumberStat(stats.interceptions) },
+      { label: "PD", value: formatNumberStat(stats.passes_defended) },
+      { label: "Tackles", value: formatNumberStat(stats.tackles) },
+      { label: "Games", value: formatNumberStat(stats.games_played) }
+    ],
+    S: [
+      { label: "INT", value: formatNumberStat(stats.interceptions) },
+      { label: "PD", value: formatNumberStat(stats.passes_defended) },
+      { label: "Tackles", value: formatNumberStat(stats.tackles) },
+      { label: "Games", value: formatNumberStat(stats.games_played) }
+    ],
+    ST: [
+      { label: "Games", value: formatNumberStat(stats.games_played) },
+      { label: "ST snaps", value: formatNumberStat(stats.special_teams_snaps) },
+      { label: "Tackles", value: formatNumberStat(stats.tackles) },
+      { label: "Starts", value: formatNumberStat(stats.starts) }
+    ]
+  };
+
+  const metrics =
+    metricsByPosition[player.position] ?? [
+      { label: "Games", value: formatNumberStat(stats.games_played) },
+      { label: "Starts", value: formatNumberStat(stats.starts) }
+    ];
+
+  return metrics.filter((metric) => metric.value !== "--").slice(0, limit);
+}
+
+export function getPlayerPrimaryProduction(player: ProductionPlayer) {
+  const metric = getPlayerProductionMetrics(player, 1)[0];
+  return metric ? `${metric.label}: ${metric.value}` : "No season stats";
+}
+
+function formatNumberStat(value: number | null | undefined) {
+  return value == null ? "--" : String(value);
+}
+
+function formatDecimalStat(value: number | null | undefined) {
+  return value == null ? "--" : Number.isInteger(value) ? String(value) : value.toFixed(1);
 }

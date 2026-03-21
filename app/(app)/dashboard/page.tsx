@@ -5,6 +5,8 @@ import { StatCard } from "@/components/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getPlayerPrimaryProduction } from "@/lib/football";
+import { Player } from "@/lib/types";
 import { formatDate, formatNumber } from "@/lib/utils";
 import {
   getDashboardMetrics,
@@ -55,13 +57,7 @@ export default async function DashboardPage() {
             yearsRemainingMin: need.min_years_remaining ?? undefined,
             minFit: 70
           })) as Array<{
-            player: {
-              id: string;
-              first_name: string;
-              last_name: string;
-              current_school: string;
-              position: string;
-            };
+            player: Pick<Player, "id" | "first_name" | "last_name" | "current_school" | "position" | "latest_stats">;
             fitScore: number;
             fitSummary: string;
           }>;
@@ -100,7 +96,7 @@ export default async function DashboardPage() {
 
   return (
     <div className="grid gap-6">
-      <Card className="overflow-hidden bg-slate-950 text-white">
+      <Card className="overflow-hidden border-none bg-[linear-gradient(145deg,#07111d_0%,#0f2740_52%,#0e7490_100%)] text-white shadow-[0_35px_80px_rgba(8,15,33,0.32)]">
         <CardContent className="grid gap-8 p-8 lg:grid-cols-[1.1fr_0.9fr]">
           <SectionHeader
             eyebrow="Control Room"
@@ -109,12 +105,12 @@ export default async function DashboardPage() {
             cta={{ label: "Create new need", href: "/needs/new" }}
           />
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Portal pipeline</p>
               <div className="mt-4 text-4xl font-semibold">{formatNumber(metrics.totalPlayers)}</div>
               <p className="mt-2 text-sm text-slate-300">Imported players live in the internal eval board.</p>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5">
+            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
               <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Shortlisted now</p>
               <div className="mt-4 text-4xl font-semibold">{metrics.shortlistedPlayers}</div>
               <p className="mt-2 text-sm text-slate-300">Players currently held in staff review stages.</p>
@@ -224,22 +220,23 @@ export default async function DashboardPage() {
                   <h3 className="mt-3 text-xl font-semibold">{need.title}</h3>
                   <div className="mt-4 grid gap-3">
                     {candidates.map((candidate) => (
-                      <div key={candidate.player.id} className="rounded-2xl border bg-white px-4 py-3">
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className="font-medium text-slate-950">
-                              {candidate.player.first_name} {candidate.player.last_name}
+                        <div key={candidate.player.id} className="rounded-2xl border bg-white px-4 py-3">
+                          <div className="flex items-center justify-between gap-3">
+                            <div>
+                              <p className="font-medium text-slate-950">
+                                {candidate.player.first_name} {candidate.player.last_name}
                             </p>
                             <p className="text-sm text-slate-600">
                               {candidate.player.current_school} • {candidate.player.position}
                             </p>
                           </div>
                           <Badge variant="success">{candidate.fitScore} fit</Badge>
-                        </div>
-                        <p className="mt-2 text-sm text-slate-600">{candidate.fitSummary}</p>
-                        <div className="mt-3 flex gap-2">
-                          <Button asChild size="sm" variant="outline">
-                            <Link href={`/players/${candidate.player.id}`}>
+                          </div>
+                          <p className="mt-2 text-sm text-slate-600">{candidate.fitSummary}</p>
+                          <p className="mt-2 text-sm text-slate-700">{getPlayerPrimaryProduction(candidate.player)}</p>
+                          <div className="mt-3 flex gap-2">
+                            <Button asChild size="sm" variant="outline">
+                              <Link href={`/players/${candidate.player.id}`}>
                               <Eye className="h-4 w-4" />
                               Profile
                             </Link>
@@ -293,6 +290,7 @@ export default async function DashboardPage() {
                   <div className="mt-3 flex gap-2">
                     {item.fitScore !== null ? <Badge variant="success">{item.fitScore} fit</Badge> : null}
                     <Badge variant="default">{formatDate(item.created_at)}</Badge>
+                    {item.player ? <Badge variant="default">{getPlayerPrimaryProduction(item.player)}</Badge> : null}
                   </div>
                 </div>
               ))

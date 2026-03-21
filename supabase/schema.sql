@@ -77,16 +77,22 @@ create table if not exists public.players (
   position position_group not null,
   transfer_year integer not null,
   current_school text not null,
+  conference text,
   previous_school text,
   hometown text,
+  state text,
   class_year text not null,
   eligibility_remaining integer not null default 1,
   stars integer,
   academic_status text,
   status text not null default 'Portal',
   film_url text,
+  photo_url text,
+  x_handle text,
+  x_user_id text,
   contact_window text,
   notes text,
+  sportradar_id text unique,
   created_at timestamptz not null default timezone('utc', now()),
   updated_at timestamptz not null default timezone('utc', now())
 );
@@ -95,12 +101,21 @@ create table if not exists public.player_measurements (
   player_id uuid primary key references public.players (id) on delete cascade,
   height_in integer,
   weight_lbs integer,
+  arm_length_in numeric(4,1),
   forty_time numeric(4,2),
   shuttle_time numeric(4,2),
   vertical_jump numeric(4,1),
   wing_span_in numeric(4,1),
   verified_at date
 );
+
+alter table public.players add column if not exists conference text;
+alter table public.players add column if not exists state text;
+alter table public.players add column if not exists photo_url text;
+alter table public.players add column if not exists x_handle text;
+alter table public.players add column if not exists x_user_id text;
+alter table public.players add column if not exists sportradar_id text unique;
+alter table public.player_measurements add column if not exists arm_length_in numeric(4,1);
 
 create table if not exists public.player_stats (
   id uuid primary key default gen_random_uuid(),
@@ -121,6 +136,60 @@ create table if not exists public.player_stats (
   passes_defended integer,
   created_at timestamptz not null default timezone('utc', now()),
   constraint player_stats_player_season_key unique (player_id, season)
+);
+
+create table if not exists public.player_identity_links (
+  player_id uuid primary key references public.players (id) on delete cascade,
+  espn_url text,
+  roster_url text,
+  source text,
+  confidence numeric(4,3),
+  matched_team text,
+  notes text,
+  last_checked_at timestamptz not null default timezone('utc', now()),
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+create table if not exists public.player_x_enrichments (
+  player_id uuid primary key references public.players (id) on delete cascade,
+  x_handle text,
+  x_user_id text,
+  measurables jsonb not null default '{}'::jsonb,
+  track jsonb not null default '{}'::jsonb,
+  offers jsonb not null default '[]'::jsonb,
+  sources jsonb not null default '[]'::jsonb,
+  last_enriched_at timestamptz not null default timezone('utc', now()),
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
+);
+
+create table if not exists public.player_source_notes (
+  id uuid primary key default gen_random_uuid(),
+  player_id uuid not null references public.players (id) on delete cascade,
+  source_platform text not null default 'x',
+  source_account text,
+  source_url text,
+  note_type text not null default 'scouting',
+  source_text text not null,
+  summary text,
+  traits text[] not null default '{}',
+  status_signal text,
+  confidence numeric(4,3),
+  created_by uuid references public.profiles (id) on delete set null,
+  created_at timestamptz not null default timezone('utc', now())
+);
+
+create table if not exists public.x_source_accounts (
+  id uuid primary key default gen_random_uuid(),
+  handle text not null unique,
+  display_name text not null,
+  category text not null,
+  priority integer not null default 100,
+  active boolean not null default true,
+  notes text,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now())
 );
 
 create table if not exists public.team_needs (
@@ -223,6 +292,10 @@ alter table public.profiles enable row level security;
 alter table public.players enable row level security;
 alter table public.player_measurements enable row level security;
 alter table public.player_stats enable row level security;
+alter table public.player_identity_links enable row level security;
+alter table public.player_x_enrichments enable row level security;
+alter table public.player_source_notes enable row level security;
+alter table public.x_source_accounts enable row level security;
 alter table public.team_needs enable row level security;
 alter table public.player_reviews enable row level security;
 alter table public.shortlists enable row level security;
@@ -256,9 +329,71 @@ begin
     create policy "Authenticated read measurements" on public.player_measurements for select to authenticated using (true);
   end if;
   if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_measurements' and policyname = 'Authenticated upsert measurements'
+  ) then
+    create policy "Authenticated upsert measurements" on public.player_measurements for all to authenticated
+      using (true)
+      with check (true);
+  end if;
+  if not exists (
     select 1 from pg_policies where schemaname = 'public' and tablename = 'player_stats' and policyname = 'Authenticated read stats'
   ) then
     create policy "Authenticated read stats" on public.player_stats for select to authenticated using (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_stats' and policyname = 'Authenticated upsert stats'
+  ) then
+    create policy "Authenticated upsert stats" on public.player_stats for all to authenticated
+      using (true)
+      with check (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_identity_links' and policyname = 'Authenticated read identity links'
+  ) then
+    create policy "Authenticated read identity links" on public.player_identity_links for select to authenticated using (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_identity_links' and policyname = 'Authenticated upsert identity links'
+  ) then
+    create policy "Authenticated upsert identity links" on public.player_identity_links for all to authenticated
+      using (true)
+      with check (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_x_enrichments' and policyname = 'Authenticated read x enrichments'
+  ) then
+    create policy "Authenticated read x enrichments" on public.player_x_enrichments for select to authenticated using (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_x_enrichments' and policyname = 'Authenticated upsert x enrichments'
+  ) then
+    create policy "Authenticated upsert x enrichments" on public.player_x_enrichments for all to authenticated
+      using (true)
+      with check (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_source_notes' and policyname = 'Authenticated read source notes'
+  ) then
+    create policy "Authenticated read source notes" on public.player_source_notes for select to authenticated using (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'player_source_notes' and policyname = 'Authenticated manage source notes'
+  ) then
+    create policy "Authenticated manage source notes" on public.player_source_notes for all to authenticated
+      using (true)
+      with check (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'x_source_accounts' and policyname = 'Authenticated read x source accounts'
+  ) then
+    create policy "Authenticated read x source accounts" on public.x_source_accounts for select to authenticated using (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'x_source_accounts' and policyname = 'Authenticated manage x source accounts'
+  ) then
+    create policy "Authenticated manage x source accounts" on public.x_source_accounts for all to authenticated
+      using (true)
+      with check (true);
   end if;
   if not exists (
     select 1 from pg_policies where schemaname = 'public' and tablename = 'player_tags' and policyname = 'Authenticated read tags'
@@ -287,3 +422,14 @@ begin
       with check (need_id in (select id from public.team_needs where team_id in (select team_id from public.profiles where id = auth.uid())));
   end if;
 end $$;
+
+create index if not exists x_source_accounts_active_priority_idx
+on public.x_source_accounts (active, priority, handle);
+create index if not exists player_source_notes_player_created_idx
+on public.player_source_notes (player_id, created_at desc);
+
+drop trigger if exists set_x_source_accounts_updated_at on public.x_source_accounts;
+create trigger set_x_source_accounts_updated_at
+before update on public.x_source_accounts
+for each row
+execute function public.set_updated_at();

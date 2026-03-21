@@ -48,11 +48,11 @@ const productionFiltersSchema = z.object({
     "Featured stat minimum must be non-negative"
   )
 }).superRefine((value, ctx) => {
-  if ((value.stat_key && value.min_stat_value === null) || (!value.stat_key && value.min_stat_value !== null)) {
+  if (value.stat_key && value.min_stat_value === null) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: "Featured stat and minimum must be set together",
-      path: ["stat_key"]
+      message: "Add a minimum only if you want to gate on the featured stat",
+      path: ["min_stat_value"]
     });
   }
 });

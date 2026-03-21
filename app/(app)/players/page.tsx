@@ -3,6 +3,7 @@ import { PlayersPagination } from "@/components/players/players-pagination";
 import { PlayerCard } from "@/components/players/player-card";
 import { SectionHeader } from "@/components/section-header";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { getNeedById, getPlayersPage } from "@/lib/data/queries";
 
@@ -72,6 +73,16 @@ export default async function PlayersPage({
     return `/players?${params.toString()}`;
   };
 
+  const activeFilterBadges = [
+    filters.position,
+    filters.classYear,
+    filters.yearsRemaining ? `${filters.yearsRemaining} year${filters.yearsRemaining === 1 ? "" : "s"}` : null,
+    filters.armLengthMin ? `Arm ${filters.armLengthMin}+` : null,
+    filters.fortyMax ? `40 <= ${filters.fortyMax}` : null,
+    filters.school ? `School: ${filters.school}` : null,
+    filters.conference
+  ].filter(Boolean) as string[];
+
   return (
     <div className="grid gap-6">
       <SectionHeader
@@ -111,11 +122,18 @@ export default async function PlayersPage({
                 {result.total} players
               </h2>
             </div>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {need ? <Badge variant="accent">Need fit mode</Badge> : null}
-              {filters.position ? <Badge>{filters.position}</Badge> : null}
-              {filters.conference ? <Badge variant="default">{filters.conference}</Badge> : null}
-              {filters.classYear ? <Badge variant="default">{filters.classYear}</Badge> : null}
+              {activeFilterBadges.map((label) => (
+                <Badge key={label} variant="default">
+                  {label}
+                </Badge>
+              ))}
+              {activeFilterBadges.length ? (
+                <Button asChild size="sm" variant="ghost">
+                  <a href={filters.needId ? `/players?needId=${filters.needId}` : "/players"}>Clear all</a>
+                </Button>
+              ) : null}
             </div>
           </div>
 
@@ -150,7 +168,7 @@ export default async function PlayersPage({
               <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Empty board</p>
               <h3 className="mt-3 text-2xl font-semibold text-slate-950">No players match the current filter set.</h3>
               <p className="mt-3 text-sm text-slate-600">
-                Loosen measurable thresholds or clear school and conference filters to widen the board.
+                Clear optional measurables first, then widen position, class, or school filters if needed.
               </p>
             </div>
           )}

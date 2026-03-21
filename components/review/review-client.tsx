@@ -21,7 +21,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { getPlayerKeyStats, getPlayerPhotoUrl } from "@/lib/football";
+import {
+  formatHeightInFeetInches,
+  getPlayerKeyStats,
+  getPlayerPhotoUrl,
+  getPlayerProductionMetrics
+} from "@/lib/football";
 import { PlayerFitResult, ReviewDecision, TeamNeed } from "@/lib/types";
 
 interface ReviewClientProps {
@@ -163,6 +168,7 @@ export function ReviewClient({
   }
 
   const stats = getPlayerKeyStats(current.player);
+  const productionMetrics = getPlayerProductionMetrics(current.player, 4);
   const swipeHint =
     dragX > 40
       ? "Shortlist"
@@ -247,7 +253,10 @@ export function ReviewClient({
 
               <div className="grid gap-5 p-6">
                 <div className="grid gap-3 md:grid-cols-4">
-                  <ReviewMetric label="Height / Weight" value={`${current.player.measurements?.height_in ?? "--"} / ${current.player.measurements?.weight_lbs ?? "--"}`} />
+                  <ReviewMetric
+                    label="Height / Weight"
+                    value={`${formatHeightInFeetInches(current.player.measurements?.height_in)} / ${current.player.measurements?.weight_lbs ?? "--"}`}
+                  />
                   <ReviewMetric label="Arm" value={current.player.measurements?.arm_length_in ? `${current.player.measurements.arm_length_in}"` : "--"} />
                   <ReviewMetric label="Forty" value={current.player.measurements?.forty_time ? `${current.player.measurements.forty_time}s` : "--"} />
                   <ReviewMetric label="Years Left" value={String(current.player.eligibility_remaining)} />
@@ -286,6 +295,7 @@ export function ReviewClient({
                       ))}
                     </div>
                     <div className="mt-4 flex flex-wrap gap-2">
+                      <Badge variant="default">{current.player.latest_stats?.season ?? "No season"}</Badge>
                       {current.player.measurements?.arm_length_in ? (
                         <Badge>Arm {current.player.measurements.arm_length_in}"</Badge>
                       ) : null}
@@ -301,6 +311,23 @@ export function ReviewClient({
                         </Badge>
                       ))}
                     </div>
+                  </div>
+                </div>
+
+                <div className="rounded-[28px] border bg-slate-50 p-5">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
+                      Latest Production
+                    </div>
+                    <Badge variant="default">{current.player.latest_stats?.season ?? "No season"}</Badge>
+                  </div>
+                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                    {productionMetrics.map((metric) => (
+                      <div key={metric.label} className="rounded-2xl bg-white px-4 py-3">
+                        <div className="text-[11px] uppercase tracking-[0.18em] text-slate-500">{metric.label}</div>
+                        <div className="mt-1 text-base font-semibold text-slate-900">{metric.value}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
 

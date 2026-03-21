@@ -2,16 +2,18 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Film, PlayCircle, Radar, Trophy } from "lucide-react";
-import {
-  addPlayerToShortlistAction,
-  markPlayerNeedsFilmAction
-} from "@/app/actions";
+import { addPlayerToShortlistAction, markPlayerNeedsFilmAction } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Paste247WriteUpForm } from "@/components/players/paste-247-writeup-form";
+import { SourceNoteForm } from "@/components/players/source-note-form";
 import {
+  formatHeightInFeetInches,
   getPlayerKeyStats,
-  getPlayerPhotoUrl
+  getPlayerPhotoUrl,
+  getPlayerProductionMetrics,
+  getPlayerPrimaryProduction
 } from "@/lib/football";
 import { getPlayerProfileData } from "@/lib/data/queries";
 
@@ -23,17 +25,18 @@ export default async function PlayerDetailPage({
   const data = await getPlayerProfileData(params.id);
   if (!data) notFound();
 
-  const { player, matchingNeeds, reviews, shortlists } = data;
+  const { player, matchingNeeds, reviews, shortlists, sourceNotes } = data;
   const topNeed = matchingNeeds[0]?.need ?? null;
   const currentShortlist = shortlists[0] ?? null;
   const keyStats = getPlayerKeyStats(player);
+  const productionMetrics = getPlayerProductionMetrics(player, 8);
 
   return (
     <div className="grid gap-6">
-      <Card className="overflow-hidden bg-slate-950 text-white">
+      <Card className="overflow-hidden border-none bg-[linear-gradient(145deg,#060c18_0%,#09192b_48%,#0f2941_72%,#0d4d67_100%)] text-white shadow-[0_35px_80px_rgba(8,15,33,0.34)]">
         <CardContent className="grid gap-8 p-8 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="flex items-start gap-5">
-            <div className="relative h-28 w-28 overflow-hidden rounded-[28px] border border-white/10 bg-white/5">
+            <div className="relative h-28 w-28 overflow-hidden rounded-[28px] border border-white/10 bg-white/10 shadow-inner">
               <Image
                 alt={`${player.first_name} ${player.last_name}`}
                 className="object-cover"
@@ -59,10 +62,16 @@ export default async function PlayerDetailPage({
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <HeroMetric label="Height / Weight" value={`${player.measurements?.height_in ?? "--"} / ${player.measurements?.weight_lbs ?? "--"}`} />
-            <HeroMetric label="Arm / Forty" value={`${player.measurements?.arm_length_in ?? "--"} / ${player.measurements?.forty_time ? `${player.measurements.forty_time}s` : "--"}`} />
-            <HeroMetric label="Starts / Games" value={`${player.latest_stats?.starts ?? 0} / ${player.latest_stats?.games_played ?? 0}`} />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <HeroMetric
+                label="Height / Weight"
+                value={`${formatHeightInFeetInches(player.measurements?.height_in)} / ${player.measurements?.weight_lbs ?? "--"}`}
+              />
+              <HeroMetric label="Arm / Forty" value={`${player.measurements?.arm_length_in ?? "--"} / ${player.measurements?.forty_time ? `${player.measurements.forty_time}s` : "--"}`} />
+              <HeroMetric
+              label="Starts / Games"
+              value={`${player.latest_stats?.starts ?? 0} / ${player.latest_stats?.games_played ?? 0}`}
+            />
             <HeroMetric label="Board Fit" value={matchingNeeds[0] ? `${matchingNeeds[0].fit.fitScore}` : "--"} />
           </div>
         </CardContent>
@@ -76,7 +85,7 @@ export default async function PlayerDetailPage({
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid gap-4 sm:grid-cols-3">
-                <MetricCard label="Height" value={player.measurements?.height_in ? `${player.measurements.height_in}"` : "--"} />
+                <MetricCard label="Height" value={formatHeightInFeetInches(player.measurements?.height_in)} />
                 <MetricCard label="Weight" value={player.measurements?.weight_lbs ? `${player.measurements.weight_lbs} lbs` : "--"} />
                 <MetricCard label="Wing / Arm" value={player.measurements?.wing_span_in ? `${player.measurements.wing_span_in}" span` : player.measurements?.arm_length_in ? `${player.measurements.arm_length_in}" arm` : "--"} />
               </div>
@@ -101,28 +110,26 @@ export default async function PlayerDetailPage({
               <CardTitle>Production Stats</CardTitle>
               <Badge variant="default">{player.latest_stats?.season ?? "No season"}</Badge>
             </CardHeader>
-            <CardContent className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <MetricCard label="Games" value={String(player.latest_stats?.games_played ?? "--")} />
-              <MetricCard label="Starts" value={String(player.latest_stats?.starts ?? "--")} />
-              <MetricCard
-                label="Featured"
-                value={String(
-                  player.latest_stats?.receiving_yards ??
-                    player.latest_stats?.rushing_yards ??
-                    player.latest_stats?.tackles ??
-                    player.latest_stats?.offensive_snaps ??
-                    "--"
-                )}
-              />
-              <MetricCard
-                label="Impact"
-                value={String(
-                  player.latest_stats?.total_touchdowns ??
-                    player.latest_stats?.sacks ??
-                    player.latest_stats?.interceptions ??
-                    "--"
-                )}
-              />
+            <CardContent className="grid gap-4">
+              {!player.latest_stats && (
+                <p className="col-span-full text-sm text-slate-500">
+                  Stats come from Sportradar. Run <code className="rounded bg-slate-100 px-1">npm run enrich:stats</code> to backfill (≈1 sec per player).
+                </p>
+              )}
+              <div className="rounded-3xl border bg-slate-50 p-5">
+                <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Primary production signal</p>
+                <p className="mt-3 text-2xl font-semibold text-slate-950">
+                  {getPlayerPrimaryProduction(player)}
+                </p>
+                <p className="mt-2 text-sm text-slate-600">
+                  Latest imported season used on board cards, fit ranking, and review context.
+                </p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {productionMetrics.map((metric) => (
+                  <MetricCard key={metric.label} label={metric.label} value={metric.value} />
+                ))}
+              </div>
             </CardContent>
           </Card>
 
@@ -184,6 +191,52 @@ export default async function PlayerDetailPage({
                   No matching active need is available for direct actions.
                 </div>
               )}
+            </CardContent>
+          </Card>
+
+          <Paste247WriteUpForm playerId={player.id} />
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Source Notes</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <SourceNoteForm playerId={player.id} />
+
+              <div className="grid gap-3">
+                {sourceNotes.length ? (
+                  sourceNotes.map((note) => (
+                    <div key={note.id} className="rounded-3xl border bg-slate-50 p-4">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <Badge variant="default">{note.note_type}</Badge>
+                        {note.source_account ? <Badge variant="accent">@{note.source_account}</Badge> : null}
+                        {note.status_signal ? <Badge variant="warning">{note.status_signal}</Badge> : null}
+                        {note.confidence !== null ? <Badge variant="success">{note.confidence.toFixed(1)} conf</Badge> : null}
+                      </div>
+                      {note.summary ? <p className="mt-3 text-sm font-medium text-slate-900">{note.summary}</p> : null}
+                      <p className="mt-2 text-sm text-slate-700">{note.source_text}</p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {note.traits.map((trait) => (
+                          <Badge key={trait} variant="default">
+                            {trait}
+                          </Badge>
+                        ))}
+                        {note.source_url ? (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={note.source_url} target="_blank">
+                              Source
+                            </Link>
+                          </Button>
+                        ) : null}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="rounded-3xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
+                    No source notes saved yet.
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
 
@@ -289,7 +342,7 @@ export default async function PlayerDetailPage({
 
 function HeroMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-[28px] border border-white/10 bg-white/5 p-4">
+    <div className="rounded-[28px] border border-white/10 bg-white/10 p-4 backdrop-blur">
       <p className="text-xs uppercase tracking-[0.24em] text-slate-300">{label}</p>
       <div className="mt-3 text-2xl font-semibold text-white">{value}</div>
     </div>

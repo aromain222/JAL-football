@@ -17,16 +17,22 @@ export interface Database {
           position: string;
           transfer_year: number;
           current_school: string;
+          conference: string | null;
           previous_school: string | null;
           hometown: string | null;
+          state: string | null;
           class_year: string;
           eligibility_remaining: number;
           stars: number | null;
           academic_status: string | null;
           status: string;
           film_url: string | null;
+          photo_url: string | null;
+          x_handle: string | null;
+          x_user_id: string | null;
           contact_window: string | null;
           notes: string | null;
+          sportradar_id: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -41,6 +47,7 @@ export interface Database {
           player_id: string;
           height_in: number | null;
           weight_lbs: number | null;
+          arm_length_in: number | null;
           forty_time: number | null;
           shuttle_time: number | null;
           vertical_jump: number | null;
@@ -75,6 +82,99 @@ export interface Database {
           "created_at"
         >;
         Update: Partial<Database["public"]["Tables"]["player_stats"]["Insert"]>;
+      };
+      player_identity_links: {
+        Row: {
+          player_id: string;
+          espn_url: string | null;
+          roster_url: string | null;
+          source: string | null;
+          confidence: number | null;
+          matched_team: string | null;
+          notes: string | null;
+          last_checked_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["player_identity_links"]["Row"],
+          "created_at" | "updated_at" | "last_checked_at"
+        > & {
+          created_at?: string;
+          updated_at?: string;
+          last_checked_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["player_identity_links"]["Insert"]>;
+      };
+      player_x_enrichments: {
+        Row: {
+          player_id: string;
+          x_handle: string | null;
+          x_user_id: string | null;
+          measurables: Json;
+          track: Json;
+          offers: Json;
+          sources: Json;
+          last_enriched_at: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["player_x_enrichments"]["Row"],
+          "created_at" | "updated_at" | "last_enriched_at"
+        > & {
+          created_at?: string;
+          updated_at?: string;
+          last_enriched_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["player_x_enrichments"]["Insert"]>;
+      };
+      player_source_notes: {
+        Row: {
+          id: string;
+          player_id: string;
+          source_platform: string;
+          source_account: string | null;
+          source_url: string | null;
+          note_type: string;
+          source_text: string;
+          summary: string | null;
+          traits: string[];
+          status_signal: string | null;
+          confidence: number | null;
+          created_by: string | null;
+          created_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["player_source_notes"]["Row"],
+          "id" | "created_at"
+        > & {
+          id?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["player_source_notes"]["Insert"]>;
+      };
+      x_source_accounts: {
+        Row: {
+          id: string;
+          handle: string;
+          display_name: string;
+          category: string;
+          priority: number;
+          active: boolean;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: Omit<
+          Database["public"]["Tables"]["x_source_accounts"]["Row"],
+          "id" | "created_at" | "updated_at"
+        > & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["x_source_accounts"]["Insert"]>;
       };
       teams: {
         Row: {

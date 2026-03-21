@@ -6,6 +6,7 @@ import {
   DashboardMetrics,
   Player,
   PlayerFitResult,
+  PlayerSourceNote,
   PlayersPageResult,
   ShortlistBoardItem,
   ShortlistItem,
@@ -198,27 +199,51 @@ function filterPlayers(players: Player[], filters: PlayerFilters) {
     }
     if (!matchesSearch(player, filters.search)) return false;
 
-    if (typeof filters.heightMin === "number" && (measurements?.height_in ?? -Infinity) < filters.heightMin) {
+    if (
+      typeof filters.heightMin === "number" &&
+      measurements?.height_in !== null &&
+      measurements?.height_in !== undefined &&
+      measurements.height_in < filters.heightMin
+    ) {
       return false;
     }
-    if (typeof filters.heightMax === "number" && (measurements?.height_in ?? Infinity) > filters.heightMax) {
+    if (
+      typeof filters.heightMax === "number" &&
+      measurements?.height_in !== null &&
+      measurements?.height_in !== undefined &&
+      measurements.height_in > filters.heightMax
+    ) {
       return false;
     }
-    if (typeof filters.weightMin === "number" && (measurements?.weight_lbs ?? -Infinity) < filters.weightMin) {
+    if (
+      typeof filters.weightMin === "number" &&
+      measurements?.weight_lbs !== null &&
+      measurements?.weight_lbs !== undefined &&
+      measurements.weight_lbs < filters.weightMin
+    ) {
       return false;
     }
-    if (typeof filters.weightMax === "number" && (measurements?.weight_lbs ?? Infinity) > filters.weightMax) {
+    if (
+      typeof filters.weightMax === "number" &&
+      measurements?.weight_lbs !== null &&
+      measurements?.weight_lbs !== undefined &&
+      measurements.weight_lbs > filters.weightMax
+    ) {
       return false;
     }
     if (
       typeof filters.armLengthMin === "number" &&
-      ((measurements?.arm_length_in ?? null) === null || (measurements?.arm_length_in ?? 0) < filters.armLengthMin)
+      measurements?.arm_length_in !== null &&
+      measurements?.arm_length_in !== undefined &&
+      measurements.arm_length_in < filters.armLengthMin
     ) {
       return false;
     }
     if (
       typeof filters.fortyMax === "number" &&
-      ((measurements?.forty_time ?? null) === null || (measurements?.forty_time ?? 99) > filters.fortyMax)
+      measurements?.forty_time !== null &&
+      measurements?.forty_time !== undefined &&
+      measurements.forty_time > filters.fortyMax
     ) {
       return false;
     }
@@ -253,19 +278,24 @@ async function getPlayersFromSupabase(filters: PlayerFilters = {}): Promise<Play
 
   if (!data) return [];
 
+  const pickSingle = <TRow>(value: TRow | TRow[] | null | undefined): TRow | null => {
+    if (Array.isArray(value)) return value[0] ?? null;
+    return value ?? null;
+  };
+
   return data.map((row: any) => ({
     ...row,
-    conference: getConferenceForSchool(row.current_school),
-    measurements: row.player_measurements ?? null,
+    conference: row.conference ?? getConferenceForSchool(row.current_school),
+    measurements: pickSingle(row.player_measurements),
     latest_stats: Array.isArray(row.player_stats)
       ? row.player_stats.sort((a: any, b: any) => b.season - a.season)[0] ?? null
-      : null,
+      : pickSingle(row.player_stats),
     tags: Array.isArray(row.player_tags) ? row.player_tags.map((item: any) => item.tag) : []
   }));
 }
 
 export async function getPlayerById(id: string) {
-  const players = await getPlayers();
+  const players = (await getPlayers()) as Player[];
   return players.find((player) => player.id === id) ?? null;
 }
 
@@ -298,12 +328,29 @@ export async function getPlayerShortlistEntries(playerId: string) {
   return (data as ShortlistItem[] | null) ?? [];
 }
 
+export async function getPlayerSourceNotes(playerId: string) {
+  noStore();
+  if (!hasSupabaseEnv()) {
+    return [] as PlayerSourceNote[];
+  }
+
+  const supabase = createSupabaseServerClient();
+  const { data } = await supabase
+    .from("player_source_notes")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("created_at", { ascending: false });
+
+  return (data as PlayerSourceNote[] | null) ?? [];
+}
+
 export async function getPlayerProfileData(playerId: string) {
-  const [player, needs, reviews, shortlists] = await Promise.all([
+  const [player, needs, reviews, shortlists, sourceNotes] = await Promise.all([
     getPlayerById(playerId),
     getNeeds(),
     getPlayerReviewHistory(playerId),
-    getPlayerShortlistEntries(playerId)
+    getPlayerShortlistEntries(playerId),
+    getPlayerSourceNotes(playerId)
   ]);
 
   if (!player) return null;
@@ -328,7 +375,8 @@ export async function getPlayerProfileData(playerId: string) {
     player,
     matchingNeeds,
     reviews,
-    shortlists
+    shortlists,
+    sourceNotes
   };
 }
 
@@ -369,10 +417,11 @@ export async function getShortlistBoard(filters?: {
     getNeeds(),
     getAllReviews()
   ]);
+  const allPlayers = players as Player[];
 
   return shortlists
     .map((item) => {
-      const player = players.find((candidate) => candidate.id === item.player_id) ?? null;
+      const player = allPlayers.find((candidate) => candidate.id === item.player_id) ?? null;
       const need = needs.find((candidate) => candidate.id === item.need_id) ?? null;
       const latestReview = reviews
         .filter((review) => review.need_id === item.need_id && review.player_id === item.player_id)

@@ -1,23 +1,17 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient } from "@supabase/supabase-js";
 
 type Role = "recruiting assistant" | "coordinator" | "head coach";
 type Position = "EDGE" | "DL" | "LB" | "CB" | "WR" | "RB" | "OL";
 type ClassYear = "FR" | "SO" | "JR" | "SR" | "GR";
 type NeedPriority = "high" | "critical" | "medium";
-type NeedStatus = "open";
 type ReviewDecision = "left" | "right" | "save";
-type ShortlistStage =
-  | "position_coach"
-  | "coordinator"
-  | "head_coach"
-  | "approved"
-  | "passed";
+type ShortlistStage = "assistant" | "coordinator" | "head_coach" | "final_watch";
 
 interface TeamInsert {
   id: string;
   name: string;
   conference: string;
-  subdivision: string;
+  logo_url: string | null;
 }
 
 interface ProfileInsert {
@@ -32,16 +26,21 @@ interface PlayerInsert {
   first_name: string;
   last_name: string;
   position: Position;
+  transfer_year: number;
   current_school: string;
+  conference: string | null;
   previous_school: string | null;
-  class_year: ClassYear;
-  years_remaining: number;
-  transfer_cycle: number;
   hometown: string | null;
   state: string | null;
-  status: "portal";
+  class_year: ClassYear;
+  eligibility_remaining: number;
+  stars: number | null;
+  academic_status: string | null;
+  status: "Portal";
   film_url: string;
-  source_external_id: string;
+  photo_url: string;
+  contact_window: string | null;
+  notes: string | null;
 }
 
 interface MeasurementInsert {
@@ -49,13 +48,11 @@ interface MeasurementInsert {
   height_in: number | null;
   weight_lbs: number | null;
   arm_length_in: number | null;
-  hand_size_in: number | null;
-  forty_yard: number | null;
-  shuttle: number | null;
-  vertical_in: number | null;
-  wingspan_in: number | null;
-  measured_at: string | null;
-  source: string;
+  forty_time: number | null;
+  shuttle_time: number | null;
+  vertical_jump: number | null;
+  wing_span_in: number | null;
+  verified_at: string | null;
 }
 
 interface StatInsert {
@@ -67,21 +64,13 @@ interface StatInsert {
   defensive_snaps: number | null;
   special_teams_snaps: number | null;
   passing_yards: number | null;
-  passing_tds: number | null;
-  interceptions_thrown: number | null;
-  rushing_attempts: number | null;
   rushing_yards: number | null;
-  rushing_tds: number | null;
-  receptions: number | null;
   receiving_yards: number | null;
-  receiving_tds: number | null;
+  total_touchdowns: number | null;
   tackles: number | null;
-  tackles_for_loss: number | null;
   sacks: number | null;
   interceptions: number | null;
   passes_defended: number | null;
-  forced_fumbles: number | null;
-  source: string;
 }
 
 interface NeedInsert {
@@ -91,13 +80,26 @@ interface NeedInsert {
   title: string;
   position: Position;
   priority: NeedPriority;
-  status: NeedStatus;
+  status: "active";
   target_count: number;
+  class_focus: string | null;
   min_height_in: number | null;
+  max_height_in: number | null;
   min_weight_lbs: number | null;
+  max_weight_lbs: number | null;
+  min_arm_length_in: number | null;
+  max_forty_time: number | null;
   min_years_remaining: number | null;
-  max_years_remaining: number | null;
+  scheme: string | null;
+  priority_traits: string[];
+  production_filters: {
+    min_games_played: number | null;
+    min_starts: number | null;
+    stat_key: string | null;
+    min_stat_value: number | null;
+  };
   min_starts: number | null;
+  min_production_score: number | null;
   notes: string;
 }
 
@@ -108,18 +110,17 @@ interface ReviewInsert {
   reviewer_id: string;
   decision: ReviewDecision;
   fit_score: number;
-  notes: string;
+  note: string;
 }
 
 interface ShortlistInsert {
   id: string;
   need_id: string;
   player_id: string;
-  team_id: string;
   created_by: string;
   stage: ShortlistStage;
-  rank_order: number | null;
-  notes: string;
+  priority_rank: number | null;
+  note: string;
 }
 
 interface PlayerBundle {
@@ -143,8 +144,12 @@ const supabase = createClient(supabaseUrl, serviceRoleKey, {
 
 const TRANSFER_CYCLE = 2026;
 const TEAM_ID = "9f391383-08e4-4895-bf10-ef2f5b7637b6";
+const requestedPlayerCount = Number(process.argv[2] ?? process.env.SEED_PLAYER_COUNT ?? "100");
+const PLAYER_COUNT = Number.isFinite(requestedPlayerCount)
+  ? Math.max(100, Math.min(Math.trunc(requestedPlayerCount), 5000))
+  : 100;
 
-const userSeeds = [
+const users = [
   {
     id: "d7488e1d-dd9b-4b7e-a4ae-d52f6d35a401",
     email: "assistant@demofootballops.com",
@@ -171,83 +176,102 @@ const userSeeds = [
 const firstNames = [
   "Jalen", "Malik", "Tyrese", "Devin", "Kobe", "Cam", "Jordan", "Micah", "Zion", "Amari",
   "Tre", "Javon", "Mason", "Bryce", "Keon", "Darius", "Noah", "Isaiah", "Quincy", "Xavier",
-  "Rashad", "Tyler", "Brandon", "Corey", "Aiden", "Jaylen", "Caden", "Omari", "Kendrick", "Treyvon"
+  "Rashad", "Tyler", "Brandon", "Corey", "Aiden", "Jaylen", "Caden", "Omari", "Kendrick", "Treyvon",
+  "Marcellus", "DeAndre", "Tavian", "Jaheim", "Khalil", "Jordon", "Donovan", "Desmond", "Zaire", "Kameron",
+  "Elijah", "Triston", "Landen", "Nasir", "Jace", "Dre", "Raylen", "Tatum", "Colby", "Shamar",
+  "Caleb", "CJ", "Damon", "Terrance", "Jaeden", "Jahmir", "Tylan", "Avery", "Jabari", "Mekhi",
+  "Antonio", "Roderick", "Nico", "Sincere", "Devonte", "KJ", "Kylan", "Traylon", "Montrell", "Zakai",
+  "Taj", "Kasen", "Makai", "Demonte", "Jayce", "Braylon", "Khyree", "Prince", "Khalan", "Deuce"
 ];
 
 const lastNames = [
   "Denson", "McCoy", "Sanders", "Holloway", "Watkins", "Miller", "Bishop", "Griffin", "Boone", "Hayes",
   "Morris", "Franklin", "Turner", "Parks", "Caldwell", "Maddox", "Pryor", "Waller", "Livingston", "Nash",
-  "Thornton", "Benson", "Pope", "Hampton", "Cooper", "Ricks", "Spears", "Grimes", "McKinney", "Ward"
+  "Thornton", "Benson", "Pope", "Hampton", "Cooper", "Ricks", "Spears", "Grimes", "McKinney", "Ward",
+  "Blackmon", "Jefferson", "Vaughn", "Coleman", "Peoples", "Henderson", "Richardson", "Slade", "Roland", "Fleming",
+  "Whitaker", "Booker", "McClain", "Foster", "Gordon", "Sampson", "Tillman", "Hickman", "Burt", "McDaniel",
+  "Gaines", "Moten", "Langston", "Dudley", "Conyers", "Huggins", "Bynum", "Atkins", "Pettway", "Merriweather",
+  "Calloway", "McFarland", "Bowie", "Dilworth", "Westbrook", "Bracey", "Goodwin", "Lockett", "Nolen", "Gipson",
+  "Ragland", "Curry", "Tatum", "Ferguson", "Drummond", "Pruitt", "Burks", "Beckham", "Chatman", "Moultrie"
 ];
 
 const schools = [
-  { school: "UTSA", conference: "AAC" },
-  { school: "Tulane", conference: "AAC" },
-  { school: "Memphis", conference: "AAC" },
-  { school: "North Texas", conference: "AAC" },
-  { school: "Boise State", conference: "MWC" },
-  { school: "Fresno State", conference: "MWC" },
-  { school: "Colorado State", conference: "MWC" },
-  { school: "San Diego State", conference: "MWC" },
-  { school: "Liberty", conference: "CUSA" },
-  { school: "James Madison", conference: "Sun Belt" },
-  { school: "Coastal Carolina", conference: "Sun Belt" },
-  { school: "App State", conference: "Sun Belt" },
-  { school: "Troy", conference: "Sun Belt" },
-  { school: "Texas State", conference: "Sun Belt" },
-  { school: "Marshall", conference: "Sun Belt" },
-  { school: "Toledo", conference: "MAC" },
-  { school: "Miami (OH)", conference: "MAC" },
-  { school: "Ohio", conference: "MAC" },
-  { school: "Western Kentucky", conference: "CUSA" },
-  { school: "Georgia State", conference: "Sun Belt" },
-  { school: "Nevada", conference: "MWC" },
-  { school: "Arkansas State", conference: "Sun Belt" },
-  { school: "UAB", conference: "AAC" },
-  { school: "Charlotte", conference: "AAC" },
-  { school: "Temple", conference: "AAC" },
-  { school: "Buffalo", conference: "MAC" },
-  { school: "Middle Tennessee", conference: "CUSA" },
-  { school: "FIU", conference: "CUSA" },
-  { school: "Wyoming", conference: "MWC" },
-  { school: "South Alabama", conference: "Sun Belt" },
-  { school: "Kansas State", conference: "Big 12" },
-  { school: "Baylor", conference: "Big 12" },
-  { school: "Texas Tech", conference: "Big 12" },
-  { school: "Ole Miss", conference: "SEC" },
-  { school: "Mississippi State", conference: "SEC" },
-  { school: "Missouri", conference: "SEC" },
-  { school: "NC State", conference: "ACC" },
-  { school: "Louisville", conference: "ACC" }
+  "UTSA", "Tulane", "Memphis", "North Texas", "Boise State", "Fresno State", "Colorado State",
+  "San Diego State", "Liberty", "James Madison", "Coastal Carolina", "App State", "Troy",
+  "Texas State", "Marshall", "Toledo", "Miami (OH)", "Ohio", "Western Kentucky", "Georgia State",
+  "Nevada", "Arkansas State", "UAB", "Charlotte", "Temple", "Buffalo", "Middle Tennessee", "FIU",
+  "Wyoming", "South Alabama", "Kansas State", "Baylor", "Texas Tech", "Ole Miss", "Mississippi State",
+  "Missouri", "NC State", "Louisville"
 ];
+const schoolConferenceMap: Record<string, string> = {
+  UTSA: "American",
+  Tulane: "American",
+  Memphis: "American",
+  "North Texas": "American",
+  "Boise State": "Mountain West",
+  "Fresno State": "Mountain West",
+  "Colorado State": "Mountain West",
+  "San Diego State": "Mountain West",
+  Liberty: "Conference USA",
+  "James Madison": "Sun Belt",
+  "Coastal Carolina": "Sun Belt",
+  "App State": "Sun Belt",
+  Troy: "Sun Belt",
+  "Texas State": "Sun Belt",
+  Marshall: "Sun Belt",
+  Toledo: "MAC",
+  "Miami (OH)": "MAC",
+  Ohio: "MAC",
+  "Western Kentucky": "Conference USA",
+  "Georgia State": "Sun Belt",
+  Nevada: "Mountain West",
+  "Arkansas State": "Sun Belt",
+  UAB: "American",
+  Charlotte: "American",
+  Temple: "American",
+  Buffalo: "MAC",
+  "Middle Tennessee": "Conference USA",
+  FIU: "Conference USA",
+  Wyoming: "Mountain West",
+  "South Alabama": "Sun Belt",
+  "Kansas State": "Big 12",
+  Baylor: "Big 12",
+  "Texas Tech": "Big 12",
+  "Ole Miss": "SEC",
+  "Mississippi State": "SEC",
+  Missouri: "SEC",
+  "NC State": "ACC",
+  Louisville: "ACC"
+};
 
 const states = ["TX", "FL", "GA", "AL", "LA", "MS", "NC", "SC", "TN", "OK", "AZ", "CA"];
-const hometownPrefixes = ["Houston", "Dallas", "Atlanta", "Mobile", "Birmingham", "New Orleans", "Charlotte", "Memphis", "Tulsa", "Phoenix", "Orlando", "Tampa"];
+const cities = ["Houston", "Dallas", "Atlanta", "Mobile", "Birmingham", "New Orleans", "Charlotte", "Memphis", "Tulsa", "Phoenix", "Orlando", "Tampa"];
 
-const needTemplates: Array<{
-  id: string;
-  title: string;
-  position: Position;
-  priority: NeedPriority;
-  target_count: number;
-  min_height_in: number | null;
-  min_weight_lbs: number | null;
-  min_years_remaining: number | null;
-  max_years_remaining: number | null;
-  min_starts: number | null;
-  notes: string;
-}> = [
+const needTemplates: Omit<NeedInsert, "team_id" | "created_by" | "status">[] = [
   {
     id: "0aa2d6af-6435-47a8-96f9-b4d9292962f0",
     title: "Boundary corner with length and man-cover profile",
     position: "CB",
     priority: "critical",
     target_count: 2,
+    class_focus: "JR/SR",
     min_height_in: 71,
+    max_height_in: 74,
     min_weight_lbs: 182,
+    max_weight_lbs: 205,
+    min_arm_length_in: 31,
+    max_forty_time: 4.55,
     min_years_remaining: 1,
-    max_years_remaining: 3,
+    scheme: "man-match",
+    priority_traits: ["length", "press", "recovery speed"],
+    production_filters: {
+      min_games_played: 8,
+      min_starts: 6,
+      stat_key: "passes_defended",
+      min_stat_value: 5
+    },
     min_starts: 6,
+    min_production_score: 70,
     notes: "Need an immediate contributor with verified speed and press comfort."
   },
   {
@@ -256,11 +280,24 @@ const needTemplates: Array<{
     position: "EDGE",
     priority: "critical",
     target_count: 2,
+    class_focus: "SR/GR",
     min_height_in: 75,
+    max_height_in: 79,
     min_weight_lbs: 235,
+    max_weight_lbs: 270,
+    min_arm_length_in: 33,
+    max_forty_time: 4.88,
     min_years_remaining: 1,
-    max_years_remaining: 2,
+    scheme: "pressure package",
+    priority_traits: ["get-off", "bend", "length"],
+    production_filters: {
+      min_games_played: 8,
+      min_starts: 5,
+      stat_key: "sacks",
+      min_stat_value: 4
+    },
     min_starts: 5,
+    min_production_score: 72,
     notes: "Looking for proven havoc production and enough size to hold up in the league."
   },
   {
@@ -269,28 +306,41 @@ const needTemplates: Array<{
     position: "WR",
     priority: "high",
     target_count: 1,
+    class_focus: "JR/SR",
     min_height_in: 70,
+    max_height_in: 76,
     min_weight_lbs: 175,
+    max_weight_lbs: 210,
+    min_arm_length_in: 30.5,
+    max_forty_time: 4.58,
     min_years_remaining: 1,
-    max_years_remaining: 3,
+    scheme: "spread",
+    priority_traits: ["explosiveness", "ball tracking", "YAC"],
+    production_filters: {
+      min_games_played: 8,
+      min_starts: 4,
+      stat_key: "receiving_yards",
+      min_stat_value: 450
+    },
     min_starts: 4,
+    min_production_score: 68,
     notes: "Need speed, ball production, and open-field value."
   }
 ];
 
-const stageDistribution: ShortlistStage[] = [
-  "position_coach",
-  "position_coach",
-  "position_coach",
+const shortlistStages: ShortlistStage[] = [
+  "assistant",
+  "assistant",
+  "assistant",
   "coordinator",
   "coordinator",
   "coordinator",
   "head_coach",
   "head_coach",
-  "approved",
-  "approved",
-  "passed",
-  "passed"
+  "final_watch",
+  "final_watch",
+  "final_watch",
+  "final_watch"
 ];
 
 async function main() {
@@ -300,18 +350,17 @@ async function main() {
     id: TEAM_ID,
     name: "Red Valley Football",
     conference: "Big 12",
-    subdivision: "FBS"
+    logo_url: null
   };
 
   await upsertTeam(team);
   const profiles = await upsertUsersAndProfiles(team.id);
-  const players = generatePlayers(100);
+  const players = generatePlayers(PLAYER_COUNT);
   const needs = generateNeeds(team.id, profiles[0].id);
   const reviews = generateReviews(players, needs, profiles);
-  const shortlists = generateShortlists(team.id, profiles[1].id, reviews);
+  const shortlists = generateShortlists(profiles[1].id, reviews);
 
-  await purgeTeamScopedData(team.id);
-  await purgePlayerData();
+  await purgeScopedData(team.id);
 
   await upsertTeam(team);
   await upsertProfiles(profiles);
@@ -334,32 +383,28 @@ async function main() {
 async function upsertUsersAndProfiles(teamId: string): Promise<ProfileInsert[]> {
   const profiles: ProfileInsert[] = [];
 
-  for (const seed of userSeeds) {
-    const existing = await supabase.auth.admin.getUserById(seed.id);
+  for (const user of users) {
+    const existing = await supabase.auth.admin.getUserById(user.id);
     if (existing.error && !existing.error.message.toLowerCase().includes("not found")) {
       throw existing.error;
     }
 
     if (!existing.data.user) {
       const created = await supabase.auth.admin.createUser({
-        id: seed.id,
-        email: seed.email,
-        password: seed.password,
-        email_confirm: true,
-        user_metadata: {
-          full_name: seed.full_name,
-          role: seed.role
-        }
+        id: user.id,
+        email: user.email,
+        password: user.password,
+        email_confirm: true
       });
 
       if (created.error) throw created.error;
     }
 
     profiles.push({
-      id: seed.id,
+      id: user.id,
       team_id: teamId,
-      full_name: seed.full_name,
-      role: seed.role
+      full_name: user.full_name,
+      role: user.role
     });
   }
 
@@ -367,268 +412,169 @@ async function upsertUsersAndProfiles(teamId: string): Promise<ProfileInsert[]> 
 }
 
 function generatePlayers(count: number): PlayerBundle[] {
-  const positionPlan: Position[] = [
-    ...Array.from({ length: 20 }, () => "EDGE"),
-    ...Array.from({ length: 18 }, () => "CB"),
-    ...Array.from({ length: 14 }, () => "DL"),
-    ...Array.from({ length: 12 }, () => "LB"),
-    ...Array.from({ length: 16 }, () => "WR"),
-    ...Array.from({ length: 10 }, () => "RB"),
-    ...Array.from({ length: 10 }, () => "OL")
+  const ratios: Array<{ position: Position; weight: number }> = [
+    { position: "EDGE", weight: 0.2 },
+    { position: "CB", weight: 0.18 },
+    { position: "DL", weight: 0.14 },
+    { position: "LB", weight: 0.12 },
+    { position: "WR", weight: 0.16 },
+    { position: "RB", weight: 0.1 },
+    { position: "OL", weight: 0.1 }
   ];
+  const positionPlan = buildPositionPlan(count, ratios);
 
   return positionPlan.slice(0, count).map((position, index) => {
     const playerId = crypto.randomUUID();
-    const firstName = pick(firstNames, index);
-    const lastName = pick(lastNames, index * 3);
     const school = pick(schools, index * 5);
-    const previousSchool = index % 5 === 0 ? pick(schools, index * 7 + 2).school : null;
     const classYear = pickClassYear(index);
-    const yearsRemaining = deriveYearsRemaining(classYear);
-    const hometown = `${pick(hometownPrefixes, index * 2)}, ${pick(states, index * 4)}`;
+    const { firstName, lastName } = getUniquePlayerName(index);
 
     const player: PlayerInsert = {
       id: playerId,
       first_name: firstName,
       last_name: lastName,
       position,
-      current_school: school.school,
-      previous_school: previousSchool,
+      transfer_year: TRANSFER_CYCLE,
+      current_school: school,
+      conference: schoolConferenceMap[school] ?? null,
+      previous_school: index % 5 === 0 ? pick(schools, index * 7 + 2) : null,
+      hometown: `${pick(cities, index * 2)}, ${pick(states, index * 4)}`,
+      state: pick(states, index * 4),
       class_year: classYear,
-      years_remaining: yearsRemaining,
-      transfer_cycle: TRANSFER_CYCLE,
-      hometown,
-      state: hometown.slice(-2),
-      status: "portal",
+      eligibility_remaining: deriveYearsRemaining(classYear),
+      stars: index % 9 === 0 ? 4 : index % 3 === 0 ? 3 : 2,
+      academic_status: "Eligible",
+      status: "Portal",
       film_url: `https://hudl.com/video/3/${100000 + index}/${900000 + index}`,
-      source_external_id: `portal-${TRANSFER_CYCLE}-${index + 1}`
+      photo_url: `https://images.unsplash.com/photo-${1500000000000 + index}?auto=format&fit=crop&w=800&q=80`,
+      contact_window: index % 3 === 0 ? "Spring" : "Open",
+      notes: `${position} profile with live portal value and ${pick(["starter reps", "special teams utility", "upside traits", "immediate depth"], index)}.`
     };
 
-    const measurement = generateMeasurement(playerId, position, index);
-    const stat = generateStat(playerId, position, index);
-
-    return { player, measurement, stat };
+    return {
+      player,
+      measurement: generateMeasurement(playerId, position, index),
+      stat: generateStat(playerId, position)
+    };
   });
 }
 
 function generateMeasurement(playerId: string, position: Position, index: number): MeasurementInsert {
   const missing = (mod: number) => index % mod === 0;
-
-  const ranges: Record<Position, { height: [number, number]; weight: [number, number]; forty: [number, number]; arm: [number, number]; hand: [number, number]; vertical: [number, number]; wingspan: [number, number]; shuttle: [number, number] }> = {
-    EDGE: { height: [74, 79], weight: [232, 265], forty: [4.58, 4.89], arm: [32.0, 35.0], hand: [9.25, 10.75], vertical: [29, 37], wingspan: [77, 84], shuttle: [4.18, 4.62] },
-    DL:   { height: [73, 78], weight: [275, 325], forty: [4.88, 5.32], arm: [31.5, 35.5], hand: [9.5, 11.0], vertical: [24, 33], wingspan: [76, 83], shuttle: [4.45, 5.02] },
-    LB:   { height: [72, 77], weight: [220, 248], forty: [4.52, 4.82], arm: [31.0, 34.0], hand: [9.0, 10.5], vertical: [31, 39], wingspan: [75, 81], shuttle: [4.12, 4.44] },
-    CB:   { height: [69, 74], weight: [175, 205], forty: [4.34, 4.58], arm: [30.0, 33.5], hand: [8.75, 10.25], vertical: [34, 42], wingspan: [72, 78], shuttle: [3.96, 4.26] },
-    WR:   { height: [69, 76], weight: [176, 215], forty: [4.33, 4.59], arm: [30.0, 33.5], hand: [8.75, 10.5], vertical: [33, 41], wingspan: [72, 79], shuttle: [3.98, 4.28] },
-    RB:   { height: [68, 73], weight: [188, 222], forty: [4.36, 4.63], arm: [29.0, 32.5], hand: [8.75, 10.25], vertical: [33, 41], wingspan: [70, 76], shuttle: [4.00, 4.31] },
-    OL:   { height: [75, 80], weight: [285, 335], forty: [5.02, 5.48], arm: [32.5, 36.5], hand: [9.5, 11.25], vertical: [22, 31], wingspan: [79, 86], shuttle: [4.55, 5.10] }
+  const ranges: Record<
+    Position,
+    { height: [number, number]; weight: [number, number]; arm: [number, number]; forty: [number, number]; shuttle: [number, number]; vertical: [number, number]; wingspan: [number, number] }
+  > = {
+    EDGE: { height: [74, 79], weight: [232, 265], arm: [32.5, 35], forty: [4.58, 4.89], shuttle: [4.18, 4.62], vertical: [29, 37], wingspan: [77, 84] },
+    DL: { height: [73, 78], weight: [275, 325], arm: [32, 35], forty: [4.88, 5.32], shuttle: [4.45, 5.02], vertical: [24, 33], wingspan: [76, 83] },
+    LB: { height: [72, 77], weight: [220, 248], arm: [31, 34], forty: [4.52, 4.82], shuttle: [4.12, 4.44], vertical: [31, 39], wingspan: [75, 81] },
+    CB: { height: [69, 74], weight: [175, 205], arm: [30.5, 33], forty: [4.34, 4.58], shuttle: [3.96, 4.26], vertical: [34, 42], wingspan: [72, 78] },
+    WR: { height: [69, 76], weight: [176, 215], arm: [30, 33.5], forty: [4.33, 4.59], shuttle: [3.98, 4.28], vertical: [33, 41], wingspan: [72, 79] },
+    RB: { height: [68, 73], weight: [188, 222], arm: [29, 32], forty: [4.36, 4.63], shuttle: [4.0, 4.31], vertical: [33, 41], wingspan: [70, 76] },
+    OL: { height: [75, 80], weight: [285, 335], arm: [33, 36], forty: [5.02, 5.48], shuttle: [4.55, 5.1], vertical: [22, 31], wingspan: [79, 86] }
   };
 
   const range = ranges[position];
-
   return {
     player_id: playerId,
-    height_in: missing(11) ? null : round(randomInRange(range.height[0], range.height[1]), 1),
-    weight_lbs: missing(13) ? null : round(randomInRange(range.weight[0], range.weight[1]), 1),
-    arm_length_in: missing(7) ? null : round(randomInRange(range.arm[0], range.arm[1]), 2),
-    hand_size_in: missing(9) ? null : round(randomInRange(range.hand[0], range.hand[1]), 2),
-    forty_yard: missing(6) ? null : round(randomInRange(range.forty[0], range.forty[1]), 2),
-    shuttle: missing(8) ? null : round(randomInRange(range.shuttle[0], range.shuttle[1]), 2),
-    vertical_in: missing(10) ? null : round(randomInRange(range.vertical[0], range.vertical[1]), 1),
-    wingspan_in: missing(12) ? null : round(randomInRange(range.wingspan[0], range.wingspan[1]), 1),
-    measured_at: missing(14) ? null : "2026-01-15",
-    source: "Demo Combine / School Verified"
+    height_in: missing(11) ? null : randomInt(range.height[0], range.height[1]),
+    weight_lbs: missing(13) ? null : randomInt(range.weight[0], range.weight[1]),
+    arm_length_in: missing(9) ? null : round(randomInRange(range.arm[0], range.arm[1]), 1),
+    forty_time: missing(6) ? null : round(randomInRange(range.forty[0], range.forty[1]), 2),
+    shuttle_time: missing(8) ? null : round(randomInRange(range.shuttle[0], range.shuttle[1]), 2),
+    vertical_jump: missing(10) ? null : round(randomInRange(range.vertical[0], range.vertical[1]), 1),
+    wing_span_in: missing(12) ? null : round(randomInRange(range.wingspan[0], range.wingspan[1]), 1),
+    verified_at: missing(14) ? null : "2026-01-15"
   };
 }
 
-function generateStat(playerId: string, position: Position, index: number): StatInsert {
+function generateStat(playerId: string, position: Position): StatInsert {
   const gamesPlayed = randomInt(8, 14);
   const starts = randomInt(0, gamesPlayed);
 
   switch (position) {
     case "EDGE":
-      return {
-        player_id: playerId,
-        season: 2025,
-        games_played: gamesPlayed,
-        starts,
-        offensive_snaps: null,
+      return baseStat(playerId, gamesPlayed, starts, {
         defensive_snaps: randomInt(220, 620),
         special_teams_snaps: randomInt(0, 90),
-        passing_yards: null,
-        passing_tds: null,
-        interceptions_thrown: null,
-        rushing_attempts: null,
-        rushing_yards: null,
-        rushing_tds: null,
-        receptions: null,
-        receiving_yards: null,
-        receiving_tds: null,
         tackles: randomInt(18, 58),
-        tackles_for_loss: round(randomInRange(4, 16), 1),
         sacks: round(randomInRange(1.5, 10.5), 1),
-        interceptions: 0,
-        passes_defended: randomInt(0, 5),
-        forced_fumbles: randomInt(0, 4),
-        source: "Demo Production Model"
-      };
+        passes_defended: randomInt(0, 5)
+      });
     case "DL":
-      return {
-        player_id: playerId,
-        season: 2025,
-        games_played: gamesPlayed,
-        starts,
-        offensive_snaps: null,
+      return baseStat(playerId, gamesPlayed, starts, {
         defensive_snaps: randomInt(240, 650),
         special_teams_snaps: randomInt(0, 40),
-        passing_yards: null,
-        passing_tds: null,
-        interceptions_thrown: null,
-        rushing_attempts: null,
-        rushing_yards: null,
-        rushing_tds: null,
-        receptions: null,
-        receiving_yards: null,
-        receiving_tds: null,
         tackles: randomInt(22, 64),
-        tackles_for_loss: round(randomInRange(3, 12), 1),
         sacks: round(randomInRange(0.5, 7.5), 1),
-        interceptions: 0,
-        passes_defended: randomInt(0, 4),
-        forced_fumbles: randomInt(0, 3),
-        source: "Demo Production Model"
-      };
+        passes_defended: randomInt(0, 4)
+      });
     case "LB":
-      return {
-        player_id: playerId,
-        season: 2025,
-        games_played: gamesPlayed,
-        starts,
-        offensive_snaps: null,
+      return baseStat(playerId, gamesPlayed, starts, {
         defensive_snaps: randomInt(260, 720),
         special_teams_snaps: randomInt(10, 140),
-        passing_yards: null,
-        passing_tds: null,
-        interceptions_thrown: null,
-        rushing_attempts: null,
-        rushing_yards: null,
-        rushing_tds: null,
-        receptions: null,
-        receiving_yards: null,
-        receiving_tds: null,
         tackles: randomInt(38, 108),
-        tackles_for_loss: round(randomInRange(2, 14), 1),
         sacks: round(randomInRange(0, 5.5), 1),
         interceptions: randomInt(0, 3),
-        passes_defended: randomInt(1, 8),
-        forced_fumbles: randomInt(0, 3),
-        source: "Demo Production Model"
-      };
+        passes_defended: randomInt(1, 8)
+      });
     case "CB":
-      return {
-        player_id: playerId,
-        season: 2025,
-        games_played: gamesPlayed,
-        starts,
-        offensive_snaps: null,
+      return baseStat(playerId, gamesPlayed, starts, {
         defensive_snaps: randomInt(260, 740),
         special_teams_snaps: randomInt(10, 120),
-        passing_yards: null,
-        passing_tds: null,
-        interceptions_thrown: null,
-        rushing_attempts: null,
-        rushing_yards: null,
-        rushing_tds: null,
-        receptions: null,
-        receiving_yards: null,
-        receiving_tds: null,
         tackles: randomInt(18, 61),
-        tackles_for_loss: round(randomInRange(0, 6), 1),
         sacks: round(randomInRange(0, 2), 1),
         interceptions: randomInt(0, 5),
-        passes_defended: randomInt(3, 16),
-        forced_fumbles: randomInt(0, 2),
-        source: "Demo Production Model"
-      };
+        passes_defended: randomInt(3, 16)
+      });
     case "WR":
-      return {
-        player_id: playerId,
-        season: 2025,
-        games_played: gamesPlayed,
-        starts,
+      return baseStat(playerId, gamesPlayed, starts, {
         offensive_snaps: randomInt(180, 760),
-        defensive_snaps: null,
         special_teams_snaps: randomInt(0, 120),
-        passing_yards: null,
-        passing_tds: null,
-        interceptions_thrown: null,
-        rushing_attempts: randomInt(0, 12),
         rushing_yards: randomInt(0, 120),
-        rushing_tds: randomInt(0, 2),
-        receptions: randomInt(12, 78),
         receiving_yards: randomInt(180, 1240),
-        receiving_tds: randomInt(1, 13),
-        tackles: null,
-        tackles_for_loss: null,
-        sacks: null,
-        interceptions: null,
-        passes_defended: null,
-        forced_fumbles: randomInt(0, 2),
-        source: "Demo Production Model"
-      };
+        total_touchdowns: randomInt(1, 13)
+      });
     case "RB":
-      return {
-        player_id: playerId,
-        season: 2025,
-        games_played: gamesPlayed,
-        starts,
+      return baseStat(playerId, gamesPlayed, starts, {
         offensive_snaps: randomInt(160, 620),
-        defensive_snaps: null,
         special_teams_snaps: randomInt(0, 90),
-        passing_yards: null,
-        passing_tds: null,
-        interceptions_thrown: null,
-        rushing_attempts: randomInt(35, 210),
         rushing_yards: randomInt(210, 1280),
-        rushing_tds: randomInt(2, 16),
-        receptions: randomInt(4, 38),
         receiving_yards: randomInt(20, 410),
-        receiving_tds: randomInt(0, 4),
-        tackles: null,
-        tackles_for_loss: null,
-        sacks: null,
-        interceptions: null,
-        passes_defended: null,
-        forced_fumbles: randomInt(0, 3),
-        source: "Demo Production Model"
-      };
+        total_touchdowns: randomInt(2, 16)
+      });
     case "OL":
-      return {
-        player_id: playerId,
-        season: 2025,
-        games_played: gamesPlayed,
-        starts,
+      return baseStat(playerId, gamesPlayed, starts, {
         offensive_snaps: randomInt(240, 850),
-        defensive_snaps: null,
-        special_teams_snaps: randomInt(0, 45),
-        passing_yards: null,
-        passing_tds: null,
-        interceptions_thrown: null,
-        rushing_attempts: null,
-        rushing_yards: null,
-        rushing_tds: null,
-        receptions: null,
-        receiving_yards: null,
-        receiving_tds: null,
-        tackles: null,
-        tackles_for_loss: null,
-        sacks: null,
-        interceptions: null,
-        passes_defended: null,
-        forced_fumbles: null,
-        source: "Demo Production Model"
-      };
+        special_teams_snaps: randomInt(0, 45)
+      });
   }
+}
+
+function baseStat(
+  playerId: string,
+  gamesPlayed: number,
+  starts: number,
+  overrides: Partial<StatInsert>
+): StatInsert {
+  return {
+    player_id: playerId,
+    season: 2025,
+    games_played: gamesPlayed,
+    starts,
+    offensive_snaps: null,
+    defensive_snaps: null,
+    special_teams_snaps: null,
+    passing_yards: null,
+    rushing_yards: null,
+    receiving_yards: null,
+    total_touchdowns: 0,
+    tackles: null,
+    sacks: null,
+    interceptions: null,
+    passes_defended: null,
+    ...overrides
+  };
 }
 
 function generateNeeds(teamId: string, createdBy: string): NeedInsert[] {
@@ -636,39 +582,33 @@ function generateNeeds(teamId: string, createdBy: string): NeedInsert[] {
     ...template,
     team_id: teamId,
     created_by: createdBy,
-    status: "open"
+    status: "active"
   }));
 }
 
-function generateReviews(
-  players: PlayerBundle[],
-  needs: NeedInsert[],
-  profiles: ProfileInsert[]
-): ReviewInsert[] {
+function generateReviews(players: PlayerBundle[], needs: NeedInsert[], profiles: ProfileInsert[]) {
   const reviews: ReviewInsert[] = [];
-  const candidateMap = new Map<Position, PlayerBundle[]>();
+  const byPosition = new Map<Position, PlayerBundle[]>();
 
   for (const player of players) {
-    const existing = candidateMap.get(player.player.position) ?? [];
-    existing.push(player);
-    candidateMap.set(player.player.position, existing);
+    const current = byPosition.get(player.player.position) ?? [];
+    current.push(player);
+    byPosition.set(player.player.position, current);
   }
 
-  const assistant = profiles.find((profile) => profile.role === "recruiting assistant")!;
-  const coordinator = profiles.find((profile) => profile.role === "coordinator")!;
-  const headCoach = profiles.find((profile) => profile.role === "head coach")!;
+  const assistant = profiles[0];
+  const coordinator = profiles[1];
+  const headCoach = profiles[2];
 
   needs.forEach((need, needIndex) => {
-    const pool = (candidateMap.get(need.position) ?? [])
+    const pool = (byPosition.get(need.position) ?? [])
       .sort((a, b) => scorePlayerForNeed(b, need) - scorePlayerForNeed(a, need))
       .slice(0, 18);
 
     pool.slice(0, 10).forEach((bundle, index) => {
-      const reviewer =
-        index < 5 ? assistant.id : index < 8 ? coordinator.id : headCoach.id;
+      const reviewer = index < 5 ? assistant.id : index < 8 ? coordinator.id : headCoach.id;
       const fitScore = scorePlayerForNeed(bundle, need);
-      const decision: ReviewDecision =
-        fitScore >= 84 ? "right" : fitScore >= 72 ? "save" : "left";
+      const decision: ReviewDecision = fitScore >= 84 ? "right" : fitScore >= 72 ? "save" : "left";
 
       reviews.push({
         id: crypto.randomUUID(),
@@ -677,7 +617,7 @@ function generateReviews(
         reviewer_id: reviewer,
         decision,
         fit_score: fitScore,
-        notes: reviewNote(bundle, need, decision, needIndex + index)
+        note: reviewNote(bundle, need, decision, needIndex + index)
       });
     });
   });
@@ -685,11 +625,7 @@ function generateReviews(
   return reviews.slice(0, 30);
 }
 
-function generateShortlists(
-  teamId: string,
-  createdBy: string,
-  reviews: ReviewInsert[]
-): ShortlistInsert[] {
+function generateShortlists(createdBy: string, reviews: ReviewInsert[]): ShortlistInsert[] {
   const advancing = reviews
     .filter((review) => review.decision !== "left")
     .sort((a, b) => b.fit_score - a.fit_score)
@@ -699,39 +635,32 @@ function generateShortlists(
     id: crypto.randomUUID(),
     need_id: review.need_id,
     player_id: review.player_id,
-    team_id: teamId,
     created_by: createdBy,
-    stage: stageDistribution[index],
-    rank_order: index < 10 ? index + 1 : null,
-    notes:
-      stageDistribution[index] === "approved"
-        ? "Approved for full staff push."
-        : stageDistribution[index] === "passed"
-          ? "Reviewed but deprioritized after cross-check."
-          : "Still active in internal staff workflow."
+    stage: shortlistStages[index],
+    priority_rank: index < 10 ? index + 1 : null,
+    note:
+      shortlistStages[index] === "final_watch"
+        ? "Final watch list for next board turn."
+        : "Still active in internal staff workflow."
   }));
 }
 
-function scorePlayerForNeed(bundle: PlayerBundle, need: NeedInsert): number {
-  const measurement = bundle.measurement;
-  const stat = bundle.stat;
+function scorePlayerForNeed(bundle: PlayerBundle, need: NeedInsert) {
   let score = 55;
-
   if (bundle.player.position === need.position) score += 10;
-  if (need.min_height_in && measurement.height_in && measurement.height_in >= need.min_height_in) score += 6;
-  if (need.min_weight_lbs && measurement.weight_lbs && measurement.weight_lbs >= need.min_weight_lbs) score += 6;
-  if (need.min_starts && stat.starts >= need.min_starts) score += 7;
-  if (need.min_years_remaining && bundle.player.years_remaining >= need.min_years_remaining) score += 4;
-  if (need.max_years_remaining && bundle.player.years_remaining <= need.max_years_remaining) score += 3;
+  if (need.min_height_in && bundle.measurement.height_in && bundle.measurement.height_in >= need.min_height_in) score += 6;
+  if (need.min_weight_lbs && bundle.measurement.weight_lbs && bundle.measurement.weight_lbs >= need.min_weight_lbs) score += 6;
+  if (need.min_starts && bundle.stat.starts >= need.min_starts) score += 7;
+  if (need.min_years_remaining && bundle.player.eligibility_remaining >= need.min_years_remaining) score += 4;
 
-  if (bundle.player.position === "EDGE") score += Math.round((stat.sacks ?? 0) * 2.2 + (stat.tackles_for_loss ?? 0) * 1.2);
-  if (bundle.player.position === "CB") score += Math.round((stat.interceptions ?? 0) * 4 + (stat.passes_defended ?? 0) * 1.3);
-  if (bundle.player.position === "WR") score += Math.round((stat.receiving_yards ?? 0) / 55 + (stat.receiving_tds ?? 0) * 2.5);
+  if (bundle.player.position === "EDGE") score += Math.round((bundle.stat.sacks ?? 0) * 2.2 + (bundle.stat.tackles ?? 0) * 0.4);
+  if (bundle.player.position === "CB") score += Math.round((bundle.stat.interceptions ?? 0) * 4 + (bundle.stat.passes_defended ?? 0) * 1.3);
+  if (bundle.player.position === "WR") score += Math.round((bundle.stat.receiving_yards ?? 0) / 55 + (bundle.stat.total_touchdowns ?? 0) * 2.5);
 
   return Math.max(45, Math.min(score, 97));
 }
 
-function reviewNote(bundle: PlayerBundle, need: NeedInsert, decision: ReviewDecision, salt: number): string {
+function reviewNote(bundle: PlayerBundle, need: NeedInsert, decision: ReviewDecision, salt: number) {
   const snippets = {
     left: [
       "Production is usable, but the profile does not clear the current threshold.",
@@ -754,19 +683,17 @@ function reviewNote(bundle: PlayerBundle, need: NeedInsert, decision: ReviewDeci
 }
 
 async function upsertTeam(team: TeamInsert) {
-  const { error } = await supabase.from("teams").upsert(team);
+  const { error } = await supabase.from("teams").upsert(team, { onConflict: "id" });
   if (error) throw error;
 }
 
 async function upsertProfiles(profiles: ProfileInsert[]) {
-  const { error } = await supabase.from("profiles").upsert(profiles);
+  const { error } = await supabase.from("profiles").upsert(profiles, { onConflict: "id" });
   if (error) throw error;
 }
 
 async function upsertPlayers(players: PlayerInsert[]) {
-  const { error } = await supabase
-    .from("players")
-    .upsert(players, { onConflict: "id" });
+  const { error } = await supabase.from("players").upsert(players, { onConflict: "id" });
   if (error) throw error;
 }
 
@@ -785,9 +712,7 @@ async function upsertStats(stats: StatInsert[]) {
 }
 
 async function upsertNeeds(needs: NeedInsert[]) {
-  const { error } = await supabase
-    .from("team_needs")
-    .upsert(needs, { onConflict: "id" });
+  const { error } = await supabase.from("team_needs").upsert(needs, { onConflict: "id" });
   if (error) throw error;
 }
 
@@ -805,45 +730,58 @@ async function upsertShortlists(shortlists: ShortlistInsert[]) {
   if (error) throw error;
 }
 
-async function purgeTeamScopedData(teamId: string) {
-  const teamNeedIds = await fetchIds("team_needs", "id", { team_id: teamId });
+async function purgeScopedData(teamId: string) {
+  const { data: teamNeedRows } = await supabase.from("team_needs").select("id").eq("team_id", teamId);
+  const needIds = (teamNeedRows ?? []).map((row) => row.id);
 
-  if (teamNeedIds.length) {
-    await must(supabase.from("shortlists").delete().in("need_id", teamNeedIds));
-    await must(supabase.from("player_reviews").delete().in("need_id", teamNeedIds));
+  if (needIds.length) {
+    await must(supabase.from("shortlists").delete().in("need_id", needIds));
+    await must(supabase.from("player_reviews").delete().in("need_id", needIds));
   }
 
   await must(supabase.from("team_needs").delete().eq("team_id", teamId));
   await must(supabase.from("profiles").delete().eq("team_id", teamId));
-}
-
-async function purgePlayerData() {
   await must(supabase.from("player_stats").delete().gte("season", 2025));
   await must(supabase.from("player_measurements").delete().not("player_id", "is", null));
-  await must(supabase.from("players").delete().eq("transfer_cycle", TRANSFER_CYCLE));
+  await must(supabase.from("players").delete().eq("transfer_year", TRANSFER_CYCLE));
 }
 
-async function fetchIds(
-  table: string,
-  column: string,
-  filter: Record<string, string>
-): Promise<string[]> {
-  let query = supabase.from(table).select(column);
-  for (const [key, value] of Object.entries(filter)) {
-    query = query.eq(key, value);
-  }
-  const { data, error } = await query;
-  if (error) throw error;
-  return (data ?? []).map((row: Record<string, string>) => row[column]);
-}
-
-async function must<T>(promise: Promise<{ error: Error | null } & T>) {
-  const result = await promise;
+async function must<T extends { error: Error | null }>(operation: PromiseLike<T>) {
+  const result = await operation;
   if (result.error) throw result.error;
   return result;
 }
 
-function pick<T>(values: readonly T[], index: number): T {
+function repeatPosition(position: Position, count: number): Position[] {
+  return Array.from({ length: count }, () => position);
+}
+
+function getUniquePlayerName(index: number) {
+  const firstName = firstNames[index % firstNames.length];
+  const lastIndex = (index * 17 + Math.floor(index / firstNames.length) * 11) % lastNames.length;
+  const lastName = lastNames[lastIndex];
+
+  return { firstName, lastName };
+}
+
+function buildPositionPlan(
+  count: number,
+  ratios: Array<{ position: Position; weight: number }>
+): Position[] {
+  const plan: Position[] = [];
+
+  for (const ratio of ratios) {
+    plan.push(...repeatPosition(ratio.position, Math.floor(count * ratio.weight)));
+  }
+
+  while (plan.length < count) {
+    plan.push(ratios[plan.length % ratios.length].position);
+  }
+
+  return plan.slice(0, count);
+}
+
+function pick<T>(values: readonly T[], index: number) {
   return values[index % values.length];
 }
 
@@ -852,7 +790,7 @@ function pickClassYear(index: number): ClassYear {
   return pick(plan, index);
 }
 
-function deriveYearsRemaining(classYear: ClassYear): number {
+function deriveYearsRemaining(classYear: ClassYear) {
   switch (classYear) {
     case "FR":
       return 4;

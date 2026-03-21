@@ -63,11 +63,11 @@ export function LoginForm() {
         <form className="grid gap-4" onSubmit={handleSubmit}>
           <div className="grid gap-2">
             <Label htmlFor="email">Email</Label>
-            <Input defaultValue="demo@jalfootball.com" id="email" name="email" type="email" required />
+            <Input defaultValue="assistant@demofootballops.com" id="email" name="email" type="email" required />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="password">Password</Label>
-            <Input defaultValue="password123" id="password" name="password" type="password" required />
+            <Input defaultValue="Password123!" id="password" name="password" type="password" required />
           </div>
           {error ? <p className="text-sm text-rose-600">{error}</p> : null}
           <Button type="submit" size="lg" disabled={loading}>

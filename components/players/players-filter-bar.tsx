@@ -47,7 +47,7 @@ export function PlayersFilterBar({
           <SlidersHorizontal className="h-4 w-4 text-cyan-300" />
           <div>
             <p className="text-xs uppercase tracking-[0.28em] text-slate-300">Board Filters</p>
-            <p className="text-sm text-slate-300">Tighten the board to measurable and production thresholds.</p>
+            <p className="text-sm text-slate-300">Keep the board broad by default. Layer in measurable filters only when needed.</p>
           </div>
         </div>
         <form className="grid gap-4 p-5 lg:grid-cols-4">
@@ -105,11 +105,11 @@ export function PlayersFilterBar({
           </FilterGroup>
 
           <FilterGroup label="Arm Length Min">
-            <Input defaultValue={defaults.armLengthMin} name="armLengthMin" placeholder="32.5" type="number" />
+            <Input defaultValue={defaults.armLengthMin} name="armLengthMin" placeholder="Optional" type="number" />
           </FilterGroup>
 
           <FilterGroup label="Forty Max">
-            <Input defaultValue={defaults.fortyMax} name="fortyMax" placeholder="4.58" type="number" />
+            <Input defaultValue={defaults.fortyMax} name="fortyMax" placeholder="Optional" type="number" />
           </FilterGroup>
 
           <FilterGroup label="Years Remaining">
@@ -123,7 +123,7 @@ export function PlayersFilterBar({
           </FilterGroup>
 
           <FilterGroup label="School">
-            <Input defaultValue={defaults.school} name="school" placeholder="UTSA" />
+            <Input defaultValue={defaults.school} name="school" placeholder="School name" />
           </FilterGroup>
 
           <FilterGroup label="Conference">

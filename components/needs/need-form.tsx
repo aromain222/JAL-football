@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Radar, Rocket } from "lucide-react";
+import { Radar, Rocket, Sparkles, Target } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { createNeedAction } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
@@ -47,24 +47,23 @@ const defaultValues: NeedFormValues = {
   max_weight_lbs: null,
   min_arm_length_in: null,
   max_forty_time: null,
-  min_years_remaining: 1,
+  min_years_remaining: null,
   scheme: "",
-  priority_traits: ["burst", "length"],
+  priority_traits: [],
   production_filters: {
-    min_games_played: 8,
-    min_starts: 4,
-    stat_key: "sacks",
-    min_stat_value: 4
+    min_games_played: null,
+    min_starts: null,
+    stat_key: null,
+    min_stat_value: null
   },
-  min_starts: 4,
-  min_production_score: 70,
+  min_starts: null,
+  min_production_score: null,
   active: true,
   notes: ""
 };
 
 export function NeedForm() {
   const router = useRouter();
-  const [traitInput, setTraitInput] = useState("");
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitMode, setSubmitMode] = useState<"detail" | "review">("detail");
   const [isPending, startTransition] = useTransition();
@@ -74,13 +73,28 @@ export function NeedForm() {
   });
 
   const values = form.watch();
-  const traits = values.priority_traits ?? [];
+  const hasFeaturedStat = Boolean(values.production_filters.stat_key);
+
+  useEffect(() => {
+    if (!values.production_filters.stat_key && values.production_filters.min_stat_value !== null) {
+      form.setValue("production_filters.min_stat_value", null, { shouldValidate: true });
+    }
+  }, [form, values.production_filters.min_stat_value, values.production_filters.stat_key]);
 
   async function onSubmit(values: NeedFormValues) {
     setSubmitError(null);
     startTransition(async () => {
       try {
-        const result = await createNeedAction(values);
+        const result = await createNeedAction({
+          ...values,
+          min_height_in: null,
+          max_height_in: null,
+          min_weight_lbs: null,
+          max_weight_lbs: null,
+          priority_traits: [],
+          min_arm_length_in: null,
+          max_forty_time: null
+        });
         router.push(submitMode === "review" ? `/review/${result.id}` : `/needs/${result.id}`);
         router.refresh();
       } catch (error) {
@@ -89,32 +103,28 @@ export function NeedForm() {
     });
   }
 
-  function addTrait() {
-    const normalized = traitInput.trim().toLowerCase();
-    if (!normalized || traits.includes(normalized) || traits.length >= 8) return;
-    form.setValue("priority_traits", [...traits, normalized], { shouldValidate: true });
-    setTraitInput("");
-  }
-
-  function removeTrait(trait: string) {
-    form.setValue(
-      "priority_traits",
-      traits.filter((entry) => entry !== trait),
-      { shouldValidate: true }
-    );
-  }
-
   return (
     <form className="grid gap-6" onSubmit={form.handleSubmit(onSubmit)}>
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card>
-          <CardHeader>
-            <CardTitle>Create Need Profile</CardTitle>
+        <Card className="overflow-hidden border-slate-200/80 bg-white/95 shadow-panel">
+          <CardHeader className="border-b bg-[radial-gradient(circle_at_top_left,_rgba(8,145,178,0.14),_transparent_30%),linear-gradient(180deg,_rgba(248,250,252,1)_0%,_rgba(255,255,255,0.98)_100%)]">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-slate-950 text-cyan-300">
+                <Target className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-[0.26em] text-cyan-700">Recruiting Need</p>
+                <CardTitle className="mt-1">Build a need profile</CardTitle>
+              </div>
+            </div>
+            <p className="max-w-2xl text-sm text-slate-600">
+              Start broad, then add only the thresholds that actually matter for this board turn.
+            </p>
           </CardHeader>
           <CardContent className="grid gap-5">
             <div className="grid gap-2">
               <Label htmlFor="title">Title</Label>
-              <Input id="title" placeholder="Boundary corner with verified speed" {...form.register("title")} />
+              <Input id="title" placeholder="Boundary corner with size and experience" {...form.register("title")} />
               <FieldError message={form.formState.errors.title?.message} />
             </div>
 
@@ -128,26 +138,7 @@ export function NeedForm() {
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <RangeField
-                form={form}
-                label="Height (in)"
-                maxName="max_height_in"
-                minName="min_height_in"
-                placeholders={["Min", "Max"]}
-              />
-              <RangeField
-                form={form}
-                label="Weight (lbs)"
-                maxName="max_weight_lbs"
-                minName="min_weight_lbs"
-                placeholders={["Min", "Max"]}
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-3">
-              <NumberField form={form} label="Arm Length Min" name="min_arm_length_in" placeholder="32.5" step="0.1" />
-              <NumberField form={form} label="Forty Max" name="max_forty_time" placeholder="4.72" step="0.01" />
+            <div className="grid gap-4 md:grid-cols-1">
               <NumberField form={form} label="Years Remaining Min" name="min_years_remaining" placeholder="1" />
             </div>
 
@@ -164,42 +155,15 @@ export function NeedForm() {
               </div>
             </div>
 
-            <div className="grid gap-3">
-              <Label>Priority Traits</Label>
-              <div className="flex gap-2">
-                <Input
-                  placeholder="Add trait and press +"
-                  value={traitInput}
-                  onChange={(event) => setTraitInput(event.target.value)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter") {
-                      event.preventDefault();
-                      addTrait();
-                    }
-                  }}
-                />
-                <Button onClick={addTrait} type="button" variant="outline">
-                  <Plus className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {traits.map((trait) => (
-                  <button
-                    key={trait}
-                    className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-700"
-                    type="button"
-                    onClick={() => removeTrait(trait)}
-                  >
-                    {trait} x
-                  </button>
-                ))}
-              </div>
-              <FieldError message={form.formState.errors.priority_traits?.message} />
-            </div>
-
-            <Card className="border-slate-200 shadow-none">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg">Production Filters</CardTitle>
+            <Card className="overflow-hidden border-slate-200 shadow-none">
+              <CardHeader className="border-b bg-slate-50/80 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-cyan-700" />
+                  <CardTitle className="text-lg">Production Filters</CardTitle>
+                </div>
+                <p className="text-sm text-slate-500">
+                  Featured stat is optional. Use it only when you want one hard production signal.
+                </p>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
                 <NumberField
@@ -231,10 +195,11 @@ export function NeedForm() {
                   </select>
                 </div>
                 <NumberField
+                  disabled={!hasFeaturedStat}
                   form={form}
                   label="Featured Stat Minimum"
                   name="production_filters.min_stat_value"
-                  placeholder="4"
+                  placeholder={hasFeaturedStat ? "Optional minimum" : "Select a stat first"}
                 />
               </CardContent>
             </Card>
@@ -273,7 +238,7 @@ export function NeedForm() {
         </Card>
 
         <div className="grid gap-6">
-          <Card className="overflow-hidden">
+          <Card className="sticky top-6 overflow-hidden border-slate-200/80 bg-white/95 shadow-panel">
             <CardHeader className="border-b bg-slate-950 text-white">
               <div className="flex items-center gap-3">
                 <Radar className="h-5 w-5 text-cyan-300" />
@@ -299,18 +264,7 @@ export function NeedForm() {
                 {values.class_focus ? <Badge variant="default">{values.class_focus}</Badge> : null}
               </div>
 
-              <SummaryLine label="Height band" value={rangeLabel(values.min_height_in, values.max_height_in, "in")} />
-              <SummaryLine label="Weight band" value={rangeLabel(values.min_weight_lbs, values.max_weight_lbs, "lbs")} />
-              <SummaryLine label="Arm length min" value={singleLabel(values.min_arm_length_in, '"')} />
-              <SummaryLine label="Forty max" value={singleLabel(values.max_forty_time, "s")} />
               <SummaryLine label="Years remaining" value={singleLabel(values.min_years_remaining, "+")} />
-
-              <div className="rounded-2xl border bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Priority Traits</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {traits.length ? traits.map((trait) => <Badge key={trait}>{trait}</Badge>) : <span className="text-sm text-slate-500">No traits added yet.</span>}
-                </div>
-              </div>
 
               <div className="rounded-2xl border bg-slate-50 p-4">
                 <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Production Gates</p>
@@ -318,8 +272,10 @@ export function NeedForm() {
                   <span>Min games: {values.production_filters.min_games_played ?? "--"}</span>
                   <span>Min starts: {values.production_filters.min_starts ?? "--"}</span>
                   <span>
-                    Featured stat: {values.production_filters.stat_key ?? "--"}{" "}
-                    {values.production_filters.min_stat_value ?? ""}
+                    Featured stat: {values.production_filters.stat_key ?? "None"}
+                    {values.production_filters.stat_key && values.production_filters.min_stat_value !== null
+                      ? ` >= ${values.production_filters.min_stat_value}`
+                      : ""}
                   </span>
                 </div>
               </div>
@@ -393,7 +349,8 @@ function NumberField({
   label,
   name,
   placeholder,
-  step
+  step,
+  disabled = false
 }: {
   form: ReturnType<typeof useForm<NeedFormValues>>;
   label: string;
@@ -408,58 +365,26 @@ function NumberField({
     | "production_filters.min_stat_value";
   placeholder: string;
   step?: string;
+  disabled?: boolean;
 }) {
   const error = getNestedError(form.formState.errors, name);
+  const touched = getNestedTouched(form.formState.touchedFields as Record<string, unknown>, name);
+  const showError = Boolean(error && (form.formState.isSubmitted || touched));
   return (
     <div className="grid gap-2">
       <Label htmlFor={name}>{label}</Label>
       <Input
+        className={disabled ? "bg-slate-50 text-slate-400" : undefined}
+        disabled={disabled}
         id={name}
         placeholder={placeholder}
         step={step}
         type="number"
         {...form.register(name, {
-          setValueAs: (value) => (value === "" ? null : Number(value))
+          setValueAs: normalizeOptionalNumber
         })}
       />
-      <FieldError message={error} />
-    </div>
-  );
-}
-
-function RangeField({
-  form,
-  label,
-  minName,
-  maxName,
-  placeholders
-}: {
-  form: ReturnType<typeof useForm<NeedFormValues>>;
-  label: string;
-  minName: "min_height_in" | "min_weight_lbs";
-  maxName: "max_height_in" | "max_weight_lbs";
-  placeholders: [string, string];
-}) {
-  return (
-    <div className="grid gap-2">
-      <Label>{label}</Label>
-      <div className="grid grid-cols-2 gap-2">
-        <Input
-          placeholder={placeholders[0]}
-          type="number"
-          {...form.register(minName, {
-            setValueAs: (value) => (value === "" ? null : Number(value))
-          })}
-        />
-        <Input
-          placeholder={placeholders[1]}
-          type="number"
-          {...form.register(maxName, {
-            setValueAs: (value) => (value === "" ? null : Number(value))
-          })}
-        />
-      </div>
-      <FieldError message={form.formState.errors[minName]?.message || form.formState.errors[maxName]?.message} />
+      <FieldError message={showError ? error : undefined} />
     </div>
   );
 }
@@ -478,11 +403,18 @@ function FieldError({ message }: { message?: string }) {
   return <p className="text-sm text-rose-600">{message}</p>;
 }
 
-function rangeLabel(min: number | null, max: number | null, unit: string) {
-  if (min === null && max === null) return "Open";
-  if (min !== null && max !== null) return `${min}-${max} ${unit}`;
-  if (min !== null) return `${min}+ ${unit}`;
-  return `Up to ${max} ${unit}`;
+function normalizeOptionalNumber(value: unknown) {
+  if (value === "" || value === null || value === undefined) return null;
+  if (typeof value === "number") {
+    return Number.isNaN(value) ? null : value;
+  }
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (!trimmed) return null;
+    const parsed = Number(trimmed);
+    return Number.isNaN(parsed) ? null : parsed;
+  }
+  return value;
 }
 
 function singleLabel(value: number | null, suffix: string) {
@@ -503,4 +435,16 @@ function getNestedError(
   return typeof (result as { message?: unknown }).message === "string"
     ? ((result as { message?: string }).message)
     : undefined;
+}
+
+function getNestedTouched(
+  touchedFields: Record<string, unknown>,
+  path: string
+): boolean {
+  const result = path.split(".").reduce<unknown>((acc, key) => {
+    if (!acc || typeof acc !== "object") return undefined;
+    return (acc as Record<string, unknown>)[key];
+  }, touchedFields);
+
+  return Boolean(result);
 }

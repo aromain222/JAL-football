@@ -66,6 +66,15 @@ export interface PlayerStat {
   sacks: number | null;
   interceptions: number | null;
   passes_defended: number | null;
+  passing_tds?: number | null;
+  interceptions_thrown?: number | null;
+  rushing_attempts?: number | null;
+  rushing_tds?: number | null;
+  receptions?: number | null;
+  receiving_tds?: number | null;
+  tackles_for_loss?: number | null;
+  forced_fumbles?: number | null;
+  source?: string | null;
 }
 
 export interface Player {
@@ -84,12 +93,30 @@ export interface Player {
   status: string;
   film_url: string | null;
   photo_url?: string | null;
+  x_handle?: string | null;
+  x_user_id?: string | null;
   contact_window: string | null;
   notes: string | null;
   conference?: string | null;
   measurements?: PlayerMeasurement | null;
   latest_stats?: PlayerStat | null;
   tags?: string[];
+}
+
+export interface PlayerSourceNote {
+  id: string;
+  player_id: string;
+  source_platform: string;
+  source_account: string | null;
+  source_url: string | null;
+  note_type: string;
+  source_text: string;
+  summary: string | null;
+  traits: string[];
+  status_signal: string | null;
+  confidence: number | null;
+  created_by: string | null;
+  created_at: string;
 }
 
 export interface Team {
