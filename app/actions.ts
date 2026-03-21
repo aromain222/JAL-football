@@ -11,7 +11,7 @@ import {
 import { insertTeamNeed } from "@/lib/data/mutations";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { getViewerContext } from "@/lib/data/queries";
-import type { Profile, Team } from "@/lib/types";
+import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
 
@@ -334,11 +334,12 @@ export async function saveMeasurablesFrom247WriteUpAction(input: {
     return { ok: false, message: "Sign in to save measurables." };
   }
 
-  const { data: existing } = await supabase
+  const { data: existingRaw } = await supabase
     .from("player_measurements")
     .select("*")
     .eq("player_id", input.playerId)
     .single();
+  const existing = existingRaw as PlayerMeasurement | null;
 
   const row = {
     player_id: input.playerId,
