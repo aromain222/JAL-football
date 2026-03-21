@@ -111,7 +111,7 @@ export async function submitReviewAction(formData: FormData) {
 
   if (hasSupabaseEnv()) {
     const supabase = createSupabaseServerClient();
-    await supabase.from("player_reviews").upsert(
+    await supabase.from("player_reviews" as never).upsert(
       {
         need_id: parsed.needId,
         player_id: parsed.playerId,
@@ -119,29 +119,29 @@ export async function submitReviewAction(formData: FormData) {
         decision: parsed.decision,
         fit_score: parsed.fitScore,
         note: parsed.note || null
-      },
+      } as never,
       { onConflict: "need_id,player_id,reviewer_id" }
     );
 
     if (parsed.decision === "right" || parsed.decision === "save") {
-      await supabase.from("shortlists").upsert(
+      await supabase.from("shortlists" as never).upsert(
         {
           need_id: parsed.needId,
           player_id: parsed.playerId,
           created_by: profile.id,
           stage: parsed.decision === "right" ? "assistant" : "final_watch",
           note: parsed.note || null
-        },
+        } as never,
         { onConflict: "need_id,player_id" }
       );
     }
 
     if (parsed.decision === "needs_film") {
-      await supabase.from("player_tags").upsert(
+      await supabase.from("player_tags" as never).upsert(
         {
           player_id: parsed.playerId,
           tag: "needs-film"
-        },
+        } as never,
         { onConflict: "player_id,tag" }
       );
     }
