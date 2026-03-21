@@ -189,8 +189,8 @@ export async function updateShortlistStageAction(formData: FormData) {
   if (hasSupabaseEnv()) {
     const supabase = createSupabaseServerClient();
     await supabase
-      .from("shortlists")
-      .update({ stage: parsed.stage })
+      .from("shortlists" as never)
+      .update({ stage: parsed.stage } as never)
       .eq("id", parsed.shortlistId);
   } else {
     updateDemoShortlistStage(parsed.shortlistId, parsed.stage);
@@ -208,7 +208,7 @@ export async function addPlayerToShortlistAction(input: {
   if (hasSupabaseEnv()) {
     const supabase = createSupabaseServerClient();
 
-    await supabase.from("player_reviews").upsert(
+    await supabase.from("player_reviews" as never).upsert(
       {
         need_id: input.needId,
         player_id: input.playerId,
@@ -216,18 +216,18 @@ export async function addPlayerToShortlistAction(input: {
         decision: "right",
         fit_score: 80,
         note: "Added from player profile."
-      },
+      } as never,
       { onConflict: "need_id,player_id,reviewer_id" }
     );
 
-    await supabase.from("shortlists").upsert(
+    await supabase.from("shortlists" as never).upsert(
       {
         need_id: input.needId,
         player_id: input.playerId,
         created_by: profile.id,
         stage: "assistant",
         note: "Added from player profile."
-      },
+      } as never,
       { onConflict: "need_id,player_id" }
     );
   } else {
@@ -267,7 +267,7 @@ export async function markPlayerNeedsFilmAction(input: {
   if (hasSupabaseEnv()) {
     const supabase = createSupabaseServerClient();
 
-    await supabase.from("player_reviews").upsert(
+    await supabase.from("player_reviews" as never).upsert(
       {
         need_id: input.needId,
         player_id: input.playerId,
@@ -275,15 +275,15 @@ export async function markPlayerNeedsFilmAction(input: {
         decision: "needs_film",
         fit_score: 72,
         note: "Needs deeper film review."
-      },
+      } as never,
       { onConflict: "need_id,player_id,reviewer_id" }
     );
 
-    await supabase.from("player_tags").upsert(
+    await supabase.from("player_tags" as never).upsert(
       {
         player_id: input.playerId,
         tag: "needs-film"
-      },
+      } as never,
       { onConflict: "player_id,tag" }
     );
   } else {
@@ -352,7 +352,7 @@ export async function saveMeasurablesFrom247WriteUpAction(input: {
     verified_at: existing?.verified_at ?? null
   };
 
-  const { error } = await supabase.from("player_measurements").upsert(row, { onConflict: "player_id" });
+  const { error } = await supabase.from("player_measurements" as never).upsert(row as never, { onConflict: "player_id" });
   if (error) {
     return { ok: false, message: error.message };
   }
@@ -390,7 +390,7 @@ export async function upsertPlayerIdentityLinkAction(input: {
     last_checked_at: new Date().toISOString()
   };
 
-  const { error } = await supabase.from("player_identity_links").upsert(row, { onConflict: "player_id" });
+  const { error } = await supabase.from("player_identity_links" as never).upsert(row as never, { onConflict: "player_id" });
   if (error) return { ok: false, message: error.message };
 
   revalidatePath("/identity");
