@@ -255,36 +255,45 @@ const SYSTEM_PROMPT = `You are an expert browser automation agent. Your job is t
 - Target season: ${PFF_SEASON}
 
 ## Starting URL
-Navigate directly to: https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO
-This is the PFF Premium Stats page for NCAA players in ${PFF_SEASON} (Regular Season).
-If it redirects to a login page, sign in and then go back to that URL.
+https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO
 
-## Your task
-Download each of the following CSV exports IN ORDER. After each download completes, wait for the file to finish before proceeding.
+This is the "2025 NCAA Position Reports" index page. It has sections like Passing Reports, Receiving Reports, Rushing Reports, Blocking Reports, Defense Reports, Special Teams Reports, and Signature Stats. Each report card has position buttons (QB, WR, ALL, etc.) that navigate to a stats table page where you can export a CSV.
 
-### Required CSV exports (download all that are available):
-1. **Player Grades** — overall grades for all players, all positions. Set position filter to "All", season to ${PFF_SEASON}, then click Export/Download CSV.
-2. **Passing Stats** — QB passing grades and stats (position: QB)
-3. **Rushing Stats** — RB/QB rushing grades (position: All or RB)
-4. **Receiving Stats** — WR/TE/RB receiving grades (position: All)
-5. **Blocking Grades** — OL and TE pass block + run block grades
-6. **Pass Rush Grades** — DL and LB pass rush grades and pressures
-7. **Run Defense Grades** — DL and LB run defense grades
-8. **Coverage Grades** — DB and LB coverage grades
-9. **Route Tree Stats** — WR/TE/RB targets broken out by route type
-10. **Snap Counts / Alignment Snaps** — shows slot vs wide vs inline snaps per player
+## Sign-in
+If you are redirected to a login page, sign in with the credentials above, then navigate back to the starting URL.
 
-## Navigation approach
-- The PFF premium stats are organized in tabs: Offense / Defense / Special Teams
-- Each tab has sub-categories (Passing, Rushing, Receiving, Blocking, etc.)
-- Look for "Export" or "CSV" or a download icon near the stats table
-- For each export, ensure the season dropdown shows ${PFF_SEASON} and position is set appropriately
-- After clicking Export, wait for the download to complete before moving on
+## Your task — download these 10 CSVs IN ORDER
+
+For each report below:
+1. Go back to https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO
+2. Scroll to find the report card
+3. Click the specified position button on that card
+4. On the stats table page that loads, find the Export/Download CSV button and click it
+5. Wait for the download to complete, then repeat for the next report
+
+### Downloads (report name → button to click):
+1. **Passing Grades** → click **ALL**
+2. **Receiving Grades** → click **ALL**
+3. **Rushing Grades** → click **ALL**
+4. **Blocking Grades** → click **ALL**
+5. **Pass Blocking** → click **ALL**
+6. **Run Blocking** → click **ALL**
+7. **Coverage Grades** → click **ALL**
+8. **Pass Rushing Productivity** → click **ALL**
+9. **Run Stop %** → click **ALL**
+10. **Special Teams Grades** → click **ST**
+
+## Finding the Export button
+On each stats table page, look for:
+- A button or link labeled "Export", "CSV", "Download", or a download icon (↓)
+- It is usually in the top-right area of the stats table
+- Click it to trigger the CSV download
 
 ## Important rules
-- Do NOT download the same category twice
-- If a particular export is not available, skip it and move to the next
-- When all downloads are complete (or you've attempted all 10), output exactly: ALL_DOWNLOADS_COMPLETE`;
+- Always return to the positions index page between downloads
+- Do NOT download the same report twice
+- If a report or export button is not found, skip it and move on
+- When all 10 downloads are attempted, output exactly: ALL_DOWNLOADS_COMPLETE`;
 
 // ---------------------------------------------------------------------------
 // Main agentic loop
