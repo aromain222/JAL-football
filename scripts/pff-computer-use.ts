@@ -272,7 +272,7 @@ For each report below:
 5. Wait for the download to complete, then repeat for the next report
 
 ### Downloads (report name → button to click):
-1. **Passing Grades** → click **ALL**
+1. **Passing Grades** → click **QB**
 2. **Receiving Grades** → click **ALL**
 3. **Rushing Grades** → click **ALL**
 4. **Blocking Grades** → click **ALL**
