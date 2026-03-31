@@ -15,7 +15,7 @@
  *   PFF_PASSWORD=...
  *
  * Optional:
- *   PFF_SEASON=2025   (default: current year)
+ *   PFF_SEASON=2024   (default: current year)
  */
 
 import { config } from "dotenv";
@@ -38,7 +38,7 @@ const PFF_SEASON = process.env.PFF_SEASON ?? String(new Date().getFullYear());
 
 const VIEWPORT_WIDTH = 1280;
 const VIEWPORT_HEIGHT = 900;
-const MAX_TURNS = 120; // safety limit for the agentic loop
+const MAX_TURNS = 150; // safety limit for the agentic loop
 
 // ---------------------------------------------------------------------------
 // Validate env
@@ -77,70 +77,134 @@ console.log(`\nDownloads will be saved to: ${downloadDir}`);
 const client = new Anthropic({ apiKey: ANTHROPIC_API_KEY });
 
 // ---------------------------------------------------------------------------
-// Types
+// Types — computer_20251124 action spec
 // ---------------------------------------------------------------------------
 
 type ComputerAction =
   | { action: "screenshot" }
-  | { action: "click"; coordinate: [number, number] }
-  | { action: "double_click"; coordinate: [number, number] }
+  | { action: "left_click"; coordinate: [number, number] }
   | { action: "right_click"; coordinate: [number, number] }
+  | { action: "middle_click"; coordinate: [number, number] }
+  | { action: "double_click"; coordinate: [number, number] }
   | { action: "mouse_move"; coordinate: [number, number] }
+  | { action: "left_click_drag"; startCoordinate: [number, number]; coordinate: [number, number] }
   | { action: "type"; text: string }
   | { action: "key"; text: string }
-  | { action: "scroll"; coordinate: [number, number]; direction: "up" | "down" | "left" | "right"; amount: number };
+  | { action: "scroll"; coordinate: [number, number]; direction: "up" | "down" | "left" | "right"; amount: number }
+  | { action: "cursor_position" };
 
 // ---------------------------------------------------------------------------
 // Playwright action executor
+// Returns content array ready to be used as tool_result content
 // ---------------------------------------------------------------------------
 
 async function executeAction(
   page: Page,
   action: ComputerAction
-): Promise<string> {
+): Promise<Anthropic.Messages.BetaToolResultBlockParam["content"]> {
   switch (action.action) {
     case "screenshot": {
       const buf = await page.screenshot({ type: "png", fullPage: false });
-      return buf.toString("base64");
+      return [
+        {
+          type: "image",
+          source: {
+            type: "base64",
+            media_type: "image/png",
+            data: buf.toString("base64"),
+          },
+        },
+      ];
     }
 
-    case "click": {
+    case "left_click": {
       const [x, y] = action.coordinate;
       await page.mouse.click(x, y);
-      await page.waitForTimeout(300);
-      return "clicked";
-    }
-
-    case "double_click": {
-      const [x, y] = action.coordinate;
-      await page.mouse.dblclick(x, y);
-      await page.waitForTimeout(300);
-      return "double_clicked";
+      await page.waitForTimeout(400);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "left_clicked" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
     }
 
     case "right_click": {
       const [x, y] = action.coordinate;
       await page.mouse.click(x, y, { button: "right" });
-      await page.waitForTimeout(300);
-      return "right_clicked";
+      await page.waitForTimeout(400);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "right_clicked" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
+    }
+
+    case "middle_click": {
+      const [x, y] = action.coordinate;
+      await page.mouse.click(x, y, { button: "middle" });
+      await page.waitForTimeout(400);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "middle_clicked" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
+    }
+
+    case "double_click": {
+      const [x, y] = action.coordinate;
+      await page.mouse.dblclick(x, y);
+      await page.waitForTimeout(400);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "double_clicked" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
     }
 
     case "mouse_move": {
       const [x, y] = action.coordinate;
       await page.mouse.move(x, y);
-      return "moved";
+      await page.waitForTimeout(150);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "moved" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
+    }
+
+    case "left_click_drag": {
+      const [sx, sy] = action.startCoordinate;
+      const [ex, ey] = action.coordinate;
+      await page.mouse.move(sx, sy);
+      await page.mouse.down();
+      await page.mouse.move(ex, ey, { steps: 10 });
+      await page.mouse.up();
+      await page.waitForTimeout(400);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "dragged" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
     }
 
     case "type": {
-      await page.keyboard.type(action.text, { delay: 30 });
-      await page.waitForTimeout(200);
-      return "typed";
+      await page.keyboard.type(action.text, { delay: 40 });
+      await page.waitForTimeout(300);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "typed" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
     }
 
     case "key": {
       await page.keyboard.press(action.text);
-      await page.waitForTimeout(200);
-      return "key_pressed";
+      await page.waitForTimeout(300);
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "key_pressed" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
     }
 
     case "scroll": {
@@ -151,20 +215,28 @@ async function executeAction(
       await page.mouse.move(x, y);
       await page.mouse.wheel(dx, dy);
       await page.waitForTimeout(300);
-      return "scrolled";
+      const buf = await page.screenshot({ type: "png", fullPage: false });
+      return [
+        { type: "text", text: "scrolled" },
+        { type: "image", source: { type: "base64", media_type: "image/png", data: buf.toString("base64") } },
+      ];
+    }
+
+    case "cursor_position": {
+      return [{ type: "text", text: `cursor at (unknown)` }];
     }
 
     default:
-      return "unknown_action";
+      return [{ type: "text", text: "unknown_action" }];
   }
 }
 
 // ---------------------------------------------------------------------------
-// Computer use tool definition
+// Computer use tool definition — computer_20251124
 // ---------------------------------------------------------------------------
 
 const computerTool: Anthropic.Messages.BetaTool = {
-  type: "computer_20241022",
+  type: "computer_20251124",
   name: "computer",
   display_width_px: VIEWPORT_WIDTH,
   display_height_px: VIEWPORT_HEIGHT,
@@ -175,49 +247,44 @@ const computerTool: Anthropic.Messages.BetaTool = {
 // System prompt
 // ---------------------------------------------------------------------------
 
-const SYSTEM_PROMPT = `You are an expert browser automation agent. Your job is to sign into Pro Football Focus (PFF) and download specific CSV data exports.
+const SYSTEM_PROMPT = `You are an expert browser automation agent. Your job is to sign into Pro Football Focus (PFF) and download specific CSV data exports for college (NCAA) players.
 
 ## Credentials
 - Email: ${PFF_EMAIL}
 - Password: ${PFF_PASSWORD}
 - Target season: ${PFF_SEASON}
 
+## Starting URL
+Navigate directly to: https://premium.pff.com/ncaa/players/${PFF_SEASON}/AS
+This is the PFF Premium Stats page for ALL college players in ${PFF_SEASON}.
+If it redirects to a login page, sign in and then go back to that URL.
+
 ## Your task
-1. Navigate to https://www.pff.com and sign in using the credentials above.
-2. After signing in, navigate to the Stats/Data section (often under "Premium Stats" or "Player Stats").
-3. Download each of the following CSV exports IN ORDER. After each download completes, wait for the file to finish downloading before proceeding to the next.
+Download each of the following CSV exports IN ORDER. After each download completes, wait for the file to finish before proceeding.
 
 ### Required CSV exports (download all that are available):
-1. **Season Player Grades** — overall grades for all players, all positions (look for "Player Grades" export)
-2. **Passing Stats** — QB passing grades and stats
-3. **Rushing Stats** — RB/QB rushing grades and stats
-4. **Receiving Stats** — WR/TE/RB receiving grades and stats
+1. **Player Grades** — overall grades for all players, all positions. Set position filter to "All", season to ${PFF_SEASON}, then click Export/Download CSV.
+2. **Passing Stats** — QB passing grades and stats (position: QB)
+3. **Rushing Stats** — RB/QB rushing grades (position: All or RB)
+4. **Receiving Stats** — WR/TE/RB receiving grades (position: All)
 5. **Blocking Grades** — OL and TE pass block + run block grades
 6. **Pass Rush Grades** — DL and LB pass rush grades and pressures
 7. **Run Defense Grades** — DL and LB run defense grades
 8. **Coverage Grades** — DB and LB coverage grades
-9. **Route Tree Stats** — WR/TE/RB targets and receptions broken out by route type (slant, hitch, out, curl, dig, post, corner, go, screen, crosser) — look for "Routes" or "Route Tree" export
-10. **Snap Counts by Alignment** — the alignment/position snap counts export showing WHERE players lined up on each snap:
-    - For WR/TE: slot vs wide vs inline vs backfield snaps
-    - For RB: offset/inline/slot/wide snaps
-    - For DL/Edge: left end vs right end vs interior snaps
-    - For LB: in-box vs off-ball snaps
-    - For DB/Safety: free safety vs strong safety vs slot CB vs outside CB vs in-box vs deep snaps
-    This is often labeled "Snap Counts" or "Alignment Snaps" in the PFF export menu.
+9. **Route Tree Stats** — WR/TE/RB targets broken out by route type
+10. **Snap Counts / Alignment Snaps** — shows slot vs wide vs inline snaps per player
 
-## Important guidelines
-- For each export, make sure the season is set to ${PFF_SEASON} before downloading.
-- If a filter panel appears, set position to "All" (unless downloading a position-specific export).
-- Look for a "Download" or "Export CSV" button near each stats table.
-- If a particular export is not available or requires a different navigation path, skip it and proceed to the next.
-- Do NOT download the same file twice.
-- When all downloads are complete, output the text: ALL_DOWNLOADS_COMPLETE
+## Navigation approach
+- The PFF premium stats are organized in tabs: Offense / Defense / Special Teams
+- Each tab has sub-categories (Passing, Rushing, Receiving, Blocking, etc.)
+- Look for "Export" or "CSV" or a download icon near the stats table
+- For each export, ensure the season dropdown shows ${PFF_SEASON} and position is set appropriately
+- After clicking Export, wait for the download to complete before moving on
 
-## Navigation tips
-- PFF premium stats are usually at pff.com/stats/player or similar.
-- The export button often looks like a download icon or says "Export" / "CSV".
-- You may need to click through tabs (Offense/Defense/Special Teams) to find specific exports.
-- Some exports are behind a "Customize" or "Advanced" filter panel.`;
+## Important rules
+- Do NOT download the same category twice
+- If a particular export is not available, skip it and move to the next
+- When all downloads are complete (or you've attempted all 10), output exactly: ALL_DOWNLOADS_COMPLETE`;
 
 // ---------------------------------------------------------------------------
 // Main agentic loop
@@ -234,7 +301,7 @@ async function main() {
   console.log(`  Chromium: ${executableExists ? CHROMIUM_PATH : "playwright default"}`);
 
   const browser = await chromium.launch({
-    headless: true,
+    headless: false, // visible browser so you can see what's happening
     executablePath: executableExists ? CHROMIUM_PATH : undefined,
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
     slowMo: 50,
@@ -253,16 +320,37 @@ async function main() {
     console.log(`  Downloaded: ${suggestedName}`);
   });
 
-  // Navigate to PFF
-  await page.goto("https://www.pff.com", { waitUntil: "domcontentloaded" });
+  // Navigate to PFF NCAA stats page
+  console.log(`\nNavigating to PFF NCAA stats (${PFF_SEASON})...`);
+  await page.goto(`https://premium.pff.com/ncaa/players/${PFF_SEASON}/AS`, {
+    waitUntil: "domcontentloaded",
+    timeout: 30000,
+  });
+  await page.waitForTimeout(2000);
 
   // -------------------------------------------------------------------------
-  // Build initial messages
+  // Take initial screenshot and build first user message
   // -------------------------------------------------------------------------
+  const initBuf = await page.screenshot({ type: "png", fullPage: false });
+  const initB64 = initBuf.toString("base64");
+
   const messages: Anthropic.Messages.BetaMessageParam[] = [
     {
       role: "user",
-      content: "Please sign into PFF and download all the required CSV exports as described in your instructions. Start by taking a screenshot to see the current state of the browser.",
+      content: [
+        {
+          type: "text",
+          text: "Here is the current state of the browser. Please sign into PFF if needed, then navigate to the NCAA college player stats and download all the required CSV exports as described in your instructions.",
+        },
+        {
+          type: "image",
+          source: {
+            type: "base64",
+            media_type: "image/png",
+            data: initB64,
+          },
+        },
+      ],
     },
   ];
 
@@ -274,53 +362,26 @@ async function main() {
   while (!done && turnCount < MAX_TURNS) {
     turnCount++;
 
-    // Take a screenshot before each turn to give Claude current state
-    const screenshotBuf = await page.screenshot({ type: "png", fullPage: false });
-    const screenshotB64 = screenshotBuf.toString("base64");
-
-    // Append screenshot as the latest tool result (or as the first user message)
-    if (turnCount > 1) {
-      messages.push({
-        role: "user",
-        content: [
-          {
-            type: "tool_result",
-            tool_use_id: `screenshot_${turnCount}`,
-            content: [
-              {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: "image/png",
-                  data: screenshotB64,
-                },
-              },
-            ],
-          },
-        ],
-      });
-    }
-
     // Call Claude
     let response: Anthropic.Messages.BetaMessage;
     try {
       response = await client.beta.messages.create({
-        model: "claude-opus-4-6",
+        model: "claude-sonnet-4-6",
         max_tokens: 4096,
         system: SYSTEM_PROMPT,
         tools: [computerTool],
         messages,
-        betas: ["computer-use-2024-10-22"],
+        betas: ["computer-use-2025-11-24"],
       });
     } catch (err: unknown) {
       console.error("Anthropic API error:", err);
       break;
     }
 
-    // Add assistant response to messages
+    // Add assistant response to conversation
     messages.push({ role: "assistant", content: response.content });
 
-    // Process each content block
+    // Process each content block from Claude's response
     const toolResults: Anthropic.Messages.BetaToolResultBlockParam[] = [];
 
     for (const block of response.content) {
@@ -335,45 +396,18 @@ async function main() {
 
       if (block.type === "tool_use" && block.name === "computer") {
         const input = block.input as ComputerAction;
-        console.log(`[Action] ${input.action}${
-          "coordinate" in input ? ` @ (${input.coordinate[0]}, ${input.coordinate[1]})` : ""
-        }${"text" in input ? ` "${input.text}"` : ""}`);
+        const coordStr = "coordinate" in input ? ` @ (${(input as { coordinate: [number, number] }).coordinate[0]}, ${(input as { coordinate: [number, number] }).coordinate[1]})` : "";
+        const textStr = "text" in input ? ` "${(input as { text: string }).text}"` : "";
+        console.log(`[Action] ${input.action}${coordStr}${textStr}`);
 
         let resultContent: Anthropic.Messages.BetaToolResultBlockParam["content"];
-
         try {
-          if (input.action === "screenshot") {
-            const b64 = await executeAction(page, input);
-            resultContent = [
-              {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: "image/png",
-                  data: b64,
-                },
-              },
-            ];
-          } else {
-            const result = await executeAction(page, input);
-            // After non-screenshot actions, take a fresh screenshot
-            const freshBuf = await page.screenshot({ type: "png", fullPage: false });
-            resultContent = [
-              { type: "text", text: result },
-              {
-                type: "image",
-                source: {
-                  type: "base64",
-                  media_type: "image/png",
-                  data: freshBuf.toString("base64"),
-                },
-              },
-            ];
-          }
+          resultContent = await executeAction(page, input);
         } catch (err: unknown) {
           resultContent = [{ type: "text", text: `Error executing action: ${String(err)}` }];
         }
 
+        // IMPORTANT: use block.id (the actual tool_use_id from Claude's response)
         toolResults.push({
           type: "tool_result",
           tool_use_id: block.id,
@@ -382,13 +416,11 @@ async function main() {
       }
     }
 
-    // If there were tool uses, add their results and continue
+    // Send tool results back to Claude if any were generated
     if (toolResults.length > 0) {
       messages.push({ role: "user", content: toolResults });
-    }
-
-    // If stop_reason is end_turn with no tool use, check if we're done
-    if (response.stop_reason === "end_turn" && toolResults.length === 0) {
+    } else if (response.stop_reason === "end_turn") {
+      // Claude finished without requesting any tool use
       console.log("\nClaude finished without tool use — stopping loop.");
       break;
     }
@@ -398,8 +430,8 @@ async function main() {
     console.warn(`\nReached maximum turn limit (${MAX_TURNS}). Stopping.`);
   }
 
-  // Give downloads a moment to finish
-  await page.waitForTimeout(2000);
+  // Give downloads a moment to finish writing
+  await page.waitForTimeout(3000);
   await browser.close();
 
   // List what was downloaded
