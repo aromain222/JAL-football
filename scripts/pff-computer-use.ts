@@ -362,21 +362,34 @@ async function main() {
   while (!done && turnCount < MAX_TURNS) {
     turnCount++;
 
-    // Call Claude
+    // Call Claude (with retry on 529 overload)
     let response: Anthropic.Messages.BetaMessage;
-    try {
-      response = await client.beta.messages.create({
-        model: "claude-sonnet-4-6",
-        max_tokens: 4096,
-        system: SYSTEM_PROMPT,
-        tools: [computerTool],
-        messages,
-        betas: ["computer-use-2025-11-24"],
-      });
-    } catch (err: unknown) {
-      console.error("Anthropic API error:", err);
-      break;
+    let apiSuccess = false;
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      try {
+        response = await client.beta.messages.create({
+          model: "claude-sonnet-4-6",
+          max_tokens: 4096,
+          system: SYSTEM_PROMPT,
+          tools: [computerTool],
+          messages,
+          betas: ["computer-use-2025-11-24"],
+        });
+        apiSuccess = true;
+        break;
+      } catch (err: unknown) {
+        const status = (err as { status?: number }).status;
+        if (status === 529 && attempt < 5) {
+          const wait = attempt * 15000;
+          console.log(`  API overloaded, retrying in ${wait / 1000}s (attempt ${attempt}/5)...`);
+          await page.waitForTimeout(wait);
+        } else {
+          console.error("Anthropic API error:", err);
+          break;
+        }
+      }
     }
+    if (!apiSuccess) break;
 
     // Add assistant response to conversation
     messages.push({ role: "assistant", content: response.content });
