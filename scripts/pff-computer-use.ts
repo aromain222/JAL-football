@@ -255,8 +255,8 @@ const SYSTEM_PROMPT = `You are an expert browser automation agent. Your job is t
 - Target season: ${PFF_SEASON}
 
 ## Starting URL
-Navigate directly to: https://premium.pff.com/ncaa/players/${PFF_SEASON}/AS
-This is the PFF Premium Stats page for ALL college players in ${PFF_SEASON}.
+Navigate directly to: https://premium.pff.com/ncaa/players/${PFF_SEASON}/REGPO
+This is the PFF Premium Stats page for NCAA players in ${PFF_SEASON} (Regular Season).
 If it redirects to a login page, sign in and then go back to that URL.
 
 ## Your task
@@ -322,7 +322,7 @@ async function main() {
 
   // Navigate to PFF NCAA stats page
   console.log(`\nNavigating to PFF NCAA stats (${PFF_SEASON})...`);
-  await page.goto(`https://premium.pff.com/ncaa/players/${PFF_SEASON}/AS`, {
+  await page.goto(`https://premium.pff.com/ncaa/players/${PFF_SEASON}/REGPO`, {
     waitUntil: "domcontentloaded",
     timeout: 30000,
   });
