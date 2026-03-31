@@ -224,8 +224,21 @@ const SYSTEM_PROMPT = `You are an expert browser automation agent. Your job is t
 // ---------------------------------------------------------------------------
 
 async function main() {
+  // Use existing Chromium binary if Playwright-bundled one isn't available
+  const CHROMIUM_PATH =
+    process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
+    `${process.env.HOME}/.cache/ms-playwright/chromium-1194/chrome-linux/chrome`;
+  const executableExists = fs.existsSync(CHROMIUM_PATH);
+
   console.log("Launching browser...");
-  const browser = await chromium.launch({ headless: false, slowMo: 50 });
+  console.log(`  Chromium: ${executableExists ? CHROMIUM_PATH : "playwright default"}`);
+
+  const browser = await chromium.launch({
+    headless: true,
+    executablePath: executableExists ? CHROMIUM_PATH : undefined,
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+    slowMo: 50,
+  });
   const context = await browser.newContext({
     viewport: { width: VIEWPORT_WIDTH, height: VIEWPORT_HEIGHT },
     acceptDownloads: true,
