@@ -743,7 +743,22 @@ function parseCSVLine(line: string): string[] {
 }
 
 function readCSV(filePath: string): PffRow[] {
-  const content = fs.readFileSync(filePath, "utf-8");
+  // Read as raw buffer to detect encoding
+  const buf = fs.readFileSync(filePath);
+  let content: string;
+
+  // UTF-16 LE BOM: FF FE
+  if (buf[0] === 0xFF && buf[1] === 0xFE) {
+    content = buf.slice(2).toString("utf16le");
+  // UTF-16 BE BOM: FE FF
+  } else if (buf[0] === 0xFE && buf[1] === 0xFF) {
+    content = buf.slice(2).swap16().toString("utf16le");
+  // UTF-8 BOM: EF BB BF
+  } else if (buf[0] === 0xEF && buf[1] === 0xBB && buf[2] === 0xBF) {
+    content = buf.slice(3).toString("utf-8");
+  } else {
+    content = buf.toString("utf-8");
+  }
   const lines = content.split(/\r?\n/).filter((l) => l.trim());
   if (lines.length < 2) return [];
   const headers = parseCSVLine(lines[0]).map((h) => h.trim().replace(/^"|"$/g, ""));
