@@ -296,23 +296,151 @@ On each stats table page, look for:
 - When all 10 downloads are attempted, output exactly: ALL_DOWNLOADS_COMPLETE`;
 
 // ---------------------------------------------------------------------------
-// Main agentic loop
+// Target reports to download
+// ---------------------------------------------------------------------------
+
+// URL slugs derived from the confirmed pattern:
+// https://premium.pff.com/ncaa/positions/2025/REGPO/offense-pass-blocking?posi=OL
+const TARGET_REPORTS = [
+  { name: "Passing Grades",       slug: "offense-passing",                  posi: "QB"  },
+  { name: "Receiving Grades",     slug: "offense-receiving",                posi: "ALL" },
+  { name: "Rushing Grades",       slug: "offense-rushing",                  posi: "ALL" },
+  { name: "Blocking Grades",      slug: "offense-blocking",                 posi: "ALL" },
+  { name: "Pass Blocking",        slug: "offense-pass-blocking",            posi: "ALL" },
+  { name: "Run Blocking",         slug: "offense-run-blocking",             posi: "ALL" },
+  { name: "Defense Grades",       slug: "defense-grades",                   posi: "ALL" },
+  { name: "Pass Rush Grades",     slug: "defense-pass-rush",                posi: "ALL" },
+  { name: "Run Defense Grades",   slug: "defense-run-defense",              posi: "ALL" },
+  { name: "Coverage Grades",      slug: "defense-coverage",                 posi: "ALL" },
+  { name: "Special Teams Grades", slug: "special-teams",                    posi: "ST"  },
+];
+
+// ---------------------------------------------------------------------------
+// Helper: sign in via Playwright if redirected to login page
+// ---------------------------------------------------------------------------
+
+async function ensureLoggedIn(page: Page): Promise<void> {
+  const url = page.url();
+  if (!url.includes("pff.com/login") && !url.includes("auth")) return;
+
+  console.log("  Logging in...");
+  // Fill email
+  await page.fill('input[type="email"], input[name="email"], input[placeholder*="email" i]', PFF_EMAIL!);
+  await page.waitForTimeout(400);
+  // Fill password
+  await page.fill('input[type="password"]', PFF_PASSWORD!);
+  await page.waitForTimeout(400);
+  // Submit
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(3000);
+  console.log("  Logged in, current URL:", page.url());
+}
+
+// ---------------------------------------------------------------------------
+// Helper: use computer use to find and click export button on stats page
+// ---------------------------------------------------------------------------
+
+async function clickExportButton(page: Page): Promise<boolean> {
+  // Try Playwright selectors first (fast path)
+  const exportSelectors = [
+    'button:has-text("Export")',
+    'button:has-text("CSV")',
+    'a:has-text("Export")',
+    'a:has-text("CSV")',
+    '[aria-label*="export" i]',
+    '[aria-label*="download" i]',
+    '[title*="export" i]',
+    '[class*="export" i]',
+    '[class*="download" i]',
+  ];
+
+  for (const sel of exportSelectors) {
+    try {
+      const el = await page.$(sel);
+      if (el) {
+        console.log(`  Found export button via selector: ${sel}`);
+        await el.click();
+        return true;
+      }
+    } catch { /* try next */ }
+  }
+
+  // Fall back to computer use
+  console.log("  Export button not found by selector — using computer use...");
+  const buf = await page.screenshot({ type: "png", fullPage: false });
+  const b64 = buf.toString("base64");
+
+  const messages: Anthropic.Messages.BetaMessageParam[] = [{
+    role: "user",
+    content: [
+      { type: "text", text: 'You are on a PFF stats table page. Find the Export or Download CSV button (usually top-right of the table) and click it. If you cannot find it, reply with text "EXPORT_NOT_FOUND".' },
+      { type: "image", source: { type: "base64", media_type: "image/png", data: b64 } },
+    ],
+  }];
+
+  let found = false;
+  for (let turn = 0; turn < 8; turn++) {
+    let response: Anthropic.Messages.BetaMessage | undefined;
+    for (let attempt = 1; attempt <= 5; attempt++) {
+      try {
+        response = await client.beta.messages.create({
+          model: "claude-sonnet-4-6",
+          max_tokens: 1024,
+          tools: [computerTool],
+          messages,
+          betas: ["computer-use-2025-11-24"],
+        });
+        break;
+      } catch (err: unknown) {
+        const status = (err as { status?: number }).status;
+        if (status === 529 && attempt < 5) {
+          const wait = attempt * 15000;
+          console.log(`  API overloaded, retrying in ${wait / 1000}s...`);
+          await page.waitForTimeout(wait);
+        } else { console.error("API error:", err); return false; }
+      }
+    }
+    if (!response) return false;
+
+    messages.push({ role: "assistant", content: response.content });
+    const toolResults: Anthropic.Messages.BetaToolResultBlockParam[] = [];
+
+    for (const block of response.content) {
+      if (block.type === "text") {
+        console.log(`  [Claude] ${block.text}`);
+        if (block.text.includes("EXPORT_NOT_FOUND")) return false;
+        if (block.text.toLowerCase().includes("clicked") || block.text.toLowerCase().includes("export")) found = true;
+      } else if (block.type === "tool_use" && block.name === "computer") {
+        const input = block.input as ComputerAction;
+        console.log(`  [Action] ${input.action}`);
+        const resultContent = await executeAction(page, input).catch((e) => [{ type: "text" as const, text: String(e) }]);
+        toolResults.push({ type: "tool_result", tool_use_id: block.id, content: resultContent });
+        if (input.action === "left_click") { found = true; }
+      }
+    }
+
+    if (toolResults.length > 0) messages.push({ role: "user", content: toolResults });
+    else break;
+  }
+
+  return found;
+}
+
+// ---------------------------------------------------------------------------
+// Main
 // ---------------------------------------------------------------------------
 
 async function main() {
-  // Use existing Chromium binary if Playwright-bundled one isn't available
   const CHROMIUM_PATH =
     process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ||
     `${process.env.HOME}/.cache/ms-playwright/chromium-1194/chrome-linux/chrome`;
   const executableExists = fs.existsSync(CHROMIUM_PATH);
 
   console.log("Launching browser...");
-  console.log(`  Chromium: ${executableExists ? CHROMIUM_PATH : "playwright default"}`);
-
   const browser = await chromium.launch({
-    headless: false, // visible browser so you can see what's happening
+    headless: false,
     executablePath: executableExists ? CHROMIUM_PATH : undefined,
-    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
     slowMo: 50,
   });
   const context = await browser.newContext({
@@ -321,153 +449,65 @@ async function main() {
   });
   const page = await context.newPage();
 
-  // Handle file downloads automatically
+  // Track downloads
   context.on("download", async (download: Download) => {
-    const suggestedName = download.suggestedFilename();
-    const savePath = path.join(downloadDir, suggestedName);
-    await download.saveAs(savePath);
-    console.log(`  Downloaded: ${suggestedName}`);
+    const name = download.suggestedFilename();
+    await download.saveAs(path.join(downloadDir, name));
+    console.log(`  Downloaded: ${name}`);
   });
 
-  // Navigate to PFF NCAA stats page
-  console.log(`\nNavigating to PFF NCAA stats (${PFF_SEASON})...`);
-  await page.goto(`https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO`, {
-    waitUntil: "domcontentloaded",
-    timeout: 30000,
-  });
+  const POSITIONS_URL = `https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO`;
+
+  // Step 1: Load positions page, handle login
+  console.log(`\nNavigating to ${POSITIONS_URL}...`);
+  await page.goto(POSITIONS_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(2000);
+  await ensureLoggedIn(page);
 
-  // -------------------------------------------------------------------------
-  // Take initial screenshot and build first user message
-  // -------------------------------------------------------------------------
-  const initBuf = await page.screenshot({ type: "png", fullPage: false });
-  const initB64 = initBuf.toString("base64");
+  // If login redirected us away, go back
+  if (!page.url().includes("/positions/")) {
+    await page.goto(POSITIONS_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.waitForTimeout(2000);
+  }
 
-  const messages: Anthropic.Messages.BetaMessageParam[] = [
-    {
-      role: "user",
-      content: [
-        {
-          type: "text",
-          text: "Here is the current state of the browser. Please sign into PFF if needed, then navigate to the NCAA college player stats and download all the required CSV exports as described in your instructions.",
-        },
-        {
-          type: "image",
-          source: {
-            type: "base64",
-            media_type: "image/png",
-            data: initB64,
-          },
-        },
-      ],
-    },
-  ];
+  // Step 2: Download each target report using direct URLs
+  let downloaded = 0;
+  for (const { name, slug, posi } of TARGET_REPORTS) {
+    console.log(`\n[${downloaded + 1}/${TARGET_REPORTS.length}] ${name} (${posi})...`);
 
-  let turnCount = 0;
-  let done = false;
-
-  console.log("\nStarting computer use loop...\n");
-
-  while (!done && turnCount < MAX_TURNS) {
-    turnCount++;
-
-    // Call Claude (with retry on 529 overload)
-    let response: Anthropic.Messages.BetaMessage;
-    let apiSuccess = false;
-    for (let attempt = 1; attempt <= 5; attempt++) {
-      try {
-        response = await client.beta.messages.create({
-          model: "claude-sonnet-4-6",
-          max_tokens: 4096,
-          system: SYSTEM_PROMPT,
-          tools: [computerTool],
-          messages,
-          betas: ["computer-use-2025-11-24"],
-        });
-        apiSuccess = true;
-        break;
-      } catch (err: unknown) {
-        const status = (err as { status?: number }).status;
-        if (status === 529 && attempt < 5) {
-          const wait = attempt * 15000;
-          console.log(`  API overloaded, retrying in ${wait / 1000}s (attempt ${attempt}/5)...`);
-          await page.waitForTimeout(wait);
-        } else {
-          console.error("Anthropic API error:", err);
-          break;
-        }
-      }
-    }
-    if (!apiSuccess) break;
-
-    // Add assistant response to conversation
-    messages.push({ role: "assistant", content: response.content });
-
-    // Process each content block from Claude's response
-    const toolResults: Anthropic.Messages.BetaToolResultBlockParam[] = [];
-
-    for (const block of response.content) {
-      if (block.type === "text") {
-        console.log(`[Claude] ${block.text}`);
-        if (block.text.includes("ALL_DOWNLOADS_COMPLETE")) {
-          console.log("\nAll downloads complete!");
-          done = true;
-        }
-        continue;
-      }
-
-      if (block.type === "tool_use" && block.name === "computer") {
-        const input = block.input as ComputerAction;
-        const coordStr = "coordinate" in input ? ` @ (${(input as { coordinate: [number, number] }).coordinate[0]}, ${(input as { coordinate: [number, number] }).coordinate[1]})` : "";
-        const textStr = "text" in input ? ` "${(input as { text: string }).text}"` : "";
-        console.log(`[Action] ${input.action}${coordStr}${textStr}`);
-
-        let resultContent: Anthropic.Messages.BetaToolResultBlockParam["content"];
-        try {
-          resultContent = await executeAction(page, input);
-        } catch (err: unknown) {
-          resultContent = [{ type: "text", text: `Error executing action: ${String(err)}` }];
-        }
-
-        // IMPORTANT: use block.id (the actual tool_use_id from Claude's response)
-        toolResults.push({
-          type: "tool_result",
-          tool_use_id: block.id,
-          content: resultContent,
-        });
-      }
+    const reportUrl = `${POSITIONS_URL}/${slug}?posi=${posi}`;
+    console.log(`  Navigating to: ${reportUrl}`);
+    try {
+      await page.goto(reportUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
+      await page.waitForTimeout(2500);
+      await ensureLoggedIn(page);
+      await page.waitForTimeout(1500);
+    } catch (err) {
+      console.log(`  Navigation failed: ${err} — skipping`);
+      continue;
     }
 
-    // Send tool results back to Claude if any were generated
-    if (toolResults.length > 0) {
-      messages.push({ role: "user", content: toolResults });
-    } else if (response.stop_reason === "end_turn") {
-      // Claude finished without requesting any tool use
-      console.log("\nClaude finished without tool use — stopping loop.");
-      break;
+    // Click export button
+    const clicked = await clickExportButton(page);
+    if (clicked) {
+      console.log(`  Export triggered — waiting for download...`);
+      await page.waitForTimeout(3000);
+      downloaded++;
+    } else {
+      console.log(`  Could not find export button — skipping`);
     }
   }
 
-  if (turnCount >= MAX_TURNS) {
-    console.warn(`\nReached maximum turn limit (${MAX_TURNS}). Stopping.`);
-  }
-
-  // Give downloads a moment to finish writing
-  await page.waitForTimeout(3000);
+  console.log(`\nFinished: ${downloaded}/${TARGET_REPORTS.length} reports downloaded`);
+  await page.waitForTimeout(2000);
   await browser.close();
 
-  // List what was downloaded
   const files = fs.readdirSync(downloadDir);
-  if (files.length === 0) {
-    console.log("\nNo files were downloaded.");
-  } else {
-    console.log(`\nFiles saved to ${downloadDir}:`);
-    for (const f of files) {
-      const size = fs.statSync(path.join(downloadDir, f)).size;
-      console.log(`  ${f} (${(size / 1024).toFixed(1)} KB)`);
-    }
+  console.log(`\nFiles saved to ${downloadDir}:`);
+  for (const f of files) {
+    const size = fs.statSync(path.join(downloadDir, f)).size;
+    console.log(`  ${f} (${(size / 1024).toFixed(1)} KB)`);
   }
-
   console.log(`\nNext step: npm run pff:import -- --dir "${downloadDir}"`);
 }
 
