@@ -465,19 +465,38 @@ async function main() {
   });
 
   const POSITIONS_URL = `https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO`;
-  const INDEX_URL = POSITIONS_URL; // REGPO = Regular Season
 
-  // Step 1: Load positions page, handle login
-  console.log(`\nNavigating to ${INDEX_URL}...`);
-  await page.goto(INDEX_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
+  // Step 1: Force login via PFF login page
+  console.log("\nLogging in to PFF...");
+  await page.goto("https://auth.pff.com/login", { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(2000);
-  await ensureLoggedIn(page);
 
-  // If login redirected us away, go back
-  if (!page.url().includes("/positions/")) {
-    await page.goto(INDEX_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
+  // Fill credentials
+  try {
+    await page.fill('input[type="email"], input[name="email"], input[placeholder*="email" i]', PFF_EMAIL!);
+    await page.waitForTimeout(400);
+    await page.fill('input[type="password"]', PFF_PASSWORD!);
+    await page.waitForTimeout(400);
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(4000);
+    console.log("  Login submitted, current URL:", page.url());
+  } catch (err) {
+    console.log("  Login form not found on auth page, trying premium.pff.com/login...");
+    await page.goto("https://premium.pff.com/login", { waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForTimeout(2000);
+    await page.fill('input[type="email"], input[name="email"], input[placeholder*="email" i]', PFF_EMAIL!);
+    await page.waitForTimeout(400);
+    await page.fill('input[type="password"]', PFF_PASSWORD!);
+    await page.waitForTimeout(400);
+    await page.keyboard.press("Enter");
+    await page.waitForTimeout(4000);
+    console.log("  Login submitted, current URL:", page.url());
   }
+
+  // Navigate to positions page after login
+  console.log(`\nNavigating to ${POSITIONS_URL}...`);
+  await page.goto(POSITIONS_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
+  await page.waitForTimeout(2000);
 
   // Step 2: Download each target report using direct URLs
   let downloaded = 0;
