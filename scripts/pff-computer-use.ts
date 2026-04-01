@@ -459,7 +459,7 @@ async function main() {
   });
 
   const POSITIONS_URL = `https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO`;
-  const INDEX_URL = `https://premium.pff.com/ncaa/positions/${PFF_SEASON}/AS`;
+  const INDEX_URL = POSITIONS_URL; // REGPO = Regular Season
 
   // Step 1: Load positions page, handle login
   console.log(`\nNavigating to ${INDEX_URL}...`);
