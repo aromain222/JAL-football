@@ -452,10 +452,16 @@ async function main() {
   const page = await context.newPage();
 
   // Track downloads
-  context.on("download", async (download: Download) => {
-    const name = download.suggestedFilename();
-    await download.saveAs(path.join(downloadDir, name));
-    console.log(`  Downloaded: ${name}`);
+  const pendingDownloads: Promise<void>[] = [];
+  context.on("download", (download: Download) => {
+    const p = (async () => {
+      const name = download.suggestedFilename() || `pff-export-${Date.now()}.csv`;
+      const savePath = path.join(downloadDir, name);
+      await download.saveAs(savePath);
+      const size = fs.statSync(savePath).size;
+      console.log(`  Downloaded: ${name} (${(size / 1024).toFixed(1)} KB)`);
+    })();
+    pendingDownloads.push(p);
   });
 
   const POSITIONS_URL = `https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO`;
@@ -494,14 +500,15 @@ async function main() {
     const clicked = await clickExportButton(page);
     if (clicked) {
       console.log(`  Export triggered — waiting for download...`);
-      await page.waitForTimeout(3000);
+      await page.waitForTimeout(8000); // wait for large CSVs
       downloaded++;
     } else {
       console.log(`  Could not find export button — skipping`);
     }
   }
 
-  console.log(`\nFinished: ${downloaded}/${TARGET_REPORTS.length} reports downloaded`);
+  console.log(`\nFinished triggering ${downloaded}/${TARGET_REPORTS.length} reports. Waiting for all downloads to complete...`);
+  await Promise.all(pendingDownloads);
   await page.waitForTimeout(2000);
   await browser.close();
 
