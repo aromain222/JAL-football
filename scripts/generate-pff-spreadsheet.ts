@@ -725,106 +725,282 @@ function makePortalDbSheet(
 }
 
 // ---------------------------------------------------------------------------
-// Main
+// Main — reads CSVs directly from --csv-dir folder
 // ---------------------------------------------------------------------------
 
+function parseCSVLine(line: string): string[] {
+  const result: string[] = [];
+  let cur = "";
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQuotes = !inQuotes; }
+    else if (ch === "," && !inQuotes) { result.push(cur); cur = ""; }
+    else { cur += ch; }
+  }
+  result.push(cur);
+  return result;
+}
+
+function readCSV(filePath: string): PffRow[] {
+  const content = fs.readFileSync(filePath, "utf-8");
+  const lines = content.split(/\r?\n/).filter((l) => l.trim());
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]).map((h) => h.trim().replace(/^"|"$/g, ""));
+  return lines.slice(1).map((line) => {
+    const vals = parseCSVLine(line);
+    const row: PffRow = {};
+    headers.forEach((h, i) => {
+      const raw = (vals[i] ?? "").trim().replace(/^"|"$/g, "");
+      row[h] = raw === "" ? null : isNaN(Number(raw)) ? raw : Number(raw);
+    });
+    return row;
+  });
+}
+
 async function main() {
-  console.log(`\nFetching data for season ${SEASON}...`);
+  const csvDir = getArg("--csv-dir") ?? path.resolve("data", "pff", "2025");
 
-  // Fetch PFF grades
-  const { data: pffData, error: pffError } = await supabase
-    .from("player_pff_grades" as never)
-    .select("*")
-    .eq("season" as never, SEASON as never);
-
-  if (pffError) {
-    console.error("Failed to fetch player_pff_grades:", pffError.message);
+  if (!fs.existsSync(csvDir)) {
+    console.error(`CSV directory not found: ${csvDir}`);
+    console.error(`Usage: npm run pff:spreadsheet -- --csv-dir "/path/to/csvs"`);
     process.exit(1);
   }
 
-  const pffRows = (pffData ?? []) as PffRow[];
-  console.log(`  PFF grade records: ${pffRows.length}`);
+  const files = fs.readdirSync(csvDir)
+    .filter((f) => f.endsWith(".csv") && !f.toLowerCase().includes("copy") && !/ \(\d\)\.csv$/.test(f));
 
-  // Fetch ALL portal players (all positions)
-  const { data: portalData, error: portalError } = await supabase
-    .from("players" as never)
-    .select("id, first_name, last_name, position, previous_school, current_school, hometown, class_year, eligibility_remaining, stars");
+  console.log(`\nReading ${files.length} CSV files from ${csvDir}:`);
 
-  if (portalError) {
-    console.error("Failed to fetch players:", portalError.message);
-    process.exit(1);
-  }
+  // Merge all CSVs by player_id (primary key)
+  const playerMap = new Map<string, PffRow>();
 
-  const portalPlayers = (portalData ?? []) as PortalPlayer[];
-  console.log(`  Transfer portal players (all positions): ${portalPlayers.length}`);
-
-  // Build lookup: player_id → pff row
-  const pffByPlayerId = new Map<string, PffRow>();
-  for (const row of pffRows) {
-    if (row.player_id) {
-      pffByPlayerId.set(String(row.player_id), row);
+  for (const file of files) {
+    const rows = readCSV(path.join(csvDir, file));
+    console.log(`  ${file}: ${rows.length} rows`);
+    for (const row of rows) {
+      const pid = String(row.player_id ?? "");
+      const name = String(row.player ?? "");
+      const team = String(row.team_name ?? "");
+      const key = pid || `${name}|${team}`;
+      if (!key || key === "|") continue;
+      const existing = playerMap.get(key) ?? {};
+      // Merge: existing fields win for grades, new file adds missing fields
+      const merged: PffRow = { ...row, ...existing };
+      // Always keep best grade values
+      for (const k of Object.keys(row)) {
+        if (k.startsWith("grades_") && row[k] != null) {
+          if (existing[k] == null) merged[k] = row[k];
+        }
+      }
+      merged.player_name = name || String(existing.player_name ?? "");
+      playerMap.set(key, merged);
     }
   }
-  const matched = portalPlayers.filter((p) => pffByPlayerId.has(p.id)).length;
-  console.log(`  Players matched to PFF data: ${matched}/${portalPlayers.length}\n`);
+
+  const allPlayers = [...playerMap.values()];
+  console.log(`\nTotal unique players across all files: ${allPlayers.length}`);
 
   const wb = new ExcelJS.Workbook();
   wb.creator = "JAL Football";
   wb.created = new Date();
   wb.modified = new Date();
-  wb.properties.date1904 = false;
 
-  console.log("Building sheets...");
+  // Helper: build position sheet using actual CSV column names
+  function makePositionSheet(
+    sheetName: string,
+    positions: string[],
+    gradeCols: { header: string; key: string }[],
+    statCols: { header: string; key: string; numFmt?: string }[]
+  ) {
+    const pos = new Set(positions.map((p) => p.toUpperCase()));
+    const players = allPlayers
+      .filter((r) => pos.has(String(r.position ?? "").toUpperCase()))
+      .sort((a, b) => {
+        const aG = gradeCols.reduce((best, c) => Math.max(best, (a[c.key] as number) ?? 0), 0);
+        const bG = gradeCols.reduce((best, c) => Math.max(best, (b[c.key] as number) ?? 0), 0);
+        return bG - aG;
+      });
 
-  // Portal sheets first (most useful)
-  makePortalSummarySheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal Target Board (all positions)");
-  makePortalQbSheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal QB");
-  makePortalWrTeSheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal WR-TE");
-  makePortalRbSheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal RB");
-  makePortalOlSheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal OL");
-  makePortalDlSheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal DL-EDGE");
-  makePortalLbSheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal LB");
-  makePortalDbSheet(wb, portalPlayers, pffByPlayerId);
-  console.log("  ✓ Portal DB");
-
-  if (pffRows.length > 0) {
-    makeAllPlayersSheet(wb, pffRows);
-    console.log("  ✓ All Players");
-    makeQbSheet(wb, pffRows);
-    console.log("  ✓ QB");
-    makeWrTeSheet(wb, pffRows);
-    console.log("  ✓ WR-TE");
-    makeRbSheet(wb, pffRows);
-    console.log("  ✓ RB");
-    makeOlSheet(wb, pffRows);
-    console.log("  ✓ OL");
-    makeDlSheet(wb, pffRows);
-    console.log("  ✓ DL-Edge");
-    makeLbSheet(wb, pffRows);
-    console.log("  ✓ LB");
-    makeDbSheet(wb, pffRows);
-    console.log("  ✓ DB-Safety");
-  } else {
-    console.log("  (Skipping PFF-wide position sheets — no grades imported yet)");
+    const cols: ColDef[] = [
+      { header: "Player", key: "player_name", width: 22 },
+      { header: "Pos", key: "position", width: 6 },
+      { header: "Team", key: "team_name", width: 16 },
+      { header: "Games", key: "player_game_count", width: 7 },
+      ...gradeCols.map((c) => ({ ...c, width: 11, isGrade: true })),
+      ...statCols.map((c) => ({ ...c, width: 10 })),
+    ];
+    addSheet(wb, sheetName, cols, players);
+    console.log(`  ✓ ${sheetName} (${players.length} players)`);
   }
+
+  console.log("\nBuilding sheets...");
+
+  // QB — passing_summary.csv
+  makePositionSheet("QB", ["QB"], [
+    { header: "Pass Grade", key: "grades_pass" },
+    { header: "Offense", key: "grades_offense" },
+  ], [
+    { header: "Att", key: "attempts" },
+    { header: "Comp", key: "completions" },
+    { header: "Yds", key: "yards" },
+    { header: "TDs", key: "touchdowns" },
+    { header: "INTs", key: "interceptions" },
+    { header: "BTT", key: "big_time_throws" },
+    { header: "TWP", key: "turnover_worthy_plays" },
+    { header: "Adj Comp%", key: "adjusted_completion_pct", numFmt: "0.0" },
+    { header: "YPA", key: "yards_per_attempt", numFmt: "0.0" },
+    { header: "ADOT", key: "avg_depth_of_target", numFmt: "0.0" },
+    { header: "Sacks", key: "sacks" },
+    { header: "Scrambles", key: "scrambles" },
+  ]);
+
+  // WR — receiving_summary.csv
+  makePositionSheet("WR", ["WR"], [
+    { header: "Offense", key: "grades_offense" },
+    { header: "Route Grade", key: "grades_pass_route" },
+  ], [
+    { header: "Tgts", key: "targets" },
+    { header: "Rec", key: "receptions" },
+    { header: "Catch%", key: "catch_rate", numFmt: "0.0" },
+    { header: "Yds", key: "yards" },
+    { header: "TDs", key: "touchdowns" },
+    { header: "Drops", key: "drops" },
+    { header: "ADOT", key: "avg_depth_of_target", numFmt: "0.0" },
+    { header: "YAC", key: "yards_after_catch" },
+    { header: "YPRR", key: "yards_per_route_run", numFmt: "0.00" },
+    { header: "Slot Snaps", key: "snap_counts_slot" },
+    { header: "Wide Snaps", key: "snap_counts_wide" },
+  ]);
+
+  // TE — receiving_summary.csv
+  makePositionSheet("TE", ["TE"], [
+    { header: "Offense", key: "grades_offense" },
+    { header: "Route Grade", key: "grades_pass_route" },
+    { header: "Block Grade", key: "grades_pass_block" },
+  ], [
+    { header: "Tgts", key: "targets" },
+    { header: "Rec", key: "receptions" },
+    { header: "Catch%", key: "catch_rate", numFmt: "0.0" },
+    { header: "Yds", key: "yards" },
+    { header: "TDs", key: "touchdowns" },
+    { header: "ADOT", key: "avg_depth_of_target", numFmt: "0.0" },
+    { header: "YPRR", key: "yards_per_route_run", numFmt: "0.00" },
+    { header: "Press Allowed", key: "pressures_allowed" },
+    { header: "Inline Snaps", key: "snap_counts_inline" },
+  ]);
+
+  // RB — rushing_summary.csv
+  makePositionSheet("RB", ["RB", "HB", "FB"], [
+    { header: "Run Grade", key: "grades_run" },
+    { header: "Offense", key: "grades_offense" },
+    { header: "Pass Block", key: "grades_pass_block" },
+  ], [
+    { header: "Carries", key: "attempts" },
+    { header: "Yds", key: "yards" },
+    { header: "TDs", key: "touchdowns" },
+    { header: "Yds/Car", key: "yards_per_attempt", numFmt: "0.0" },
+    { header: "YAC/Car", key: "yards_after_contact_per_attempt", numFmt: "0.0" },
+    { header: "Broken Tkls", key: "avoided_tackles" },
+    { header: "Elusive Rtg", key: "elusive_rating", numFmt: "0.0" },
+    { header: "Fumbles", key: "fumbles" },
+    { header: "Tgts", key: "targets" },
+    { header: "Rec", key: "receptions" },
+    { header: "Rec Yds", key: "receiving_yards" },
+  ]);
+
+  // OL — offense_blocking / offense_pass_blocking / offense_run_blocking
+  makePositionSheet("OL", ["T", "G", "C", "OT", "OG", "OL", "LT", "RT", "LG", "RG"], [
+    { header: "Pass Block", key: "grades_pass_block" },
+    { header: "Run Block", key: "grades_run_block" },
+    { header: "Overall", key: "grades_offense" },
+  ], [
+    { header: "Press Allowed", key: "pressures_allowed" },
+    { header: "Sacks Allow", key: "sacks_allowed", numFmt: "0.0" },
+    { header: "Hits Allow", key: "hits_allowed" },
+    { header: "Hurries Allow", key: "hurries_allowed" },
+    { header: "Penalties", key: "penalties" },
+    { header: "PB Snaps", key: "snap_counts_pass_play" },
+    { header: "RB Snaps", key: "snap_counts_run_play" },
+  ]);
+
+  // EDGE/DL — pass_rush_summary + run_defense_summary
+  makePositionSheet("DL-EDGE", ["DE", "DT", "NT", "ED", "DL", "EDGE", "IDL"], [
+    { header: "Pass Rush", key: "grades_pass_rush_defense" },
+    { header: "Run Def", key: "grades_run_defense" },
+    { header: "Defense", key: "grades_defense" },
+  ], [
+    { header: "Pressures", key: "pressures" },
+    { header: "Sacks", key: "sacks" },
+    { header: "Hits", key: "hits" },
+    { header: "Hurries", key: "hurries" },
+    { header: "Run Stops", key: "stops" },
+    { header: "Tackles", key: "tackles" },
+    { header: "Missed Tkls", key: "missed_tackles" },
+  ]);
+
+  // LB — pass_rush + run_defense + coverage
+  makePositionSheet("LB", ["LB", "ILB", "OLB", "MLB"], [
+    { header: "Defense", key: "grades_defense" },
+    { header: "Coverage", key: "grades_coverage_defense" },
+    { header: "Run Def", key: "grades_run_defense" },
+    { header: "Pass Rush", key: "grades_pass_rush_defense" },
+    { header: "Tackle", key: "grades_tackle" },
+  ], [
+    { header: "Tackles", key: "tackles" },
+    { header: "Assists", key: "assists" },
+    { header: "Stops", key: "stops" },
+    { header: "Missed Tkls", key: "missed_tackles" },
+    { header: "Tgts Allow", key: "targets" },
+    { header: "INTs", key: "interceptions" },
+    { header: "PBU", key: "pass_break_ups" },
+    { header: "Pressures", key: "pressures" },
+    { header: "Sacks", key: "sacks" },
+  ]);
+
+  // CB — defense_coverage_summary
+  makePositionSheet("CB", ["CB", "NCB"], [
+    { header: "Coverage", key: "grades_coverage_defense" },
+    { header: "Defense", key: "grades_defense" },
+    { header: "Tackle", key: "grades_tackle" },
+  ], [
+    { header: "Tgts Allow", key: "targets" },
+    { header: "Rec Allow", key: "receptions" },
+    { header: "Yds Allow", key: "yards" },
+    { header: "INTs", key: "interceptions" },
+    { header: "PBU", key: "pass_break_ups" },
+    { header: "QBR Allow", key: "qb_rating_against", numFmt: "0.0" },
+    { header: "Yds/CovSnap", key: "yards_per_coverage_snap", numFmt: "0.00" },
+    { header: "Cov Snaps", key: "snap_counts_coverage" },
+    { header: "Forced Inc%", key: "forced_incompletion_rate", numFmt: "0.0" },
+  ]);
+
+  // S — defense_coverage_summary
+  makePositionSheet("S", ["S", "SS", "FS", "SAF", "DB"], [
+    { header: "Coverage", key: "grades_coverage_defense" },
+    { header: "Run Def", key: "grades_run_defense" },
+    { header: "Defense", key: "grades_defense" },
+    { header: "Tackle", key: "grades_tackle" },
+  ], [
+    { header: "Tackles", key: "tackles" },
+    { header: "Assists", key: "assists" },
+    { header: "Stops", key: "stops" },
+    { header: "Tgts Allow", key: "targets" },
+    { header: "INTs", key: "interceptions" },
+    { header: "PBU", key: "pass_break_ups" },
+    { header: "QBR Allow", key: "qb_rating_against", numFmt: "0.0" },
+    { header: "Cov Snaps", key: "snap_counts_coverage" },
+    { header: "Missed Tkls", key: "missed_tackles" },
+  ]);
 
   await wb.xlsx.writeFile(outputPath);
   console.log(`\nSpreadsheet saved: ${outputPath}`);
-  console.log(`\nGrade color key:`);
-  console.log("  Gold  = 90–100 (Elite)");
-  console.log("  Blue  = 80–89  (Great)");
-  console.log("  Green = 70–79  (Good)");
-  console.log("  Yellow= 60–69  (Average)");
-  console.log("  Red   = 0–59   (Below average)");
-  console.log(`\nNote: Players showing 'No PFF match' had no PFF data in the import.`);
-  console.log(`Most lower-division players won't have PFF grades (PFF covers FBS primarily).`);
+  console.log("\nGrade color key:");
+  console.log("  Gold   = 90–100 (Elite)");
+  console.log("  Blue   = 80–89  (Great)");
+  console.log("  Green  = 70–79  (Good)");
+  console.log("  Yellow = 60–69  (Average)");
+  console.log("  Red    = 0–59   (Below average)");
 }
 
 main().catch((err) => {
