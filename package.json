@@ -32,6 +32,7 @@
     "pff:download": "tsx scripts/pff-computer-use.ts",
     "pff:import": "tsx scripts/import-pff-stats.ts",
     "pff:spreadsheet": "tsx scripts/generate-pff-spreadsheet.ts",
+    "pff:snap-counts": "tsx scripts/pff-player-snap-counts.ts",
     "pff:all": "npm run pff:download && npm run pff:import && npm run pff:spreadsheet"
   },
   "dependencies": {
