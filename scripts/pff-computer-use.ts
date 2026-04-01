@@ -393,9 +393,11 @@ async function clickExportButton(page: Page): Promise<boolean> {
         break;
       } catch (err: unknown) {
         const status = (err as { status?: number }).status;
-        if (status === 529 && attempt < 5) {
-          const wait = attempt * 15000;
-          console.log(`  API overloaded, retrying in ${wait / 1000}s...`);
+        const headers = (err as { headers?: Record<string, string> }).headers;
+        if ((status === 529 || status === 429) && attempt < 5) {
+          const retryAfter = headers?.["retry-after"];
+          const wait = retryAfter ? parseInt(retryAfter) * 1000 : attempt * 20000;
+          console.log(`  API ${status === 429 ? "rate limited" : "overloaded"}, waiting ${wait / 1000}s...`);
           await page.waitForTimeout(wait);
         } else { console.error("API error:", err); return false; }
       }
