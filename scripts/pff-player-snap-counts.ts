@@ -179,19 +179,9 @@ async function main() {
   await page.fill('input[type="password"]', PFF_PASSWORD);
   await page.waitForTimeout(500);
 
-  // Submit
-  const submitSelectors = ['button[type="submit"]', 'button:has-text("Sign in")', 'button:has-text("Log in")', 'button:has-text("Login")'];
-  for (const sel of submitSelectors) {
-    if (await page.locator(sel).isVisible({ timeout: 1000 }).catch(() => false)) {
-      await page.click(sel);
-      break;
-    }
-  }
-  // Fallback: press Enter
-  await page.keyboard.press("Enter");
-
-  // Wait for redirect to premium.pff.com
-  await page.waitForURL(/premium\.pff\.com/, { timeout: 30000 });
+  // Credentials filled — user clicks Sign In
+  console.log("Credentials filled. Please click the Sign In button in the browser...");
+  await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
