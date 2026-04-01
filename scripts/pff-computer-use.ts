@@ -298,22 +298,14 @@ On each stats table page, look for:
 // ---------------------------------------------------------------------------
 // Target reports to download
 // ---------------------------------------------------------------------------
+// Reports to download — scraped dynamically from the index page
+// For each report we prefer the ALL button; fallback to first available.
+// Passing reports use QB since they're QB-specific.
+// ---------------------------------------------------------------------------
 
-// URL slugs derived from the confirmed pattern:
-// https://premium.pff.com/ncaa/positions/2025/REGPO/offense-pass-blocking?posi=OL
-const TARGET_REPORTS = [
-  { name: "Passing Grades",       slug: "offense-passing",                  posi: "QB"  },
-  { name: "Receiving Grades",     slug: "offense-receiving",                posi: "ALL" },
-  { name: "Rushing Grades",       slug: "offense-rushing",                  posi: "ALL" },
-  { name: "Blocking Grades",      slug: "offense-blocking",                 posi: "ALL" },
-  { name: "Pass Blocking",        slug: "offense-pass-blocking",            posi: "ALL" },
-  { name: "Run Blocking",         slug: "offense-run-blocking",             posi: "ALL" },
-  { name: "Defense Grades",       slug: "defense-grades",                   posi: "ALL" },
-  { name: "Pass Rush Grades",     slug: "defense-pass-rush",                posi: "ALL" },
-  { name: "Run Defense Grades",   slug: "defense-run-defense",              posi: "ALL" },
-  { name: "Coverage Grades",      slug: "defense-coverage",                 posi: "ALL" },
-  { name: "Special Teams Grades", slug: "special-teams",                    posi: "ST"  },
-];
+const PREFER_QB_SLUGS = ["offense-passing", "offense-passing-depth", "offense-passing-pressure",
+  "offense-passing-concept", "offense-time-in-pocket", "offense-allowed-pressure",
+  "offense-adjusted-completion"];
 
 // ---------------------------------------------------------------------------
 // Helper: sign in via Playwright if redirected to login page
@@ -498,12 +490,58 @@ async function main() {
   await page.goto(POSITIONS_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(2000);
 
-  // Step 2: Download each target report using direct URLs
-  let downloaded = 0;
-  for (const { name, slug, posi } of TARGET_REPORTS) {
-    console.log(`\n[${downloaded + 1}/${TARGET_REPORTS.length}] ${name} (${posi})...`);
+  // Step 2: Scrape all report links from the index page
+  console.log("\nScraping all report links from index page...");
+  const allLinks: { name: string; url: string }[] = await page.evaluate((posUrl) => {
+    const results: { name: string; url: string }[] = [];
+    const seen = new Set<string>();
 
-    const reportUrl = `${POSITIONS_URL}/${slug}?posi=${posi}`;
+    // Each report card has a heading + anchor buttons
+    document.querySelectorAll("a[href]").forEach((a) => {
+      const href = (a as HTMLAnchorElement).href;
+      if (!href.includes("/REGPO/")) return;
+
+      // Prefer ALL button, but accept any
+      const slug = href.match(/\/REGPO\/([^?]+)/)?.[1] ?? "";
+      if (!slug || seen.has(slug + (href.match(/posi=([^&]+)/)?.[1] ?? ""))) return;
+
+      const posi = href.match(/posi=([^&]+)/)?.[1] ?? "ALL";
+      seen.add(slug + posi);
+
+      // Get nearby heading text
+      let name = a.textContent?.trim() ?? posi;
+      const card = a.closest("[class]");
+      if (card) {
+        const heading = card.querySelector("h2, h3, h4, p strong, [class*='title'], [class*='name']");
+        if (heading) name = heading.textContent?.trim() ?? name;
+      }
+      results.push({ name: `${name} (${posi})`, url: href });
+    });
+    return results;
+  }, POSITIONS_URL);
+
+  // Deduplicate: for each slug, prefer ALL > QB > first available
+  const bySlug = new Map<string, { name: string; url: string }>();
+  for (const link of allLinks) {
+    const slug = link.url.match(/\/REGPO\/([^?]+)/)?.[1] ?? "";
+    const posi = link.url.match(/posi=([^&]+)/)?.[1] ?? "";
+    const existing = bySlug.get(slug);
+    const prefersQB = PREFER_QB_SLUGS.includes(slug);
+    if (!existing ||
+        (prefersQB && posi === "QB") ||
+        (!prefersQB && posi === "ALL")) {
+      bySlug.set(slug, link);
+    }
+  }
+
+  const reportList = [...bySlug.values()];
+  console.log(`  Found ${reportList.length} unique reports to download`);
+  reportList.forEach((r, i) => console.log(`    ${i + 1}. ${r.name} → ${r.url}`));
+
+  // Step 3: Download each report
+  let downloaded = 0;
+  for (const { name, url: reportUrl } of reportList) {
+    console.log(`\n[${downloaded + 1}/${reportList.length}] ${name}...`);
     console.log(`  Navigating to: ${reportUrl}`);
     try {
       await page.goto(reportUrl, { waitUntil: "domcontentloaded", timeout: 30000 });
@@ -526,7 +564,7 @@ async function main() {
     }
   }
 
-  console.log(`\nFinished triggering ${downloaded}/${TARGET_REPORTS.length} reports. Waiting for all downloads to complete...`);
+  console.log(`\nFinished triggering ${downloaded}/${reportList.length} reports. Waiting for all downloads to complete...`);
   await Promise.all(pendingDownloads);
   await page.waitForTimeout(2000);
   await browser.close();
