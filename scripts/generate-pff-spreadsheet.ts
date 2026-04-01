@@ -775,6 +775,10 @@ function readCSV(filePath: string): PffRow[] {
   });
 }
 
+function normalizeName(s: string): string {
+  return s.toLowerCase().replace(/[^a-z0-9]/g, "").trim();
+}
+
 async function main() {
   const csvDir = getArg("--csv-dir") ?? path.resolve("data", "pff", "2025");
 
@@ -829,6 +833,46 @@ async function main() {
   const allPlayers = [...playerMap.values()];
   console.log(`\nTotal unique players across all files: ${allPlayers.length}`);
 
+  // ---------------------------------------------------------------------------
+  // Portal filter — auto-loads ~/Desktop/players_rows (5).csv or --portal-csv
+  // ---------------------------------------------------------------------------
+  type PortalEntry = {
+    player_name: string; position: string; team_name: string;
+    class_year: string; eligibility_remaining: number | null;
+    stars: number | null; hometown: string;
+  };
+
+  const portalArg = getArg("--portal-csv");
+  const defaultPortalPath = path.join(process.env.HOME ?? "", "Desktop", "players_rows (5).csv");
+  const portalCsvPath = portalArg ?? (fs.existsSync(defaultPortalPath) ? defaultPortalPath : null);
+
+  let portalEntries: PortalEntry[] = [];
+  if (portalCsvPath && fs.existsSync(portalCsvPath)) {
+    const raw = readCSV(portalCsvPath);
+    portalEntries = raw.map((r) => {
+      const name = `${r.first_name ?? ""} ${r.last_name ?? ""}`.trim();
+      return {
+        player_name: name,
+        position: String(r.position ?? ""),
+        team_name: String(r.previous_school ?? ""),
+        class_year: String(r.class_year ?? ""),
+        eligibility_remaining: r.eligibility_remaining != null ? Number(r.eligibility_remaining) : null,
+        stars: r.stars != null ? Number(r.stars) : null,
+        hometown: String(r.hometown ?? ""),
+      };
+    }).filter((e) => e.player_name);
+    console.log(`\nPortal filter active: ${portalEntries.length} players from ${portalCsvPath}`);
+  }
+
+  const isPortalMode = portalEntries.length > 0;
+
+  // Build PFF lookup by normalized full name for portal matching
+  const pffByNormName = new Map<string, PffRow>();
+  for (const p of allPlayers) {
+    const norm = normalizeName(String(p.player_name ?? ""));
+    if (norm && !pffByNormName.has(norm)) pffByNormName.set(norm, p);
+  }
+
   const wb = new ExcelJS.Workbook();
   wb.creator = "JAL Football";
   wb.created = new Date();
@@ -842,24 +886,56 @@ async function main() {
     statCols: { header: string; key: string; numFmt?: string }[]
   ) {
     const pos = new Set(positions.map((p) => p.toUpperCase()));
-    const players = allPlayers
-      .filter((r) => pos.has(String(r.position ?? "").toUpperCase()))
-      .sort((a, b) => {
-        const aG = gradeCols.reduce((best, c) => Math.max(best, (a[c.key] as number) ?? 0), 0);
-        const bG = gradeCols.reduce((best, c) => Math.max(best, (b[c.key] as number) ?? 0), 0);
-        return bG - aG;
+    let rows: Record<string, unknown>[];
+
+    if (isPortalMode) {
+      // Only show portal players for this position group, merge PFF data by name
+      const posPortal = portalEntries.filter((e) => pos.has(e.position.toUpperCase()));
+      rows = posPortal.map((pe) => {
+        const norm = normalizeName(pe.player_name);
+        const pff = pffByNormName.get(norm) ?? {};
+        return {
+          ...pff,
+          // portal profile always wins for identity fields
+          player_name: pe.player_name,
+          position: pe.position,
+          team_name: pe.team_name,
+          class_year: pe.class_year,
+          eligibility_remaining: pe.eligibility_remaining,
+          stars: pe.stars,
+          hometown: pe.hometown,
+          pff_match: Object.keys(pff).length > 0 ? "✓" : "—",
+        };
       });
+    } else {
+      rows = allPlayers.filter((r) => pos.has(String(r.position ?? "").toUpperCase()));
+    }
+
+    rows.sort((a, b) => {
+      const aG = gradeCols.reduce((best, c) => Math.max(best, (a[c.key] as number) ?? 0), 0);
+      const bG = gradeCols.reduce((best, c) => Math.max(best, (b[c.key] as number) ?? 0), 0);
+      return bG - aG;
+    });
+
+    const portalProfileCols: ColDef[] = isPortalMode ? [
+      { header: "Class", key: "class_year", width: 7 },
+      { header: "Elig", key: "eligibility_remaining", width: 5 },
+      { header: "Stars", key: "stars", width: 6 },
+      { header: "Hometown", key: "hometown", width: 18 },
+      { header: "PFF?", key: "pff_match", width: 5 },
+    ] : [];
 
     const cols: ColDef[] = [
       { header: "Player", key: "player_name", width: 22 },
       { header: "Pos", key: "position", width: 6 },
       { header: "Team", key: "team_name", width: 16 },
       { header: "Games", key: "player_game_count", width: 7 },
+      ...portalProfileCols,
       ...gradeCols.map((c) => ({ ...c, width: 11, isGrade: true })),
       ...statCols.map((c) => ({ ...c, width: 10 })),
     ];
-    addSheet(wb, sheetName, cols, players);
-    console.log(`  ✓ ${sheetName} (${players.length} players)`);
+    addSheet(wb, sheetName, cols, rows);
+    console.log(`  ✓ ${sheetName} (${rows.length} players)`);
   }
 
   console.log("\nBuilding sheets...");
