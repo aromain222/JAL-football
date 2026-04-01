@@ -784,8 +784,17 @@ async function main() {
     process.exit(1);
   }
 
-  const files = fs.readdirSync(csvDir)
-    .filter((f) => f.endsWith(".csv") && !f.toLowerCase().includes("copy") && !/ \(\d\)\.csv$/.test(f));
+  const allCsvFiles = fs.readdirSync(csvDir).filter((f) => f.endsWith(".csv"));
+  // Skip "copy" files; skip "(N)" variants only if the base file also exists in the same folder
+  const files = allCsvFiles.filter((f) => {
+    if (f.toLowerCase().includes("copy")) return false;
+    const dupMatch = f.match(/^(.+) \(\d+\)\.csv$/i);
+    if (dupMatch) {
+      const baseName = dupMatch[1] + ".csv";
+      return !allCsvFiles.includes(baseName); // keep (1) when no base file exists
+    }
+    return true;
+  });
 
   console.log(`\nReading ${files.length} CSV files from ${csvDir}:`);
 
@@ -794,7 +803,9 @@ async function main() {
 
   for (const file of files) {
     const rows = readCSV(path.join(csvDir, file));
+    const sampleCols = rows[0] ? Object.keys(rows[0]).join(", ") : "(empty)";
     console.log(`  ${file}: ${rows.length} rows`);
+    console.log(`    columns: ${sampleCols}`);
     for (const row of rows) {
       const pid = String(row.player_id ?? "");
       const name = String(row.player ?? "");
@@ -858,6 +869,7 @@ async function main() {
     { header: "Pass Grade", key: "grades_pass" },
     { header: "Offense", key: "grades_offense" },
   ], [
+    { header: "Pass Snaps", key: "snap_counts_pass_play" },
     { header: "Att", key: "attempts" },
     { header: "Comp", key: "completions" },
     { header: "Yds", key: "yards" },
@@ -870,6 +882,9 @@ async function main() {
     { header: "ADOT", key: "avg_depth_of_target", numFmt: "0.0" },
     { header: "Sacks", key: "sacks" },
     { header: "Scrambles", key: "scrambles" },
+    { header: "TTT", key: "time_to_throw", numFmt: "0.00" },
+    { header: "Pressures", key: "times_pressured" },
+    { header: "Press%", key: "times_pressured_pct", numFmt: "0.0" },
   ]);
 
   // WR — receiving_summary.csv
@@ -877,6 +892,8 @@ async function main() {
     { header: "Offense", key: "grades_offense" },
     { header: "Route Grade", key: "grades_pass_route" },
   ], [
+    { header: "Snaps", key: "snap_counts_offense" },
+    { header: "Routes Run", key: "routes" },
     { header: "Tgts", key: "targets" },
     { header: "Rec", key: "receptions" },
     { header: "Catch%", key: "catch_rate", numFmt: "0.0" },
@@ -886,6 +903,8 @@ async function main() {
     { header: "ADOT", key: "avg_depth_of_target", numFmt: "0.0" },
     { header: "YAC", key: "yards_after_catch" },
     { header: "YPRR", key: "yards_per_route_run", numFmt: "0.00" },
+    { header: "Contested Tgts", key: "contested_targets" },
+    { header: "Contested Rec", key: "contested_receptions" },
     { header: "Slot Snaps", key: "snap_counts_slot" },
     { header: "Wide Snaps", key: "snap_counts_wide" },
   ]);
@@ -896,6 +915,8 @@ async function main() {
     { header: "Route Grade", key: "grades_pass_route" },
     { header: "Block Grade", key: "grades_pass_block" },
   ], [
+    { header: "Snaps", key: "snap_counts_offense" },
+    { header: "Routes Run", key: "routes" },
     { header: "Tgts", key: "targets" },
     { header: "Rec", key: "receptions" },
     { header: "Catch%", key: "catch_rate", numFmt: "0.0" },
@@ -905,6 +926,8 @@ async function main() {
     { header: "YPRR", key: "yards_per_route_run", numFmt: "0.00" },
     { header: "Press Allowed", key: "pressures_allowed" },
     { header: "Inline Snaps", key: "snap_counts_inline" },
+    { header: "Slot Snaps", key: "snap_counts_slot" },
+    { header: "Wide Snaps", key: "snap_counts_wide" },
   ]);
 
   // RB — rushing_summary.csv
@@ -912,11 +935,14 @@ async function main() {
     { header: "Run Grade", key: "grades_run" },
     { header: "Offense", key: "grades_offense" },
     { header: "Pass Block", key: "grades_pass_block" },
+    { header: "Recv Grade", key: "grades_pass_route" },
   ], [
+    { header: "Snaps", key: "snap_counts_offense" },
     { header: "Carries", key: "attempts" },
     { header: "Yds", key: "yards" },
     { header: "TDs", key: "touchdowns" },
     { header: "Yds/Car", key: "yards_per_attempt", numFmt: "0.0" },
+    { header: "YAC", key: "yards_after_contact" },
     { header: "YAC/Car", key: "yards_after_contact_per_attempt", numFmt: "0.0" },
     { header: "Broken Tkls", key: "avoided_tackles" },
     { header: "Elusive Rtg", key: "elusive_rating", numFmt: "0.0" },
@@ -924,6 +950,9 @@ async function main() {
     { header: "Tgts", key: "targets" },
     { header: "Rec", key: "receptions" },
     { header: "Rec Yds", key: "receiving_yards" },
+    { header: "Slot Snaps", key: "snap_counts_slot" },
+    { header: "Backfield Snaps", key: "snap_counts_backfield" },
+    { header: "PR Snaps", key: "snap_counts_pass_rush" },
   ]);
 
   // OL — offense_blocking / offense_pass_blocking / offense_run_blocking
@@ -932,13 +961,19 @@ async function main() {
     { header: "Run Block", key: "grades_run_block" },
     { header: "Overall", key: "grades_offense" },
   ], [
+    { header: "Snaps", key: "snap_counts_offense" },
+    { header: "PB Snaps", key: "snap_counts_pass_play" },
+    { header: "RB Snaps", key: "snap_counts_run_play" },
     { header: "Press Allowed", key: "pressures_allowed" },
     { header: "Sacks Allow", key: "sacks_allowed", numFmt: "0.0" },
     { header: "Hits Allow", key: "hits_allowed" },
     { header: "Hurries Allow", key: "hurries_allowed" },
     { header: "Penalties", key: "penalties" },
-    { header: "PB Snaps", key: "snap_counts_pass_play" },
-    { header: "RB Snaps", key: "snap_counts_run_play" },
+    { header: "LT Snaps", key: "snap_counts_lt" },
+    { header: "LG Snaps", key: "snap_counts_lg" },
+    { header: "C Snaps", key: "snap_counts_c" },
+    { header: "RG Snaps", key: "snap_counts_rg" },
+    { header: "RT Snaps", key: "snap_counts_rt" },
   ]);
 
   // EDGE/DL — pass_rush_summary + run_defense_summary
@@ -946,14 +981,21 @@ async function main() {
     { header: "Pass Rush", key: "grades_pass_rush_defense" },
     { header: "Run Def", key: "grades_run_defense" },
     { header: "Defense", key: "grades_defense" },
+    { header: "Tackle", key: "grades_tackle" },
   ], [
+    { header: "Def Snaps", key: "snap_counts_defense" },
+    { header: "PR Snaps", key: "snap_counts_pass_rush" },
+    { header: "Run Def Snaps", key: "snap_counts_run_defense" },
     { header: "Pressures", key: "pressures" },
     { header: "Sacks", key: "sacks" },
     { header: "Hits", key: "hits" },
     { header: "Hurries", key: "hurries" },
     { header: "Run Stops", key: "stops" },
     { header: "Tackles", key: "tackles" },
+    { header: "Assists", key: "assists" },
     { header: "Missed Tkls", key: "missed_tackles" },
+    { header: "Stop%", key: "stop_pct", numFmt: "0.0" },
+    { header: "Press%", key: "pressure_pct", numFmt: "0.0" },
   ]);
 
   // LB — pass_rush + run_defense + coverage
@@ -964,6 +1006,11 @@ async function main() {
     { header: "Pass Rush", key: "grades_pass_rush_defense" },
     { header: "Tackle", key: "grades_tackle" },
   ], [
+    { header: "Def Snaps", key: "snap_counts_defense" },
+    { header: "Cov Snaps", key: "snap_counts_coverage" },
+    { header: "PR Snaps", key: "snap_counts_pass_rush" },
+    { header: "Run Def Snaps", key: "snap_counts_run_defense" },
+    { header: "Box Snaps", key: "snap_counts_box" },
     { header: "Tackles", key: "tackles" },
     { header: "Assists", key: "assists" },
     { header: "Stops", key: "stops" },
@@ -980,16 +1027,25 @@ async function main() {
     { header: "Coverage", key: "grades_coverage_defense" },
     { header: "Defense", key: "grades_defense" },
     { header: "Tackle", key: "grades_tackle" },
+    { header: "Pass Rush", key: "grades_pass_rush_defense" },
   ], [
+    { header: "Cov Snaps", key: "snap_counts_coverage" },
+    { header: "Slot Snaps", key: "snap_counts_slot_cb" },
+    { header: "Outside Snaps", key: "snap_counts_outside_cb" },
+    { header: "Pass Play Snaps", key: "snap_counts_pass_play" },
     { header: "Tgts Allow", key: "targets" },
     { header: "Rec Allow", key: "receptions" },
     { header: "Yds Allow", key: "yards" },
     { header: "INTs", key: "interceptions" },
     { header: "PBU", key: "pass_break_ups" },
-    { header: "QBR Allow", key: "qb_rating_against", numFmt: "0.0" },
-    { header: "Yds/CovSnap", key: "yards_per_coverage_snap", numFmt: "0.00" },
-    { header: "Cov Snaps", key: "snap_counts_coverage" },
+    { header: "Drops", key: "dropped_ints" },
+    { header: "Forced Inc", key: "forced_incompletes" },
     { header: "Forced Inc%", key: "forced_incompletion_rate", numFmt: "0.0" },
+    { header: "QBR Allow", key: "qb_rating_against", numFmt: "0.0" },
+    { header: "Catch%", key: "catch_rate", numFmt: "0.0" },
+    { header: "Yds/CovSnap", key: "yards_per_coverage_snap", numFmt: "0.00" },
+    { header: "Tackles", key: "tackles" },
+    { header: "Missed Tkls", key: "missed_tackles" },
   ]);
 
   // S — defense_coverage_summary
@@ -998,16 +1054,25 @@ async function main() {
     { header: "Run Def", key: "grades_run_defense" },
     { header: "Defense", key: "grades_defense" },
     { header: "Tackle", key: "grades_tackle" },
+    { header: "Pass Rush", key: "grades_pass_rush_defense" },
   ], [
+    { header: "Cov Snaps", key: "snap_counts_coverage" },
+    { header: "Pass Play Snaps", key: "snap_counts_pass_play" },
+    { header: "Box Snaps", key: "snap_counts_box" },
+    { header: "Slot Snaps", key: "snap_counts_slot" },
+    { header: "Deep Snaps", key: "snap_counts_deep" },
     { header: "Tackles", key: "tackles" },
     { header: "Assists", key: "assists" },
     { header: "Stops", key: "stops" },
+    { header: "Missed Tkls", key: "missed_tackles" },
     { header: "Tgts Allow", key: "targets" },
+    { header: "Rec Allow", key: "receptions" },
+    { header: "Yds Allow", key: "yards" },
     { header: "INTs", key: "interceptions" },
+    { header: "Drops", key: "dropped_ints" },
     { header: "PBU", key: "pass_break_ups" },
     { header: "QBR Allow", key: "qb_rating_against", numFmt: "0.0" },
-    { header: "Cov Snaps", key: "snap_counts_coverage" },
-    { header: "Missed Tkls", key: "missed_tackles" },
+    { header: "Yds/CovSnap", key: "yards_per_coverage_snap", numFmt: "0.00" },
   ]);
 
   await wb.xlsx.writeFile(outputPath);
