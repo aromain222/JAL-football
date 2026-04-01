@@ -182,8 +182,8 @@ async function main() {
 
     try {
       if (job.pffId) {
-        // Direct navigation via player_id
-        await navigateToSnapCounts(page, job.pffId);
+        // Direct navigation via player_id + name slug
+        await navigateToSnapCounts(page, job.name, job.pffId);
       } else {
         // Search by name
         await searchPlayerByName(page, job.name);
@@ -231,23 +231,31 @@ async function main() {
 // Navigation helpers
 // ---------------------------------------------------------------------------
 
-async function navigateToSnapCounts(page: import("playwright").Page, playerId: string) {
-  // Try direct snap-counts URL first
-  const url = `https://premium.pff.com/ncaa/players/${playerId}/snap-counts?season=2025&seasonType=REGPO`;
+async function navigateToSnapCounts(page: import("playwright").Page, playerName: string, playerId: string) {
+  // Build URL slug from player name: "Rueben Bain Jr" → "rueben-bain-jr"
+  const slug = playerName.toLowerCase()
+    .replace(/['']/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+
+  const url = `https://premium.pff.com/ncaa/players/2025/REGPO/${slug}/${playerId}/snaps-by-position`;
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 20000 });
   await page.waitForTimeout(1500);
 
-  // If redirected away or page shows error, try base player page and click snap counts tab
-  const currentUrl = page.url();
-  if (!currentUrl.includes(playerId)) {
-    throw new Error(`Redirected away from player page: ${currentUrl}`);
-  }
-
-  // Click "Snap Counts" tab if present
-  const snapTab = page.locator('a, button, [role="tab"]').filter({ hasText: /snap.?count/i }).first();
-  if (await snapTab.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await snapTab.click();
-    await page.waitForTimeout(1000);
+  // Enable "Detailed Positions" toggle if it's not already on
+  const toggle = page.locator('label:has-text("Detailed"), button:has-text("Detailed"), [role="switch"]').first();
+  if (await toggle.isVisible({ timeout: 3000 }).catch(() => false)) {
+    // Check if it's already enabled (aria-checked="true" or class contains "on"/"active"/"checked")
+    const isOn = await toggle.evaluate(el =>
+      el.getAttribute("aria-checked") === "true" ||
+      el.classList.contains("on") ||
+      el.classList.contains("active") ||
+      (el as HTMLInputElement).checked
+    ).catch(() => false);
+    if (!isOn) {
+      await toggle.click();
+      await page.waitForTimeout(800);
+    }
   }
 }
 
@@ -267,11 +275,24 @@ async function searchPlayerByName(page: import("playwright").Page, name: string)
   await firstResult.click();
   await page.waitForTimeout(1500);
 
-  // Click snap counts tab
-  const snapTab = page.locator('a, button, [role="tab"]').filter({ hasText: /snap.?count/i }).first();
+  // Navigate to snaps-by-position tab
+  const snapTab = page.locator('a[href*="snaps-by-position"], button, [role="tab"]')
+    .filter({ hasText: /snap/i }).first();
   if (await snapTab.isVisible({ timeout: 3000 }).catch(() => false)) {
     await snapTab.click();
     await page.waitForTimeout(1000);
+  }
+
+  // Enable "Detailed Positions" toggle
+  const toggle = page.locator('label:has-text("Detailed"), button:has-text("Detailed"), [role="switch"]').first();
+  if (await toggle.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const isOn = await toggle.evaluate(el =>
+      el.getAttribute("aria-checked") === "true" || (el as HTMLInputElement).checked
+    ).catch(() => false);
+    if (!isOn) {
+      await toggle.click();
+      await page.waitForTimeout(800);
+    }
   }
 }
 
