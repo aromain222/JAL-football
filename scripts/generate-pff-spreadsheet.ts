@@ -767,7 +767,9 @@ function readCSV(filePath: string): PffRow[] {
     const row: PffRow = {};
     headers.forEach((h, i) => {
       const raw = (vals[i] ?? "").trim().replace(/^"|"$/g, "");
-      row[h] = raw === "" ? null : isNaN(Number(raw)) ? raw : Number(raw);
+      // Strip non-printable/control characters from strings
+      const clean = raw.replace(/[^\x20-\x7E\u00A0-\uFFFC]/g, "").trim();
+      row[h] = clean === "" ? null : isNaN(Number(clean)) ? clean : Number(clean);
     });
     return row;
   });
