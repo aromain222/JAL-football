@@ -155,9 +155,9 @@ async function main() {
   const context = await browser.newContext({ acceptDownloads: true });
   const page    = await context.newPage();
 
-  // Log in automatically
-  console.log("\nOpening PFF login page...");
-  await page.goto("https://auth.pff.com/login", { waitUntil: "domcontentloaded", timeout: 30000 });
+  // Log in — navigate to premium first so PFF redirects us to its auth flow naturally
+  console.log("\nOpening PFF...");
+  await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(2000);
 
   // Fill email
