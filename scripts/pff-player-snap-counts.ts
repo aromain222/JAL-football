@@ -155,11 +155,43 @@ async function main() {
   const context = await browser.newContext({ acceptDownloads: true });
   const page    = await context.newPage();
 
-  // Open browser — user logs in manually
-  console.log("\nOpening PFF... please log in manually in the browser window.");
-  console.log("Waiting for you to reach premium.pff.com (up to 120 seconds)...");
+  // Log in automatically
+  console.log("\nOpening PFF login page...");
   await page.goto("https://auth.pff.com/login", { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
+  await page.waitForTimeout(2000);
+
+  // Fill email
+  const emailSelectors = [
+    'input[type="email"]',
+    'input[name="email"]',
+    'input[name="username"]',
+    'input[placeholder*="email" i]',
+    'input[autocomplete*="email" i]',
+  ];
+  for (const sel of emailSelectors) {
+    if (await page.locator(sel).isVisible({ timeout: 2000 }).catch(() => false)) {
+      await page.fill(sel, PFF_EMAIL);
+      break;
+    }
+  }
+
+  // Fill password
+  await page.fill('input[type="password"]', PFF_PASSWORD);
+  await page.waitForTimeout(500);
+
+  // Submit
+  const submitSelectors = ['button[type="submit"]', 'button:has-text("Sign in")', 'button:has-text("Log in")', 'button:has-text("Login")'];
+  for (const sel of submitSelectors) {
+    if (await page.locator(sel).isVisible({ timeout: 1000 }).catch(() => false)) {
+      await page.click(sel);
+      break;
+    }
+  }
+  // Fallback: press Enter
+  await page.keyboard.press("Enter");
+
+  // Wait for redirect to premium.pff.com
+  await page.waitForURL(/premium\.pff\.com/, { timeout: 30000 });
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
