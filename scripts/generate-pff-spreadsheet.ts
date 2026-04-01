@@ -1035,6 +1035,10 @@ async function main() {
     { header: "Missed Tkls", key: "missed_tackles" },
     { header: "Stop%", key: "stop_percent", numFmt: "0.0" },
     { header: "Forced Fmbl", key: "forced_fumbles" },
+    { header: "LHS PR Snaps", key: "lhs_pass_rush_snaps" },
+    { header: "LHS Pressures", key: "lhs_pressures" },
+    { header: "RHS PR Snaps", key: "rhs_pass_rush_snaps" },
+    { header: "RHS Pressures", key: "rhs_pressures" },
   ]);
 
   // LB — pass_rush_summary + run_defense_summary + defense_coverage_summary columns confirmed
