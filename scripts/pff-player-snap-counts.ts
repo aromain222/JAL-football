@@ -157,12 +157,33 @@ async function main() {
 
   // Log in
   console.log("\nLogging into PFF...");
-  await page.goto("https://auth.pff.com/login", { waitUntil: "networkidle" });
-  await page.fill('input[type="email"], input[name="email"]', PFF_EMAIL);
-  await page.fill('input[type="password"], input[name="password"]', PFF_PASSWORD);
-  await page.click('button[type="submit"]');
-  await page.waitForURL(/premium\.pff\.com/, { timeout: 15000 }).catch(() => {});
-  console.log("Logged in ✓");
+  await page.goto("https://auth.pff.com/login", { waitUntil: "networkidle", timeout: 30000 });
+  await page.waitForTimeout(2000);
+
+  // Try multiple selectors for email field
+  const emailSelectors = ['input[type="email"]', 'input[name="email"]', 'input[name="username"]', 'input[placeholder*="email" i]', 'input[id*="email" i]'];
+  let filled = false;
+  for (const sel of emailSelectors) {
+    if (await page.locator(sel).isVisible({ timeout: 2000 }).catch(() => false)) {
+      await page.fill(sel, PFF_EMAIL);
+      filled = true;
+      break;
+    }
+  }
+  if (!filled) throw new Error("Could not find email input on PFF login page");
+
+  const passSelectors = ['input[type="password"]', 'input[name="password"]', 'input[id*="password" i]'];
+  for (const sel of passSelectors) {
+    if (await page.locator(sel).isVisible({ timeout: 2000 }).catch(() => false)) {
+      await page.fill(sel, PFF_PASSWORD);
+      break;
+    }
+  }
+
+  await page.keyboard.press("Enter");
+  await page.waitForURL(/premium\.pff\.com/, { timeout: 20000 }).catch(() => {});
+  await page.waitForTimeout(2000);
+  console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
   let skipped    = 0;
