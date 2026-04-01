@@ -457,16 +457,17 @@ async function main() {
   });
 
   const POSITIONS_URL = `https://premium.pff.com/ncaa/positions/${PFF_SEASON}/REGPO`;
+  const INDEX_URL = `https://premium.pff.com/ncaa/positions/${PFF_SEASON}/AS`;
 
   // Step 1: Load positions page, handle login
-  console.log(`\nNavigating to ${POSITIONS_URL}...`);
-  await page.goto(POSITIONS_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
+  console.log(`\nNavigating to ${INDEX_URL}...`);
+  await page.goto(INDEX_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(2000);
   await ensureLoggedIn(page);
 
   // If login redirected us away, go back
   if (!page.url().includes("/positions/")) {
-    await page.goto(POSITIONS_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
+    await page.goto(INDEX_URL, { waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForTimeout(2000);
   }
 
