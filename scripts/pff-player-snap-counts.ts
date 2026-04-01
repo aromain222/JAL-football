@@ -213,6 +213,19 @@ async function main() {
       }
 
       // Wait for snap counts tab/section to be visible
+      // Take a debug screenshot of first player to confirm page layout
+      if (downloaded + failed === 0) {
+        await page.screenshot({ path: path.join(outDir, `debug_first_player.png`) });
+        console.log(`  📸 Debug screenshot saved: debug_first_player.png`);
+        // Log all text containing CSV or toggle
+        const allText = await page.evaluate(() =>
+          Array.from(document.querySelectorAll("a, button, label, [role='switch'], [role='button']"))
+            .map(el => `${el.tagName} | ${el.className} | ${el.textContent?.trim().slice(0, 50)}`)
+            .filter(t => t.toLowerCase().includes("csv") || t.toLowerCase().includes("detail") || t.toLowerCase().includes("snap"))
+        );
+        console.log("  Page elements:", allText.join("\n    "));
+      }
+
       const csvButton = await findCsvButton(page);
       if (!csvButton) {
         console.log(`  ⚠ No CSV button found — skipping`);
@@ -265,19 +278,22 @@ async function navigateToSnapCounts(page: import("playwright").Page, playerName:
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 20000 });
   await page.waitForTimeout(1500);
 
-  // Enable "Detailed Positions" toggle if it's not already on
-  const toggle = page.locator('label:has-text("Detailed"), button:has-text("Detailed"), [role="switch"]').first();
-  if (await toggle.isVisible({ timeout: 3000 }).catch(() => false)) {
-    // Check if it's already enabled (aria-checked="true" or class contains "on"/"active"/"checked")
-    const isOn = await toggle.evaluate(el =>
-      el.getAttribute("aria-checked") === "true" ||
-      el.classList.contains("on") ||
-      el.classList.contains("active") ||
-      (el as HTMLInputElement).checked
-    ).catch(() => false);
-    if (!isOn) {
-      await toggle.click();
+  // Enable "Detailed Positions" toggle
+  // Try multiple selectors — click the toggle area near "Detailed Positions" text
+  const toggleSelectors = [
+    'label:has-text("Detailed")',
+    '[role="switch"]',
+    'button:has-text("Detailed")',
+    'input[type="checkbox"]',
+    '[class*="toggle"]',
+    '[class*="switch"]',
+  ];
+  for (const sel of toggleSelectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await el.click().catch(() => {});
       await page.waitForTimeout(800);
+      break;
     }
   }
 }
@@ -320,21 +336,32 @@ async function searchPlayerByName(page: import("playwright").Page, name: string)
 }
 
 async function findCsvButton(page: import("playwright").Page) {
+  // Wait a bit for page to fully render
+  await page.waitForTimeout(2000);
+
   // Try various selectors PFF uses for CSV export
   const selectors = [
     'button:has-text("CSV")',
     'a:has-text("CSV")',
+    'span:has-text("CSV")',
     '[data-testid*="csv"]',
     '[aria-label*="CSV"]',
-    'button[class*="csv"]',
+    '[class*="csv"]',
     'a[href*=".csv"]',
     'button:has-text("Export")',
     'a:has-text("Export")',
+    '[class*="export"]',
+    '[class*="download"]',
   ];
   for (const sel of selectors) {
     const el = page.locator(sel).first();
-    if (await el.isVisible({ timeout: 1500 }).catch(() => false)) return el;
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) return el;
   }
+
+  // Last resort: find any element whose text is exactly "CSV"
+  const anyEl = page.getByText("CSV", { exact: true }).first();
+  if (await anyEl.isVisible({ timeout: 2000 }).catch(() => false)) return anyEl;
+
   return null;
 }
 
