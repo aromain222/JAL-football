@@ -155,36 +155,11 @@ async function main() {
   const context = await browser.newContext({ acceptDownloads: true });
   const page    = await context.newPage();
 
-  // Log in
-  console.log("\nOpening PFF login page...");
+  // Open browser — user logs in manually
+  console.log("\nOpening PFF... please log in manually in the browser window.");
+  console.log("Waiting for you to reach premium.pff.com (up to 120 seconds)...");
   await page.goto("https://auth.pff.com/login", { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.waitForTimeout(2000);
-
-  // Try automated login first
-  let loggedIn = false;
-  const emailSelectors = ['input[type="email"]', 'input[name="email"]', 'input[name="username"]', 'input[placeholder*="email" i]', 'input[autocomplete*="email" i]'];
-  for (const sel of emailSelectors) {
-    if (await page.locator(sel).isVisible({ timeout: 1500 }).catch(() => false)) {
-      await page.fill(sel, PFF_EMAIL);
-      const passEl = page.locator('input[type="password"]').first();
-      if (await passEl.isVisible({ timeout: 1500 }).catch(() => false)) {
-        await passEl.fill(PFF_PASSWORD);
-        await page.keyboard.press("Enter");
-        await page.waitForURL(/premium\.pff\.com/, { timeout: 15000 }).catch(() => {});
-        loggedIn = page.url().includes("premium.pff.com");
-      }
-      break;
-    }
-  }
-
-  // If automated login failed, ask user to log in manually in the browser window
-  if (!loggedIn && !page.url().includes("premium.pff.com")) {
-    console.log("\n⚠  Automated login failed. Please log in manually in the browser window.");
-    console.log("   Waiting up to 60 seconds for you to complete login...");
-    await page.waitForURL(/premium\.pff\.com/, { timeout: 60000 }).catch(() => {});
-  }
-
-  if (!page.url().includes("pff.com")) throw new Error("Login failed — not on PFF after waiting");
+  await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
