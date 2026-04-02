@@ -304,27 +304,73 @@ async function navigateToSnapCounts(page: import("playwright").Page, playerName:
 }
 
 async function searchPlayerByName(page: import("playwright").Page, name: string) {
-  // Navigate to player search
-  await page.goto(
-    `https://premium.pff.com/ncaa/players/search?q=${encodeURIComponent(name)}&season=2025&seasonType=REGPO`,
-    { waitUntil: "domcontentloaded", timeout: 20000 }
-  );
-  await page.waitForTimeout(1500);
-
-  // Click first result
-  const firstResult = page.locator('a[href*="/players/"]').first();
-  if (!await firstResult.isVisible({ timeout: 5000 }).catch(() => false)) {
-    throw new Error(`No search results for "${name}"`);
+  // Use PFF's global search bar — find the search input on the current page
+  // (stay on premium.pff.com and type into the search box)
+  if (!page.url().includes("premium.pff.com")) {
+    await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 20000 });
+    await page.waitForTimeout(1500);
   }
-  await firstResult.click();
-  await page.waitForTimeout(1500);
+
+  // Find the search input
+  const searchSelectors = [
+    'input[placeholder*="search" i]',
+    'input[type="search"]',
+    '[class*="search"] input',
+    '[class*="kyber-search"] input',
+    'input[name="q"]',
+    'input[aria-label*="search" i]',
+  ];
+
+  let searchInput: import("playwright").Locator | null = null;
+  for (const sel of searchSelectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
+      searchInput = el;
+      break;
+    }
+  }
+
+  if (!searchInput) {
+    throw new Error(`Could not find search bar for "${name}"`);
+  }
+
+  // Clear and type the player name
+  await searchInput.click();
+  await searchInput.fill("");
+  await searchInput.type(name, { delay: 60 });
+  await page.waitForTimeout(1500); // wait for dropdown results
+
+  // Click the first result that matches the name (prefer snaps-by-position link)
+  const resultLink = page.locator(`a[href*="/players/"]`).filter({ hasText: name.split(" ")[0] }).first();
+  if (await resultLink.isVisible({ timeout: 4000 }).catch(() => false)) {
+    const href = await resultLink.getAttribute("href") ?? "";
+    // If the result link goes directly to the player page, navigate to snaps tab
+    await resultLink.click();
+    await page.waitForTimeout(1500);
+  } else {
+    // Try any first search result
+    const anyResult = page.locator('a[href*="/players/"]').first();
+    if (!await anyResult.isVisible({ timeout: 3000 }).catch(() => false)) {
+      throw new Error(`No search results for "${name}"`);
+    }
+    await anyResult.click();
+    await page.waitForTimeout(1500);
+  }
 
   // Navigate to snaps-by-position tab
-  const snapTab = page.locator('a[href*="snaps-by-position"], button, [role="tab"]')
+  const snapTab = page.locator('[href*="snaps-by-position"], [role="tab"]')
     .filter({ hasText: /snap/i }).first();
   if (await snapTab.isVisible({ timeout: 3000 }).catch(() => false)) {
     await snapTab.click();
     await page.waitForTimeout(1000);
+  } else {
+    // Try navigating directly by modifying the URL
+    const currentUrl = page.url();
+    const snapUrl = currentUrl.replace(/\/[^/]+$/, "/snaps-by-position");
+    if (snapUrl !== currentUrl) {
+      await page.goto(snapUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
+      await page.waitForTimeout(1000);
+    }
   }
 
   await enableDetailedPositions(page);
