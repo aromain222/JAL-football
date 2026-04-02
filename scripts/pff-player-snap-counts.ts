@@ -345,6 +345,15 @@ async function enableDetailedPositions(page: import("playwright").Page) {
     return;
   }
 
+  // Try kyber toggle component (PFF uses kyber- CSS classes)
+  const kyberToggle = page.locator('[class*="kyber"][class*="toggle"], [class*="kyber"][class*="switch"]').first();
+  if (await kyberToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await kyberToggle.click();
+    await page.waitForTimeout(800);
+    console.log("  ✓ Detailed Positions enabled (kyber toggle)");
+    return;
+  }
+
   // Try label containing "Detailed"
   const labelEl = page.locator('label').filter({ hasText: /detailed/i }).first();
   if (await labelEl.isVisible({ timeout: 2000 }).catch(() => false)) {
@@ -354,7 +363,7 @@ async function enableDetailedPositions(page: import("playwright").Page) {
     return;
   }
 
-  // Try any element with "Detailed" text near a checkbox/toggle
+  // Try any element with "Detailed" text
   const textEl = page.getByText(/detailed positions/i).first();
   if (await textEl.isVisible({ timeout: 2000 }).catch(() => false)) {
     await textEl.click();
@@ -363,15 +372,22 @@ async function enableDetailedPositions(page: import("playwright").Page) {
     return;
   }
 
-  // Try checkbox fallback
-  const checkbox = page.locator('input[type="checkbox"]').first();
-  if (await checkbox.isVisible({ timeout: 1000 }).catch(() => false)) {
-    const checked = await checkbox.isChecked().catch(() => false);
-    if (!checked) {
-      await checkbox.check();
-      await page.waitForTimeout(800);
-      console.log("  ✓ Detailed Positions enabled (checkbox)");
-    }
+  // JS fallback: find element containing "Detailed" text and click its nearest toggle ancestor
+  const clicked = await page.evaluate(() => {
+    const all = Array.from(document.querySelectorAll("*"));
+    const el = all.find(e =>
+      e.textContent?.toLowerCase().includes("detailed") &&
+      (e.tagName === "LABEL" || e.tagName === "BUTTON" ||
+       e.getAttribute("role") === "switch" || e.getAttribute("role") === "checkbox" ||
+       e.className?.toString().toLowerCase().includes("toggle") ||
+       e.className?.toString().toLowerCase().includes("switch"))
+    );
+    if (el) { (el as HTMLElement).click(); return true; }
+    return false;
+  });
+  if (clicked) {
+    await page.waitForTimeout(800);
+    console.log("  ✓ Detailed Positions enabled (JS fallback)");
     return;
   }
 
