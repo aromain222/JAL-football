@@ -377,66 +377,71 @@ async function searchPlayerByName(page: import("playwright").Page, name: string)
 }
 
 async function enableDetailedPositions(page: import("playwright").Page) {
-  // Try role=switch first (most reliable for toggle components)
-  const switchEl = page.getByRole("switch").first();
-  if (await switchEl.isVisible({ timeout: 3000 }).catch(() => false)) {
-    const isOn = await switchEl.getAttribute("aria-checked").catch(() => null);
-    if (isOn !== "true") {
-      await switchEl.click();
-      await page.waitForTimeout(800);
-      console.log("  ✓ Detailed Positions enabled (role=switch)");
-    } else {
-      console.log("  ✓ Detailed Positions already on");
-    }
-    return;
-  }
-
-  // Try kyber toggle component (PFF uses kyber- CSS classes)
-  const kyberToggle = page.locator('[class*="kyber"][class*="toggle"], [class*="kyber"][class*="switch"]').first();
-  if (await kyberToggle.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await kyberToggle.click();
-    await page.waitForTimeout(800);
-    console.log("  ✓ Detailed Positions enabled (kyber toggle)");
-    return;
-  }
-
-  // Try label containing "Detailed"
-  const labelEl = page.locator('label').filter({ hasText: /detailed/i }).first();
-  if (await labelEl.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await labelEl.click();
-    await page.waitForTimeout(800);
-    console.log("  ✓ Detailed Positions enabled (label)");
-    return;
-  }
-
-  // Try any element with "Detailed" text
-  const textEl = page.getByText(/detailed positions/i).first();
-  if (await textEl.isVisible({ timeout: 2000 }).catch(() => false)) {
-    await textEl.click();
-    await page.waitForTimeout(800);
-    console.log("  ✓ Detailed Positions enabled (text click)");
-    return;
-  }
-
-  // JS fallback: find element containing "Detailed" text and click its nearest toggle ancestor
+  // From the screenshot: toggle is a slider switch sibling to "Detailed Positions" text.
+  // Walk up from the text node to find the container, then click the toggle within it.
   const clicked = await page.evaluate(() => {
-    const all = Array.from(document.querySelectorAll("*"));
-    const el = all.find(e =>
-      e.textContent?.toLowerCase().includes("detailed") &&
-      (e.tagName === "LABEL" || e.tagName === "BUTTON" ||
-       e.getAttribute("role") === "switch" || e.getAttribute("role") === "checkbox" ||
-       e.className?.toString().toLowerCase().includes("toggle") ||
-       e.className?.toString().toLowerCase().includes("switch"))
-    );
-    if (el) { (el as HTMLElement).click(); return true; }
-    return false;
-  });
-  if (clicked) {
-    await page.waitForTimeout(800);
-    console.log("  ✓ Detailed Positions enabled (JS fallback)");
-    return;
-  }
+    // Find the text node with "Detailed Positions"
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    let node: Node | null;
+    let labelEl: Element | null = null;
+    while ((node = walker.nextNode())) {
+      if (node.textContent?.trim().toLowerCase().includes("detailed positions")) {
+        labelEl = node.parentElement;
+        break;
+      }
+    }
+    if (!labelEl) return "not_found";
 
+    // Walk up to find a container that has a sibling or child toggle
+    let container: Element | null = labelEl;
+    for (let i = 0; i < 5; i++) {
+      if (!container) break;
+      // Look for toggle/switch inside this container
+      const toggle = container.querySelector(
+        '[role="switch"], input[type="checkbox"], button[class*="toggle"], ' +
+        'button[class*="switch"], [class*="toggle-track"], [class*="toggle-thumb"], ' +
+        '[class*="switch-track"], [class*="switch-thumb"], svg'
+      );
+      if (toggle && toggle !== labelEl) {
+        (toggle as HTMLElement).click();
+        return "clicked_child:" + toggle.tagName + "." + toggle.className.toString().slice(0, 40);
+      }
+      // Also check siblings of the label element's parent
+      const parent = container.parentElement;
+      if (parent) {
+        for (const sibling of Array.from(parent.children)) {
+          if (sibling === container) continue;
+          if (
+            sibling.getAttribute("role") === "switch" ||
+            sibling.tagName === "BUTTON" ||
+            sibling.className?.toString().toLowerCase().includes("toggle") ||
+            sibling.className?.toString().toLowerCase().includes("switch")
+          ) {
+            (sibling as HTMLElement).click();
+            return "clicked_sibling:" + sibling.tagName + "." + sibling.className.toString().slice(0, 40);
+          }
+          // Check children of siblings too
+          const inner = sibling.querySelector('[role="switch"], [class*="toggle"], [class*="switch"]');
+          if (inner) {
+            (inner as HTMLElement).click();
+            return "clicked_sibling_child:" + inner.tagName + "." + inner.className.toString().slice(0, 40);
+          }
+        }
+      }
+      container = parent;
+    }
+    // Last resort: click the label/parent itself
+    (labelEl as HTMLElement).click();
+    return "clicked_label";
+  });
+
+  if (clicked && clicked !== "not_found") {
+    await page.waitForTimeout(800);
+    console.log(`  ✓ Detailed Positions enabled (${clicked})`);
+  } else {
+    console.log("  ⚠ Could not find Detailed Positions toggle");
+  }
+}
   console.log("  ⚠ Could not find Detailed Positions toggle");
 }
 
