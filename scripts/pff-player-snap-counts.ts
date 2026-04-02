@@ -38,6 +38,13 @@ const csvDir  = getArg("--csv-dir") ?? path.join(os.homedir(), "Desktop", "trans
 const outDir  = path.resolve(getArg("--out") ?? path.join("data", "pff", "snap-counts"));
 const portalCsv = getArg("--portal-csv") ?? path.join(os.homedir(), "Desktop", "players_rows (5).csv");
 
+// Optional position filter: --positions "DL,LB,OL" (comma-separated, case-insensitive)
+const positionFilter: Set<string> | null = (() => {
+  const raw = getArg("--positions");
+  if (!raw) return null;
+  return new Set(raw.split(",").map(p => p.trim().toUpperCase()));
+})();
+
 fs.mkdirSync(outDir, { recursive: true });
 
 // ---------------------------------------------------------------------------
@@ -138,10 +145,26 @@ async function main() {
 
   // Match portal players to PFF ids
   type PlayerJob = { name: string; position: string; school: string; pffId: string | null };
-  const jobs: PlayerJob[] = portalPlayers.map(p => ({
+  let jobs: PlayerJob[] = portalPlayers.map(p => ({
     ...p,
     pffId: pffIdMap.get(normalizeName(p.name)) ?? null,
   }));
+
+  // Apply position filter if provided
+  if (positionFilter) {
+    const before = jobs.length;
+    jobs = jobs.filter(j => {
+      const pos = j.position.toUpperCase();
+      // Match exact or prefix (e.g. "DL" matches "DT", "DE", "NT", "ED")
+      return [...positionFilter].some(f =>
+        pos === f || pos.startsWith(f) ||
+        (f === "DL" && /^(DT|DE|NT|ED|IDL|DL)/.test(pos)) ||
+        (f === "LB" && /^(LB|ILB|OLB|MLB|WLB|SLB)/.test(pos)) ||
+        (f === "OL" && /^(OL|OT|OG|C|LT|RT|LG|RG)/.test(pos))
+      );
+    });
+    console.log(`Position filter (${[...positionFilter].join(",")}): ${jobs.length} of ${before} players`);
+  }
 
   const matched   = jobs.filter(j => j.pffId);
   const unmatched = jobs.filter(j => !j.pffId);
