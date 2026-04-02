@@ -442,8 +442,6 @@ async function enableDetailedPositions(page: import("playwright").Page) {
     console.log("  ⚠ Could not find Detailed Positions toggle");
   }
 }
-  console.log("  ⚠ Could not find Detailed Positions toggle");
-}
 
 async function findCsvButton(page: import("playwright").Page) {
   // Wait a bit for page to fully render
