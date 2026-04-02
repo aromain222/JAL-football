@@ -275,24 +275,9 @@ async function navigateToSnapCounts(page: import("playwright").Page, playerName:
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 20000 });
   await page.waitForTimeout(1500);
 
-  // Enable "Detailed Positions" toggle
-  // Try multiple selectors — click the toggle area near "Detailed Positions" text
-  const toggleSelectors = [
-    'label:has-text("Detailed")',
-    '[role="switch"]',
-    'button:has-text("Detailed")',
-    'input[type="checkbox"]',
-    '[class*="toggle"]',
-    '[class*="switch"]',
-  ];
-  for (const sel of toggleSelectors) {
-    const el = page.locator(sel).first();
-    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await el.click().catch(() => {});
-      await page.waitForTimeout(800);
-      break;
-    }
-  }
+  // Enable "Detailed Positions" toggle — wait for page to fully render first
+  await page.waitForTimeout(2500);
+  await enableDetailedPositions(page);
 }
 
 async function searchPlayerByName(page: import("playwright").Page, name: string) {
@@ -319,17 +304,55 @@ async function searchPlayerByName(page: import("playwright").Page, name: string)
     await page.waitForTimeout(1000);
   }
 
-  // Enable "Detailed Positions" toggle
-  const toggle = page.locator('label:has-text("Detailed"), button:has-text("Detailed"), [role="switch"]').first();
-  if (await toggle.isVisible({ timeout: 3000 }).catch(() => false)) {
-    const isOn = await toggle.evaluate(el =>
-      el.getAttribute("aria-checked") === "true" || (el as HTMLInputElement).checked
-    ).catch(() => false);
-    if (!isOn) {
-      await toggle.click();
+  await enableDetailedPositions(page);
+}
+
+async function enableDetailedPositions(page: import("playwright").Page) {
+  // Try role=switch first (most reliable for toggle components)
+  const switchEl = page.getByRole("switch").first();
+  if (await switchEl.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const isOn = await switchEl.getAttribute("aria-checked").catch(() => null);
+    if (isOn !== "true") {
+      await switchEl.click();
       await page.waitForTimeout(800);
+      console.log("  ✓ Detailed Positions enabled (role=switch)");
+    } else {
+      console.log("  ✓ Detailed Positions already on");
     }
+    return;
   }
+
+  // Try label containing "Detailed"
+  const labelEl = page.locator('label').filter({ hasText: /detailed/i }).first();
+  if (await labelEl.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await labelEl.click();
+    await page.waitForTimeout(800);
+    console.log("  ✓ Detailed Positions enabled (label)");
+    return;
+  }
+
+  // Try any element with "Detailed" text near a checkbox/toggle
+  const textEl = page.getByText(/detailed positions/i).first();
+  if (await textEl.isVisible({ timeout: 2000 }).catch(() => false)) {
+    await textEl.click();
+    await page.waitForTimeout(800);
+    console.log("  ✓ Detailed Positions enabled (text click)");
+    return;
+  }
+
+  // Try checkbox fallback
+  const checkbox = page.locator('input[type="checkbox"]').first();
+  if (await checkbox.isVisible({ timeout: 1000 }).catch(() => false)) {
+    const checked = await checkbox.isChecked().catch(() => false);
+    if (!checked) {
+      await checkbox.check();
+      await page.waitForTimeout(800);
+      console.log("  ✓ Detailed Positions enabled (checkbox)");
+    }
+    return;
+  }
+
+  console.log("  ⚠ Could not find Detailed Positions toggle");
 }
 
 async function findCsvButton(page: import("playwright").Page) {
