@@ -389,34 +389,41 @@ async function searchPlayerByName(page: import("playwright").Page, name: string)
   // Type the player name
   await searchInput.click();
   await searchInput.fill("");
-  await searchInput.type(name, { delay: 60 });
-  await page.waitForTimeout(1500);
+  await searchInput.type(name, { delay: 80 });
+  await page.waitForTimeout(2000); // wait for autocomplete dropdown
 
-  // Click the first matching result
-  const resultLink = page.locator('a[href*="/players/"]').filter({ hasText: name.split(" ")[0] }).first();
-  if (await resultLink.isVisible({ timeout: 4000 }).catch(() => false)) {
-    await resultLink.click();
-    await page.waitForTimeout(1500);
-  } else {
-    const anyResult = page.locator('a[href*="/players/"]').first();
-    if (!await anyResult.isVisible({ timeout: 3000 }).catch(() => false)) {
-      throw new Error(`No search results for "${name}"`);
+  // Click first result — try multiple selectors for PFF's dropdown
+  const resultSelectors = [
+    `a[href*="/players/"]:has-text("${name.split(" ")[0]}")`,
+    `li:has-text("${name.split(" ")[0]}")`,
+    `[class*="option"]:has-text("${name.split(" ")[0]}")`,
+    `[class*="result"]:has-text("${name.split(" ")[0]}")`,
+    `[class*="suggestion"]:has-text("${name.split(" ")[0]}")`,
+    `[class*="dropdown"] li`,
+    `[class*="autocomplete"] li`,
+    `[role="option"]`,
+    `a[href*="/players/"]`,
+  ];
+  let clicked = false;
+  for (const sel of resultSelectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await el.click();
+      clicked = true;
+      await page.waitForTimeout(1500);
+      break;
     }
-    await anyResult.click();
-    await page.waitForTimeout(1500);
   }
+  if (!clicked) throw new Error(`No search results found for "${name}"`);
 
-  // Navigate to snaps-by-position tab
-  const snapTab = page.locator('[href*="snaps-by-position"], [role="tab"]')
-    .filter({ hasText: /snap/i }).first();
-  if (await snapTab.isVisible({ timeout: 3000 }).catch(() => false)) {
-    await snapTab.click();
-    await page.waitForTimeout(1000);
-  } else {
-    // Try navigating directly by modifying the URL
-    const currentUrl = page.url();
-    const snapUrl = currentUrl.replace(/\/[^/]+$/, "/snaps-by-position");
-    if (snapUrl !== currentUrl) {
+  // Navigate to snaps-by-position — append to current URL if needed
+  if (!page.url().includes("snaps-by-position")) {
+    const snapTab = page.locator('[href*="snaps-by-position"], [role="tab"]').filter({ hasText: /snap/i }).first();
+    if (await snapTab.isVisible({ timeout: 3000 }).catch(() => false)) {
+      await snapTab.click();
+      await page.waitForTimeout(1000);
+    } else {
+      const snapUrl = page.url().replace(/\/[^/]+$/, "/snaps-by-position");
       await page.goto(snapUrl, { waitUntil: "domcontentloaded", timeout: 15000 });
       await page.waitForTimeout(1000);
     }
@@ -493,10 +500,9 @@ async function enableDetailedPositions(page: import("playwright").Page) {
 }
 
 async function findCsvButton(page: import("playwright").Page) {
-  // Wait a bit for page to fully render
   await page.waitForTimeout(2000);
 
-  // Try various selectors PFF uses for CSV export
+  // Try Playwright selectors first
   const selectors = [
     'button:has-text("CSV")',
     'a:has-text("CSV")',
@@ -512,7 +518,17 @@ async function findCsvButton(page: import("playwright").Page) {
   ];
   for (const sel of selectors) {
     const el = page.locator(sel).first();
-    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) return el;
+    if (await el.isVisible({ timeout: 1000 }).catch(() => false)) return el;
+  }
+
+  // JS fallback: find any clickable element whose text is "CSV"
+  const csvHandle = await page.evaluateHandle(() => {
+    const els = Array.from(document.querySelectorAll("a, button, span, div"));
+    return els.find(el => el.textContent?.trim() === "CSV") ?? null;
+  });
+  if (csvHandle) {
+    const el = csvHandle.asElement();
+    if (el) return page.locator(`text=CSV`).first();
   }
 
   // Last resort: find any element whose text is exactly "CSV"
