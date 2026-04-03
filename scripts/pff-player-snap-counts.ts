@@ -180,8 +180,12 @@ async function main() {
 
   // Log in — navigate to premium first so PFF redirects us to its auth flow naturally
   console.log("\nOpening PFF...");
-  await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.waitForTimeout(2000);
+  await page.goto("https://premium.pff.com", { waitUntil: "networkidle", timeout: 30000 }).catch(() =>
+    page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 })
+  );
+  // Wait for any JS-driven auth redirect to fully resolve
+  await page.waitForTimeout(4000);
+  console.log(`Page after load: ${page.url()}`);
 
   // Fill email if login form is present (step 1 of two-step auth)
   const emailSelectors = [
@@ -193,7 +197,7 @@ async function main() {
   ];
   let emailFilled = false;
   for (const sel of emailSelectors) {
-    if (await page.locator(sel).isVisible({ timeout: 4000 }).catch(() => false)) {
+    if (await page.locator(sel).isVisible({ timeout: 10000 }).catch(() => false)) {
       await page.fill(sel, PFF_EMAIL);
       await page.keyboard.press("Enter"); // submit email to reveal password field
       await page.waitForTimeout(2000);
