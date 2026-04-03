@@ -178,25 +178,36 @@ async function main() {
   const context = await browser.newContext({ acceptDownloads: true });
   const page    = await context.newPage();
 
-  // Navigate to an NCAA player page to force auth check
+  // Navigate to NCAA players page
   console.log("\nOpening PFF...");
   await page.goto("https://premium.pff.com/ncaa/players/2025/REGPO", { waitUntil: "domcontentloaded", timeout: 30000 });
-  await page.waitForTimeout(4000);
-  console.log(`Page after load: ${page.url()}`);
+  await page.waitForTimeout(3000);
 
-  // If on an auth/login page, fill credentials
-  const landedUrl = page.url();
-  if (landedUrl.includes("auth.") || landedUrl.includes("login") || landedUrl.includes("signin")) {
-    console.log("Login page detected — filling credentials...");
+  // PFF shows pages without auth but with lock icons — detect by checking for locks or Sign In button
+  const isLoggedIn = await page.evaluate(() => {
+    const locks = document.querySelectorAll('[class*="lock"], [aria-label*="lock" i]');
+    if (locks.length > 0) return false;
+    const signIn = Array.from(document.querySelectorAll("a, button")).find(el =>
+      /sign\s*in|log\s*in/i.test(el.textContent ?? "")
+    );
+    return !signIn;
+  });
 
-    // Step 1: fill email
-    const emailSelectors = [
-      'input[type="email"]',
-      'input[name="email"]',
-      'input[name="username"]',
-      'input[placeholder*="email" i]',
-      'input[autocomplete*="email" i]',
-    ];
+  if (!isLoggedIn) {
+    console.log("Not logged in — filling credentials...");
+
+    // Click sign-in link if present in the nav
+    const signInLink = page.getByRole("link", { name: /sign in/i }).or(page.getByRole("button", { name: /sign in/i })).first();
+    if (await signInLink.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await signInLink.click();
+      await page.waitForTimeout(2000);
+    } else {
+      await page.goto("https://premium.pff.com/login", { waitUntil: "domcontentloaded", timeout: 20000 });
+      await page.waitForTimeout(2000);
+    }
+
+    // Fill email (step 1)
+    const emailSelectors = ['input[type="email"]', 'input[name="email"]', 'input[name="username"]', 'input[placeholder*="email" i]'];
     for (const sel of emailSelectors) {
       if (await page.locator(sel).isVisible({ timeout: 5000 }).catch(() => false)) {
         await page.fill(sel, PFF_EMAIL);
@@ -206,24 +217,27 @@ async function main() {
       }
     }
 
-    // Step 2: fill password (appears after email submitted)
+    // Fill password (step 2 — appears after email submitted)
     if (await page.locator('input[type="password"]').isVisible({ timeout: 8000 }).catch(() => false)) {
       await page.fill('input[type="password"]', PFF_PASSWORD);
       await page.waitForTimeout(500);
       console.log("Credentials filled — please click Sign In in the browser...");
     } else {
-      console.log("Password field not found — please complete login manually...");
+      console.log("Please complete login manually in the browser...");
     }
-  } else {
-    console.log("Session active — no login needed.");
+
+    // Wait until back on premium.pff.com with no lock icons (= successfully logged in)
+    console.log("Waiting for successful login (watching for lock icons to disappear)...");
+    await page.waitForFunction(
+      () => {
+        if (!window.location.hostname.includes("premium.pff.com")) return false;
+        const locks = document.querySelectorAll('[class*="lock"]');
+        return locks.length === 0;
+      },
+      { timeout: 120000, polling: 1500 }
+    );
   }
 
-  // Hard block: do NOT proceed until browser is on premium.pff.com
-  console.log("Waiting until logged in to premium.pff.com...");
-  await page.waitForFunction(
-    () => window.location.hostname === "premium.pff.com",
-    { timeout: 120000, polling: 1000 }
-  );
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
