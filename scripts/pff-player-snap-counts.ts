@@ -183,28 +183,37 @@ async function main() {
   await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(2000);
 
-  // Fill email
-  const emailSelectors = [
-    'input[type="email"]',
-    'input[name="email"]',
-    'input[name="username"]',
-    'input[placeholder*="email" i]',
-    'input[autocomplete*="email" i]',
-  ];
-  for (const sel of emailSelectors) {
-    if (await page.locator(sel).isVisible({ timeout: 2000 }).catch(() => false)) {
-      await page.fill(sel, PFF_EMAIL);
-      break;
+  // If already logged in, skip login flow
+  if (!page.url().includes("premium.pff.com") || page.url().includes("auth.")) {
+    // Fill email (step 1)
+    const emailSelectors = [
+      'input[type="email"]',
+      'input[name="email"]',
+      'input[name="username"]',
+      'input[placeholder*="email" i]',
+      'input[autocomplete*="email" i]',
+    ];
+    for (const sel of emailSelectors) {
+      if (await page.locator(sel).isVisible({ timeout: 3000 }).catch(() => false)) {
+        await page.fill(sel, PFF_EMAIL);
+        await page.keyboard.press("Enter"); // submit email to reveal password field
+        await page.waitForTimeout(1500);
+        break;
+      }
+    }
+
+    // Fill password (step 2 — appears after email is submitted)
+    const passVisible = await page.locator('input[type="password"]').isVisible({ timeout: 8000 }).catch(() => false);
+    if (passVisible) {
+      await page.fill('input[type="password"]', PFF_PASSWORD);
+      await page.waitForTimeout(500);
+      console.log("Credentials filled. Please click the Sign In button in the browser...");
+    } else {
+      console.log("Could not fill password — please log in manually in the browser...");
     }
   }
 
-  // Fill password
-  await page.fill('input[type="password"]', PFF_PASSWORD);
-  await page.waitForTimeout(500);
-
-  // Credentials filled — user clicks Sign In
-  console.log("Credentials filled. Please click the Sign In button in the browser...");
-  await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
+  await page.waitForURL(/premium\.pff\.com(?!.*auth)/, { timeout: 120000 });
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
