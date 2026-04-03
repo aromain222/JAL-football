@@ -213,7 +213,7 @@ async function main() {
     }
   }
 
-  await page.waitForURL(/premium\.pff\.com(?!.*auth)/, { timeout: 120000 });
+  await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
