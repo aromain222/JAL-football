@@ -221,7 +221,18 @@ async function main() {
     if (await page.locator('input[type="password"]').isVisible({ timeout: 8000 }).catch(() => false)) {
       await page.fill('input[type="password"]', PFF_PASSWORD);
       await page.waitForTimeout(500);
-      console.log("Credentials filled — please click Sign In in the browser...");
+      // Click the sign-in button
+      const submitSelectors = ['button[type="submit"]', 'button:has-text("Sign in")', 'button:has-text("Log in")', 'button:has-text("Continue")'];
+      let clicked = false;
+      for (const sel of submitSelectors) {
+        if (await page.locator(sel).isVisible({ timeout: 1000 }).catch(() => false)) {
+          await page.click(sel);
+          clicked = true;
+          break;
+        }
+      }
+      if (!clicked) await page.keyboard.press("Enter");
+      console.log("Signing in...");
     } else {
       console.log("Please complete login manually in the browser...");
     }
