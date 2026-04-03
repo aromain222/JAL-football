@@ -178,49 +178,53 @@ async function main() {
   const context = await browser.newContext({ acceptDownloads: true });
   const page    = await context.newPage();
 
-  // Log in — navigate to premium first so PFF redirects us to its auth flow naturally
+  // Log in — navigate to premium first so PFF redirects to auth
   console.log("\nOpening PFF...");
-  await page.goto("https://premium.pff.com", { waitUntil: "networkidle", timeout: 30000 }).catch(() =>
-    page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 })
-  );
-  // Wait for any JS-driven auth redirect to fully resolve
-  await page.waitForTimeout(4000);
+  await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 });
+  // Wait for JS-driven auth redirect to finish
+  await page.waitForTimeout(5000);
   console.log(`Page after load: ${page.url()}`);
 
-  // Fill email if login form is present (step 1 of two-step auth)
-  const emailSelectors = [
-    'input[type="email"]',
-    'input[name="email"]',
-    'input[name="username"]',
-    'input[placeholder*="email" i]',
-    'input[autocomplete*="email" i]',
-  ];
-  let emailFilled = false;
-  for (const sel of emailSelectors) {
-    if (await page.locator(sel).isVisible({ timeout: 10000 }).catch(() => false)) {
-      await page.fill(sel, PFF_EMAIL);
-      await page.keyboard.press("Enter"); // submit email to reveal password field
-      await page.waitForTimeout(2000);
-      emailFilled = true;
-      break;
-    }
-  }
+  // If redirected to auth page, fill credentials
+  const currentUrl = page.url();
+  if (currentUrl.includes("auth.pff.com") || currentUrl.includes("/login") || currentUrl.includes("/signin")) {
+    console.log("Login page detected — filling credentials...");
 
-  if (emailFilled) {
-    // Fill password (step 2 — appears after email is submitted)
-    const passVisible = await page.locator('input[type="password"]').isVisible({ timeout: 8000 }).catch(() => false);
-    if (passVisible) {
+    // Step 1: fill email
+    const emailSelectors = [
+      'input[type="email"]',
+      'input[name="email"]',
+      'input[name="username"]',
+      'input[placeholder*="email" i]',
+      'input[autocomplete*="email" i]',
+    ];
+    for (const sel of emailSelectors) {
+      if (await page.locator(sel).isVisible({ timeout: 5000 }).catch(() => false)) {
+        await page.fill(sel, PFF_EMAIL);
+        await page.keyboard.press("Enter");
+        await page.waitForTimeout(2000);
+        break;
+      }
+    }
+
+    // Step 2: fill password (appears after email submitted)
+    if (await page.locator('input[type="password"]').isVisible({ timeout: 8000 }).catch(() => false)) {
       await page.fill('input[type="password"]', PFF_PASSWORD);
       await page.waitForTimeout(500);
-      console.log("Credentials filled. Please click the Sign In button in the browser...");
+      console.log("Credentials filled — please click Sign In in the browser...");
     } else {
-      console.log("Could not find password field — please log in manually in the browser...");
+      console.log("Password field not found — please complete login manually...");
     }
   } else {
-    console.log("No login form found — already logged in or please log in manually...");
+    console.log("Already on PFF — skipping login.");
   }
 
-  await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
+  // Wait here until user is fully on premium.pff.com (not on auth page)
+  console.log("Waiting for you to be logged in...");
+  await page.waitForFunction(
+    () => window.location.hostname === "premium.pff.com",
+    { timeout: 120000, polling: 1000 }
+  );
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
