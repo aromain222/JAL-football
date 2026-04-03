@@ -183,25 +183,26 @@ async function main() {
   await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(2000);
 
-  // If already logged in, skip login flow
-  if (!page.url().includes("premium.pff.com") || page.url().includes("auth.")) {
-    // Fill email (step 1)
-    const emailSelectors = [
-      'input[type="email"]',
-      'input[name="email"]',
-      'input[name="username"]',
-      'input[placeholder*="email" i]',
-      'input[autocomplete*="email" i]',
-    ];
-    for (const sel of emailSelectors) {
-      if (await page.locator(sel).isVisible({ timeout: 3000 }).catch(() => false)) {
-        await page.fill(sel, PFF_EMAIL);
-        await page.keyboard.press("Enter"); // submit email to reveal password field
-        await page.waitForTimeout(1500);
-        break;
-      }
+  // Fill email if login form is present (step 1 of two-step auth)
+  const emailSelectors = [
+    'input[type="email"]',
+    'input[name="email"]',
+    'input[name="username"]',
+    'input[placeholder*="email" i]',
+    'input[autocomplete*="email" i]',
+  ];
+  let emailFilled = false;
+  for (const sel of emailSelectors) {
+    if (await page.locator(sel).isVisible({ timeout: 4000 }).catch(() => false)) {
+      await page.fill(sel, PFF_EMAIL);
+      await page.keyboard.press("Enter"); // submit email to reveal password field
+      await page.waitForTimeout(2000);
+      emailFilled = true;
+      break;
     }
+  }
 
+  if (emailFilled) {
     // Fill password (step 2 — appears after email is submitted)
     const passVisible = await page.locator('input[type="password"]').isVisible({ timeout: 8000 }).catch(() => false);
     if (passVisible) {
@@ -209,8 +210,10 @@ async function main() {
       await page.waitForTimeout(500);
       console.log("Credentials filled. Please click the Sign In button in the browser...");
     } else {
-      console.log("Could not fill password — please log in manually in the browser...");
+      console.log("Could not find password field — please log in manually in the browser...");
     }
+  } else {
+    console.log("No login form found — already logged in or please log in manually...");
   }
 
   await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
