@@ -178,16 +178,15 @@ async function main() {
   const context = await browser.newContext({ acceptDownloads: true });
   const page    = await context.newPage();
 
-  // Log in — navigate to premium first so PFF redirects to auth
+  // Navigate to an NCAA player page to force auth check
   console.log("\nOpening PFF...");
-  await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 });
-  // Wait for JS-driven auth redirect to finish
-  await page.waitForTimeout(5000);
+  await page.goto("https://premium.pff.com/ncaa/players/2025/REGPO", { waitUntil: "domcontentloaded", timeout: 30000 });
+  await page.waitForTimeout(4000);
   console.log(`Page after load: ${page.url()}`);
 
-  // If redirected to auth page, fill credentials
-  const currentUrl = page.url();
-  if (currentUrl.includes("auth.pff.com") || currentUrl.includes("/login") || currentUrl.includes("/signin")) {
+  // If on an auth/login page, fill credentials
+  const landedUrl = page.url();
+  if (landedUrl.includes("auth.") || landedUrl.includes("login") || landedUrl.includes("signin")) {
     console.log("Login page detected — filling credentials...");
 
     // Step 1: fill email
@@ -216,11 +215,11 @@ async function main() {
       console.log("Password field not found — please complete login manually...");
     }
   } else {
-    console.log("Already on PFF — skipping login.");
+    console.log("Session active — no login needed.");
   }
 
-  // Wait here until user is fully on premium.pff.com (not on auth page)
-  console.log("Waiting for you to be logged in...");
+  // Hard block: do NOT proceed until browser is on premium.pff.com
+  console.log("Waiting until logged in to premium.pff.com...");
   await page.waitForFunction(
     () => window.location.hostname === "premium.pff.com",
     { timeout: 120000, polling: 1000 }
@@ -324,25 +323,40 @@ async function navigateToSnapCounts(page: import("playwright").Page, playerName:
 }
 
 async function searchPlayerByName(page: import("playwright").Page, name: string) {
-  // Use PFF's global search bar — find the search input on the current page
-  // (stay on premium.pff.com and type into the search box)
-  if (!page.url().includes("premium.pff.com")) {
-    await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 20000 });
-    await page.waitForTimeout(1500);
+  // Navigate to NCAA players page if not already there
+  if (!page.url().includes("premium.pff.com/ncaa")) {
+    await page.goto("https://premium.pff.com/ncaa/players/2025/REGPO", { waitUntil: "domcontentloaded", timeout: 20000 });
+    await page.waitForTimeout(2000);
   }
 
-  // Find the search input
-  const searchSelectors = [
+  // PFF has a "Search for player..." button that opens a search modal — click it first
+  const searchTriggerSelectors = [
+    'button:has-text("Search for player")',
+    '[placeholder*="Search for player" i]',
+    '[class*="player-search"]',
+    '[class*="search-player"]',
+    'button[class*="search"]',
+  ];
+  for (const sel of searchTriggerSelectors) {
+    const el = page.locator(sel).first();
+    if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
+      await el.click();
+      await page.waitForTimeout(1000);
+      break;
+    }
+  }
+
+  // Now find the actual text input (may have appeared after clicking trigger)
+  const inputSelectors = [
     'input[placeholder*="search" i]',
     'input[type="search"]',
+    'input[placeholder*="player" i]',
     '[class*="search"] input',
-    '[class*="kyber-search"] input',
     'input[name="q"]',
     'input[aria-label*="search" i]',
   ];
-
   let searchInput: import("playwright").Locator | null = null;
-  for (const sel of searchSelectors) {
+  for (const sel of inputSelectors) {
     const el = page.locator(sel).first();
     if (await el.isVisible({ timeout: 2000 }).catch(() => false)) {
       searchInput = el;
@@ -351,24 +365,21 @@ async function searchPlayerByName(page: import("playwright").Page, name: string)
   }
 
   if (!searchInput) {
-    throw new Error(`Could not find search bar for "${name}"`);
+    throw new Error(`Could not find search input for "${name}"`);
   }
 
-  // Clear and type the player name
+  // Type the player name
   await searchInput.click();
   await searchInput.fill("");
   await searchInput.type(name, { delay: 60 });
-  await page.waitForTimeout(1500); // wait for dropdown results
+  await page.waitForTimeout(1500);
 
-  // Click the first result that matches the name (prefer snaps-by-position link)
-  const resultLink = page.locator(`a[href*="/players/"]`).filter({ hasText: name.split(" ")[0] }).first();
+  // Click the first matching result
+  const resultLink = page.locator('a[href*="/players/"]').filter({ hasText: name.split(" ")[0] }).first();
   if (await resultLink.isVisible({ timeout: 4000 }).catch(() => false)) {
-    const href = await resultLink.getAttribute("href") ?? "";
-    // If the result link goes directly to the player page, navigate to snaps tab
     await resultLink.click();
     await page.waitForTimeout(1500);
   } else {
-    // Try any first search result
     const anyResult = page.locator('a[href*="/players/"]').first();
     if (!await anyResult.isVisible({ timeout: 3000 }).catch(() => false)) {
       throw new Error(`No search results for "${name}"`);
