@@ -178,77 +178,64 @@ async function main() {
   const context = await browser.newContext({ acceptDownloads: true });
   const page    = await context.newPage();
 
-  // Navigate to NCAA players page
+  // Open PFF and log in
   console.log("\nOpening PFF...");
-  await page.goto("https://premium.pff.com/ncaa/players/2025/REGPO", { waitUntil: "domcontentloaded", timeout: 30000 });
+  await page.goto("https://premium.pff.com", { waitUntil: "domcontentloaded", timeout: 30000 });
   await page.waitForTimeout(3000);
 
-  // PFF shows pages without auth but with lock icons — detect by checking for locks or Sign In button
-  const isLoggedIn = await page.evaluate(() => {
-    const locks = document.querySelectorAll('[class*="lock"], [aria-label*="lock" i]');
-    if (locks.length > 0) return false;
-    const signIn = Array.from(document.querySelectorAll("a, button")).find(el =>
-      /sign\s*in|log\s*in/i.test(el.textContent ?? "")
-    );
-    return !signIn;
-  });
-
-  if (!isLoggedIn) {
-    console.log("Not logged in — filling credentials...");
-
-    // Click sign-in link if present in the nav
-    const signInLink = page.getByRole("link", { name: /sign in/i }).or(page.getByRole("button", { name: /sign in/i })).first();
-    if (await signInLink.isVisible({ timeout: 2000 }).catch(() => false)) {
-      await signInLink.click();
+  // Always attempt login — if email input appears we need to sign in
+  const emailSelectors = ['input[type="email"]', 'input[name="email"]', 'input[name="username"]', 'input[placeholder*="email" i]'];
+  let emailFound = false;
+  for (const sel of emailSelectors) {
+    if (await page.locator(sel).isVisible({ timeout: 5000 }).catch(() => false)) {
+      console.log("Login form found — filling credentials...");
+      await page.fill(sel, PFF_EMAIL);
+      await page.keyboard.press("Enter");
       await page.waitForTimeout(2000);
-    } else {
-      await page.goto("https://premium.pff.com/login", { waitUntil: "domcontentloaded", timeout: 20000 });
-      await page.waitForTimeout(2000);
+      emailFound = true;
+      break;
     }
+  }
 
-    // Fill email (step 1)
-    const emailSelectors = ['input[type="email"]', 'input[name="email"]', 'input[name="username"]', 'input[placeholder*="email" i]'];
+  if (!emailFound) {
+    // Not on login page — try navigating to login explicitly
+    console.log("No login form on landing page — navigating to sign in...");
+    await page.goto("https://premium.pff.com/login", { waitUntil: "domcontentloaded", timeout: 20000 });
+    await page.waitForTimeout(2000);
     for (const sel of emailSelectors) {
       if (await page.locator(sel).isVisible({ timeout: 5000 }).catch(() => false)) {
         await page.fill(sel, PFF_EMAIL);
         await page.keyboard.press("Enter");
         await page.waitForTimeout(2000);
+        emailFound = true;
         break;
       }
     }
-
-    // Fill password (step 2 — appears after email submitted)
-    if (await page.locator('input[type="password"]').isVisible({ timeout: 8000 }).catch(() => false)) {
-      await page.fill('input[type="password"]', PFF_PASSWORD);
-      await page.waitForTimeout(500);
-      // Click the sign-in button
-      const submitSelectors = ['button[type="submit"]', 'button:has-text("Sign in")', 'button:has-text("Log in")', 'button:has-text("Continue")'];
-      let clicked = false;
-      for (const sel of submitSelectors) {
-        if (await page.locator(sel).isVisible({ timeout: 1000 }).catch(() => false)) {
-          await page.click(sel);
-          clicked = true;
-          break;
-        }
-      }
-      if (!clicked) await page.keyboard.press("Enter");
-      console.log("Signing in...");
-    } else {
-      console.log("Please complete login manually in the browser...");
-    }
-
-    // Wait until back on premium.pff.com with no lock icons (= successfully logged in)
-    console.log("Waiting for successful login (watching for lock icons to disappear)...");
-    await page.waitForFunction(
-      () => {
-        if (!window.location.hostname.includes("premium.pff.com")) return false;
-        const locks = document.querySelectorAll('[class*="lock"]');
-        return locks.length === 0;
-      },
-      { timeout: 120000, polling: 1500 }
-    );
   }
 
+  // Fill password (step 2 — appears after email submitted)
+  if (await page.locator('input[type="password"]').isVisible({ timeout: 10000 }).catch(() => false)) {
+    await page.fill('input[type="password"]', PFF_PASSWORD);
+    await page.waitForTimeout(500);
+    // Click sign-in button
+    const submitSelectors = ['button[type="submit"]', 'button:has-text("Sign in")', 'button:has-text("Log in")', 'button:has-text("Continue")'];
+    let clicked = false;
+    for (const sel of submitSelectors) {
+      if (await page.locator(sel).isVisible({ timeout: 1000 }).catch(() => false)) {
+        await page.click(sel);
+        clicked = true;
+        break;
+      }
+    }
+    if (!clicked) await page.keyboard.press("Enter");
+    console.log("Signing in...");
+  } else {
+    console.log("No password field found — may already be logged in, or please log in manually...");
+  }
+
+  // Wait until on premium.pff.com (not auth page)
+  await page.waitForURL(/premium\.pff\.com/, { timeout: 120000 });
+  await page.waitForTimeout(1000);
   console.log(`Logged in ✓  (${page.url()})`);
 
   let downloaded = 0;
