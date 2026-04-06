@@ -6,6 +6,8 @@ import {
   DashboardMetrics,
   Player,
   PlayerFitResult,
+  PlayerPffGrade,
+  PlayerSchemeContext,
   Profile,
   PlayerSourceNote,
   PlayersPageResult,
@@ -16,6 +18,9 @@ import {
 } from "@/lib/types";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { demoProfile, demoTeam } from "@/lib/data/demo";
+import { resolveScheme } from "@/lib/scheme/registry";
+import { selectFeaturedStats } from "@/lib/scheme/featuredStats";
+import { computeSchemeDelta, generateSchemeSummary } from "@/lib/scheme/schemeFit";
 
 export interface PlayerFilters {
   position?: string;
@@ -348,16 +353,54 @@ export async function getPlayerSourceNotes(playerId: string) {
   return (data as PlayerSourceNote[] | null) ?? [];
 }
 
+async function getPlayerPffGrade(playerId: string): Promise<PlayerPffGrade | null> {
+  if (!hasSupabaseEnv()) return null;
+
+  const supabase = createSupabaseServerClient();
+  const { data } = await supabase
+    .from("player_pff_grades")
+    .select("*")
+    .eq("player_id", playerId)
+    .order("season", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  return (data as PlayerPffGrade | null) ?? null;
+}
+
 export async function getPlayerProfileData(playerId: string) {
-  const [player, needs, reviews, shortlists, sourceNotes] = await Promise.all([
+  const [player, needs, reviews, shortlists, sourceNotes, pffGrade, { team }] = await Promise.all([
     getPlayerById(playerId),
     getNeeds(),
     getPlayerReviewHistory(playerId),
     getPlayerShortlistEntries(playerId),
-    getPlayerSourceNotes(playerId)
+    getPlayerSourceNotes(playerId),
+    getPlayerPffGrade(playerId),
+    getViewerContext()
   ]);
 
   if (!player) return null;
+
+  const originScheme =
+    resolveScheme(player.current_school) ?? resolveScheme(player.previous_school ?? null);
+  const destScheme = resolveScheme(team?.name ?? null);
+
+  const { featuredStats, fitTrait } = pffGrade
+    ? selectFeaturedStats(pffGrade, player.position)
+    : { featuredStats: [], fitTrait: "" };
+
+  const schemeDelta = computeSchemeDelta(originScheme, destScheme, player.position, featuredStats);
+  const schemeFitSummary = generateSchemeSummary(originScheme, destScheme, player.position, fitTrait);
+
+  const schemeContext: PlayerSchemeContext = {
+    latestPffSeason: pffGrade,
+    featuredStats,
+    fitTrait,
+    schemeFitSummary,
+    schemeDelta,
+    resolvedOriginScheme: originScheme,
+    resolvedDestinationScheme: destScheme
+  };
 
   const matchingNeeds = needs
     .filter((need) => need.position === player.position && need.status === "active")
@@ -366,9 +409,14 @@ export async function getPlayerProfileData(playerId: string) {
       const latestReview = reviews.find((review) => review.need_id === need.id) ?? null;
       const shortlist = shortlists.find((item) => item.need_id === need.id) ?? null;
 
+      // Per-need scheme delta: use need.scheme override if set
+      const needDestScheme = need.scheme ? resolveScheme(need.scheme) ?? destScheme : destScheme;
+      const needDelta = computeSchemeDelta(originScheme, needDestScheme, player.position, featuredStats);
+      const adjustedFitScore = Math.max(0, Math.min(100, fit.fitScore + needDelta));
+
       return {
         need,
-        fit,
+        fit: { ...fit, fitScore: adjustedFitScore },
         latestReview,
         shortlist
       };
@@ -380,7 +428,8 @@ export async function getPlayerProfileData(playerId: string) {
     matchingNeeds,
     reviews,
     shortlists,
-    sourceNotes
+    sourceNotes,
+    schemeContext
   };
 }
 

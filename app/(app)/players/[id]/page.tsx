@@ -16,6 +16,7 @@ import {
   getPlayerPrimaryProduction
 } from "@/lib/football";
 import { getPlayerProfileData } from "@/lib/data/queries";
+import { FeaturedStats } from "@/components/players/featured-stats";
 
 export default async function PlayerDetailPage({
   params
@@ -25,7 +26,7 @@ export default async function PlayerDetailPage({
   const data = await getPlayerProfileData(params.id);
   if (!data) notFound();
 
-  const { player, matchingNeeds, reviews, shortlists, sourceNotes } = data;
+  const { player, matchingNeeds, reviews, shortlists, sourceNotes, schemeContext } = data;
   const topNeed = matchingNeeds[0]?.need ?? null;
   const currentShortlist = shortlists[0] ?? null;
   const keyStats = getPlayerKeyStats(player);
@@ -76,6 +77,8 @@ export default async function PlayerDetailPage({
           </div>
         </CardContent>
       </Card>
+
+      <FeaturedStats schemeContext={schemeContext} />
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="grid gap-6">
