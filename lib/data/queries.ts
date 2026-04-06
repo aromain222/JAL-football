@@ -8,6 +8,7 @@ import {
   PlayerFitResult,
   PlayerPffGrade,
   PlayerSchemeContext,
+  // PlayerPffGrade re-used as cast target for raw pffStats
   Profile,
   PlayerSourceNote,
   PlayersPageResult,
@@ -21,6 +22,7 @@ import { demoProfile, demoTeam } from "@/lib/data/demo";
 import { resolveScheme } from "@/lib/scheme/registry";
 import { selectFeaturedStats } from "@/lib/scheme/featuredStats";
 import { computeSchemeDelta, generateSchemeSummary } from "@/lib/scheme/schemeFit";
+import { tableForPosition } from "@/lib/data/pff-position-tables";
 
 export interface PlayerFilters {
   position?: string;
@@ -353,37 +355,62 @@ export async function getPlayerSourceNotes(playerId: string) {
   return (data as PlayerSourceNote[] | null) ?? [];
 }
 
-async function getPlayerPffGrade(playerId: string): Promise<PlayerPffGrade | null> {
+async function getPffStatsForPlayer(
+  player: Player
+): Promise<Record<string, unknown> | null> {
   if (!hasSupabaseEnv()) return null;
+  const table = tableForPosition(player.position);
+  if (!table) return null;
 
   const supabase = createSupabaseServerClient();
-  const { data } = await supabase
-    .from("player_pff_grades")
+
+  // Try combined player_name column first (common in PFF exports)
+  const fullName = `${player.first_name} ${player.last_name}`;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase as any)
+    .from(table)
     .select("*")
-    .eq("player_id", playerId)
+    .ilike("player_name", fullName)
     .order("season", { ascending: false })
     .limit(1)
     .maybeSingle();
 
-  return (data as PlayerPffGrade | null) ?? null;
+  if (data) return data as Record<string, unknown>;
+
+  // Fallback: separate first_name / last_name columns
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data: data2 } = await (supabase as any)
+    .from(table)
+    .select("*")
+    .ilike("last_name", player.last_name)
+    .ilike("first_name", player.first_name)
+    .order("season", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  return (data2 as Record<string, unknown> | null) ?? null;
 }
 
 export async function getPlayerProfileData(playerId: string) {
-  const [player, needs, reviews, shortlists, sourceNotes, pffGrade, { team }] = await Promise.all([
-    getPlayerById(playerId),
+  // Need player first to route PFF fetch by position
+  const player = await getPlayerById(playerId);
+  if (!player) return null;
+
+  const [needs, reviews, shortlists, sourceNotes, pffStats, { team }] = await Promise.all([
     getNeeds(),
     getPlayerReviewHistory(playerId),
     getPlayerShortlistEntries(playerId),
     getPlayerSourceNotes(playerId),
-    getPlayerPffGrade(playerId),
+    getPffStatsForPlayer(player),
     getViewerContext()
   ]);
-
-  if (!player) return null;
 
   const originScheme =
     resolveScheme(player.current_school) ?? resolveScheme(player.previous_school ?? null);
   const destScheme = resolveScheme(team?.name ?? null);
+
+  // Cast raw pffStats to PlayerPffGrade shape for featured-stats selector
+  const pffGrade = pffStats as PlayerPffGrade | null;
 
   const { featuredStats, fitTrait } = pffGrade
     ? selectFeaturedStats(pffGrade, player.position)
@@ -429,6 +456,7 @@ export async function getPlayerProfileData(playerId: string) {
     reviews,
     shortlists,
     sourceNotes,
+    pffStats,
     schemeContext
   };
 }

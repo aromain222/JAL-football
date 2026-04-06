@@ -17,6 +17,7 @@ import {
 } from "@/lib/football";
 import { getPlayerProfileData } from "@/lib/data/queries";
 import { FeaturedStats } from "@/components/players/featured-stats";
+import { PffStatsGrid } from "@/components/players/pff-stats-grid";
 
 export default async function PlayerDetailPage({
   params
@@ -26,7 +27,7 @@ export default async function PlayerDetailPage({
   const data = await getPlayerProfileData(params.id);
   if (!data) notFound();
 
-  const { player, matchingNeeds, reviews, shortlists, sourceNotes, schemeContext } = data;
+  const { player, matchingNeeds, reviews, shortlists, sourceNotes, pffStats, schemeContext } = data;
   const topNeed = matchingNeeds[0]?.need ?? null;
   const currentShortlist = shortlists[0] ?? null;
   const keyStats = getPlayerKeyStats(player);
@@ -133,6 +134,15 @@ export default async function PlayerDetailPage({
                   <MetricCard key={metric.label} label={metric.label} value={metric.value} />
                 ))}
               </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>PFF Grades &amp; Stats</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PffStatsGrid pffStats={pffStats ?? null} position={player.position} />
             </CardContent>
           </Card>
 
