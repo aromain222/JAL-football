@@ -10,7 +10,7 @@ import {
 } from "@/lib/data/demo-store";
 import { insertTeamNeed } from "@/lib/data/mutations";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
-import { getViewerContext, getPlayerQuickViewData, getPlayersFromSupabaseForAI, getPffStatsForPlayer } from "@/lib/data/queries";
+import { getViewerContext, getPlayerQuickViewData, getPlayersFromSupabaseForAI, getBatchPffStatsForPlayers } from "@/lib/data/queries";
 import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
@@ -455,23 +455,18 @@ export async function aiPlayerSearchAction(query: string): Promise<{
     minYearsRemaining: criteria.min_years_remaining
   });
 
-  // Phase 3: fetch PFF stats in parallel (cap at 40 players for performance)
-  const candidates = players.slice(0, 40);
-  const pffResults = await Promise.all(
-    candidates.map((p) => getPffStatsForPlayer(p).then((stats) => ({ id: p.id, stats })))
-  );
-  const pffStatsMap: Record<string, Record<string, unknown> | null> = Object.fromEntries(
-    pffResults.map((r) => [r.id, r.stats])
-  );
+  // Phase 3: batch-fetch PFF stats — one query per position table, not one per player
+  // This scales to any number of players (100, 300, etc.)
+  const pffStatsMap = await getBatchPffStatsForPlayers(players);
 
-  // Phase 4: score + rank, return top 12
-  const ranked = searchPlayersByAiCriteria(criteria, candidates, pffStatsMap);
+  // Phase 4: score + rank, return top 15
+  const ranked = searchPlayersByAiCriteria(criteria, players, pffStatsMap);
 
   return {
     criteria,
-    results: ranked.slice(0, 12).map((r) => ({
+    results: ranked.slice(0, 15).map((r) => ({
       ...r,
-      player: candidates.find((p) => p.id === r.playerId)!
+      player: players.find((p) => p.id === r.playerId)!
     }))
   };
 }

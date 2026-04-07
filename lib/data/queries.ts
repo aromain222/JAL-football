@@ -456,6 +456,54 @@ export async function getPffStatsForPlayer(
   return (data2 as Record<string, unknown> | null) ?? null;
 }
 
+export async function getBatchPffStatsForPlayers(
+  players: Player[]
+): Promise<Record<string, Record<string, unknown>>> {
+  if (!hasSupabaseEnv() || players.length === 0) return {};
+
+  // Group players by their PFF table name
+  const byTable = new Map<string, Player[]>();
+  for (const p of players) {
+    const table = tableForPosition(p.position);
+    if (!table) continue;
+    if (!byTable.has(table)) byTable.set(table, []);
+    byTable.get(table)!.push(p);
+  }
+
+  const result: Record<string, Record<string, unknown>> = {};
+  const supabase = createSupabaseServerClient();
+
+  // One query per position table — scales to any number of players
+  await Promise.all(
+    Array.from(byTable.entries()).map(async ([table, tablePlayers]) => {
+      const names = tablePlayers.map((p) => `${p.first_name} ${p.last_name}`);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data } = await (supabase as any)
+        .from(table)
+        .select("*")
+        .in("player_name", names)
+        .order("season", { ascending: false });
+
+      if (!data) return;
+
+      // Match each PFF row back to a player by name, keep only most recent per player
+      const seen = new Set<string>();
+      for (const row of data as Array<Record<string, unknown>>) {
+        const rowName = ((row.player_name as string | undefined) ?? "").toLowerCase();
+        const player = tablePlayers.find(
+          (p) => `${p.first_name} ${p.last_name}`.toLowerCase() === rowName
+        );
+        if (player && !seen.has(player.id)) {
+          seen.add(player.id);
+          result[player.id] = row;
+        }
+      }
+    })
+  );
+
+  return result;
+}
+
 export async function getPlayerQuickViewData(
   playerId: string
 ): Promise<{ player: Player; pffStats: Record<string, unknown> | null } | null> {
