@@ -247,86 +247,6 @@ const schoolConferenceMap: Record<string, string> = {
 const states = ["TX", "FL", "GA", "AL", "LA", "MS", "NC", "SC", "TN", "OK", "AZ", "CA"];
 const cities = ["Houston", "Dallas", "Atlanta", "Mobile", "Birmingham", "New Orleans", "Charlotte", "Memphis", "Tulsa", "Phoenix", "Orlando", "Tampa"];
 
-const needTemplates: Omit<NeedInsert, "team_id" | "created_by" | "status">[] = [
-  {
-    id: "0aa2d6af-6435-47a8-96f9-b4d9292962f0",
-    title: "Boundary corner with length and man-cover profile",
-    position: "CB",
-    priority: "critical",
-    target_count: 2,
-    class_focus: "JR/SR",
-    min_height_in: 71,
-    max_height_in: 74,
-    min_weight_lbs: 182,
-    max_weight_lbs: 205,
-    min_arm_length_in: 31,
-    max_forty_time: 4.55,
-    min_years_remaining: 1,
-    scheme: "man-match",
-    priority_traits: ["length", "press", "recovery speed"],
-    production_filters: {
-      min_games_played: 8,
-      min_starts: 6,
-      stat_key: "passes_defended",
-      min_stat_value: 5
-    },
-    min_starts: 6,
-    min_production_score: 70,
-    notes: "Need an immediate contributor with verified speed and press comfort."
-  },
-  {
-    id: "887d79d4-2be0-4a95-b627-a8cfd74a9a5f",
-    title: "Third-down EDGE with real pass-rush juice",
-    position: "EDGE",
-    priority: "critical",
-    target_count: 2,
-    class_focus: "SR/GR",
-    min_height_in: 75,
-    max_height_in: 79,
-    min_weight_lbs: 235,
-    max_weight_lbs: 270,
-    min_arm_length_in: 33,
-    max_forty_time: 4.88,
-    min_years_remaining: 1,
-    scheme: "pressure package",
-    priority_traits: ["get-off", "bend", "length"],
-    production_filters: {
-      min_games_played: 8,
-      min_starts: 5,
-      stat_key: "sacks",
-      min_stat_value: 4
-    },
-    min_starts: 5,
-    min_production_score: 72,
-    notes: "Looking for proven havoc production and enough size to hold up in the league."
-  },
-  {
-    id: "ba0e1eef-e1b4-4f31-9fe8-f6c351ffb8ff",
-    title: "Explosive field receiver with return value",
-    position: "WR",
-    priority: "high",
-    target_count: 1,
-    class_focus: "JR/SR",
-    min_height_in: 70,
-    max_height_in: 76,
-    min_weight_lbs: 175,
-    max_weight_lbs: 210,
-    min_arm_length_in: 30.5,
-    max_forty_time: 4.58,
-    min_years_remaining: 1,
-    scheme: "spread",
-    priority_traits: ["explosiveness", "ball tracking", "YAC"],
-    production_filters: {
-      min_games_played: 8,
-      min_starts: 4,
-      stat_key: "receiving_yards",
-      min_stat_value: 450
-    },
-    min_starts: 4,
-    min_production_score: 68,
-    notes: "Need speed, ball production, and open-field value."
-  }
-];
 
 const shortlistStages: ShortlistStage[] = [
   "assistant",
@@ -356,8 +276,7 @@ async function main() {
   await upsertTeam(team);
   const profiles = await upsertUsersAndProfiles(team.id);
   const players = generatePlayers(PLAYER_COUNT);
-  const needs = generateNeeds(team.id, profiles[0].id);
-  const reviews = generateReviews(players, needs, profiles);
+  const reviews = generateReviews(players, [], profiles);
   const shortlists = generateShortlists(profiles[1].id, reviews);
 
   await purgeScopedData(team.id);
@@ -367,7 +286,6 @@ async function main() {
   await upsertPlayers(players.map((item) => item.player));
   await upsertMeasurements(players.map((item) => item.measurement));
   await upsertStats(players.map((item) => item.stat));
-  await upsertNeeds(needs);
   await upsertReviews(reviews);
   await upsertShortlists(shortlists);
 
@@ -375,7 +293,6 @@ async function main() {
   console.log(`Team: ${team.name}`);
   console.log(`Profiles: ${profiles.length}`);
   console.log(`Players: ${players.length}`);
-  console.log(`Needs: ${needs.length}`);
   console.log(`Reviews: ${reviews.length}`);
   console.log(`Shortlists: ${shortlists.length}`);
 }
@@ -577,14 +494,6 @@ function baseStat(
   };
 }
 
-function generateNeeds(teamId: string, createdBy: string): NeedInsert[] {
-  return needTemplates.map((template) => ({
-    ...template,
-    team_id: teamId,
-    created_by: createdBy,
-    status: "active"
-  }));
-}
 
 function generateReviews(players: PlayerBundle[], needs: NeedInsert[], profiles: ProfileInsert[]) {
   const reviews: ReviewInsert[] = [];
@@ -711,10 +620,6 @@ async function upsertStats(stats: StatInsert[]) {
   if (error) throw error;
 }
 
-async function upsertNeeds(needs: NeedInsert[]) {
-  const { error } = await supabase.from("team_needs").upsert(needs, { onConflict: "id" });
-  if (error) throw error;
-}
 
 async function upsertReviews(reviews: ReviewInsert[]) {
   const { error } = await supabase

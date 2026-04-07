@@ -1,6 +1,6 @@
 import { PlayersFilterBar } from "@/components/players/players-filter-bar";
 import { PlayersPagination } from "@/components/players/players-pagination";
-import { PlayerCard } from "@/components/players/player-card";
+import { PlayerListClient } from "@/components/players/player-list-client";
 import { SectionHeader } from "@/components/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -91,7 +91,7 @@ export default async function PlayersPage({
         description={
           need
             ? `Board filtered against ${need.title}. Fit score badges surface how closely each player matches this need.`
-            : "Filter by measurable thresholds, eligibility, and school context, then open any player profile for full context."
+            : "Filter by measurable thresholds, eligibility, and school context, then click any player to view their stat profile."
         }
       />
 
@@ -139,26 +139,10 @@ export default async function PlayersPage({
 
           {result.items.length ? (
             <>
-              <div className="grid gap-4 xl:grid-cols-2">
-                {result.items.map((item) =>
-                  "player" in item ? (
-                    <PlayerCard
-                      key={item.player.id}
-                      detailHref={`/players/${item.player.id}`}
-                      fitScore={item.fitScore}
-                      player={item.player}
-                    />
-                  ) : (
-                    <PlayerCard
-                      key={item.id}
-                      detailHref={`/players/${item.id}`}
-                      player={item}
-                    />
-                  )
-                )}
-              </div>
-              <PlayersPagination
+              <PlayerListClient
                 hrefForPage={hrefForPage}
+                items={result.items}
+                needId={filters.needId}
                 page={result.page}
                 totalPages={result.totalPages}
               />

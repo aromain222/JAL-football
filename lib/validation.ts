@@ -93,7 +93,7 @@ export const needSchema = z.object({
   ),
   scheme: z.string().max(60).optional().or(z.literal("")),
   priority_traits: z.array(z.string().trim().min(1).max(24)).max(8),
-  production_filters: productionFiltersSchema,
+  production_filters: productionFiltersSchema.optional().default({ min_games_played: null, min_starts: null, stat_key: null, min_stat_value: null }),
   min_starts: emptyToNullNumber.refine(
     (value) => value === null || (Number.isInteger(value) && value >= 0 && value <= 60),
     "Min starts must be an integer between 0 and 60"

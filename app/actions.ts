@@ -10,7 +10,7 @@ import {
 } from "@/lib/data/demo-store";
 import { insertTeamNeed } from "@/lib/data/mutations";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
-import { getViewerContext } from "@/lib/data/queries";
+import { getViewerContext, getPlayerQuickViewData } from "@/lib/data/queries";
 import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
@@ -397,6 +397,39 @@ export async function upsertPlayerIdentityLinkAction(input: {
   revalidatePath("/identity");
   revalidatePath(`/players/${input.playerId}`);
   return { ok: true, message: "Saved identity links." };
+}
+
+export async function getPlayerQuickDataAction(playerId: string) {
+  return getPlayerQuickViewData(playerId);
+}
+
+export async function deleteNeedAction(needId: string) {
+  if (!hasSupabaseEnv()) {
+    revalidatePath("/needs");
+    return;
+  }
+
+  const supabase = createSupabaseServerClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Sign in to delete a need.");
+
+  const { data: profileRaw } = await supabase
+    .from("profiles")
+    .select("team_id")
+    .eq("id", user.id)
+    .single();
+  const teamId = (profileRaw as { team_id: string } | null)?.team_id;
+  if (!teamId) throw new Error("Team not found.");
+
+  await supabase
+    .from("team_needs" as never)
+    .delete()
+    .eq("id", needId)
+    .eq("team_id", teamId);
+
+  revalidatePath("/needs");
 }
 
 export async function addPlayerSourceNoteAction(formData: FormData) {

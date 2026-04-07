@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Radar, Rocket, Sparkles, Target } from "lucide-react";
+import { Radar, Rocket, Target } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { createNeedAction } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
@@ -19,19 +19,6 @@ import { z } from "zod";
 
 const positions = ["QB", "RB", "WR", "TE", "OL", "EDGE", "DL", "LB", "CB", "S", "ST"] as const;
 const priorities = ["critical", "high", "medium"] as const;
-const statKeys = [
-  { value: "", label: "No featured stat" },
-  { value: "starts", label: "Starts" },
-  { value: "games_played", label: "Games played" },
-  { value: "receiving_yards", label: "Receiving yards" },
-  { value: "rushing_yards", label: "Rushing yards" },
-  { value: "tackles", label: "Tackles" },
-  { value: "sacks", label: "Sacks" },
-  { value: "interceptions", label: "Interceptions" },
-  { value: "passes_defended", label: "Passes defended" },
-  { value: "offensive_snaps", label: "Offensive snaps" },
-  { value: "defensive_snaps", label: "Defensive snaps" }
-] as const;
 
 type NeedFormValues = z.infer<typeof needSchema>;
 
@@ -73,13 +60,6 @@ export function NeedForm() {
   });
 
   const values = form.watch();
-  const hasFeaturedStat = Boolean(values.production_filters.stat_key);
-
-  useEffect(() => {
-    if (!values.production_filters.stat_key && values.production_filters.min_stat_value !== null) {
-      form.setValue("production_filters.min_stat_value", null, { shouldValidate: true });
-    }
-  }, [form, values.production_filters.min_stat_value, values.production_filters.stat_key]);
 
   async function onSubmit(values: NeedFormValues) {
     setSubmitError(null);
@@ -155,65 +135,6 @@ export function NeedForm() {
               </div>
             </div>
 
-            <Card className="overflow-hidden border-slate-200 shadow-none">
-              <CardHeader className="border-b bg-slate-50/80 pb-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-4 w-4 text-cyan-700" />
-                  <CardTitle className="text-lg">Production Filters</CardTitle>
-                </div>
-                <p className="text-sm text-slate-500">
-                  Featured stat is optional. Use it only when you want one hard production signal.
-                </p>
-              </CardHeader>
-              <CardContent className="grid gap-4 md:grid-cols-2">
-                <NumberField
-                  form={form}
-                  label="Min Games"
-                  name="production_filters.min_games_played"
-                  placeholder="8"
-                />
-                <NumberField
-                  form={form}
-                  label="Min Starts"
-                  name="production_filters.min_starts"
-                  placeholder="4"
-                />
-                <div className="grid gap-2">
-                  <Label htmlFor="stat_key">Featured Stat</Label>
-                  <select
-                    className="h-10 rounded-xl border bg-white px-3 text-sm"
-                    id="stat_key"
-                    {...form.register("production_filters.stat_key", {
-                      setValueAs: (value) => (value === "" ? null : value)
-                    })}
-                  >
-                    {statKeys.map((option) => (
-                      <option key={option.label} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <NumberField
-                  disabled={!hasFeaturedStat}
-                  form={form}
-                  label="Featured Stat Minimum"
-                  name="production_filters.min_stat_value"
-                  placeholder={hasFeaturedStat ? "Optional minimum" : "Select a stat first"}
-                />
-              </CardContent>
-            </Card>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField form={form} label="Min Starts Override" name="min_starts" placeholder="4" />
-              <NumberField
-                form={form}
-                label="Min Production Score"
-                name="min_production_score"
-                placeholder="70"
-              />
-            </div>
-
             <div className="grid gap-2">
               <Label htmlFor="notes">Notes</Label>
               <Textarea
@@ -265,20 +186,6 @@ export function NeedForm() {
               </div>
 
               <SummaryLine label="Years remaining" value={singleLabel(values.min_years_remaining, "+")} />
-
-              <div className="rounded-2xl border bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Production Gates</p>
-                <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                  <span>Min games: {values.production_filters.min_games_played ?? "--"}</span>
-                  <span>Min starts: {values.production_filters.min_starts ?? "--"}</span>
-                  <span>
-                    Featured stat: {values.production_filters.stat_key ?? "None"}
-                    {values.production_filters.stat_key && values.production_filters.min_stat_value !== null
-                      ? ` >= ${values.production_filters.min_stat_value}`
-                      : ""}
-                  </span>
-                </div>
-              </div>
 
               <p className="text-sm text-slate-600">
                 {values.notes || "Need summary preview updates live as staff changes thresholds."}
@@ -359,10 +266,7 @@ function NumberField({
     | "max_forty_time"
     | "min_years_remaining"
     | "min_starts"
-    | "min_production_score"
-    | "production_filters.min_games_played"
-    | "production_filters.min_starts"
-    | "production_filters.min_stat_value";
+    | "min_production_score";
   placeholder: string;
   step?: string;
   disabled?: boolean;

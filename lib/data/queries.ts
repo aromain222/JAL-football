@@ -391,6 +391,15 @@ async function getPffStatsForPlayer(
   return (data2 as Record<string, unknown> | null) ?? null;
 }
 
+export async function getPlayerQuickViewData(
+  playerId: string
+): Promise<{ player: Player; pffStats: Record<string, unknown> | null } | null> {
+  const player = await getPlayerById(playerId);
+  if (!player) return null;
+  const pffStats = await getPffStatsForPlayer(player);
+  return { player, pffStats };
+}
+
 export async function getPlayerProfileData(playerId: string) {
   // Need player first to route PFF fetch by position
   const player = await getPlayerById(playerId);

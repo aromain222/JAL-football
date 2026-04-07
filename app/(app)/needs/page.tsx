@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Trash2 } from "lucide-react";
+import { deleteNeedAction } from "@/app/actions";
 import { SectionHeader } from "@/components/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ export default async function NeedsPage() {
                 <h2 className="mt-3 text-2xl font-semibold">{need.title}</h2>
                 <p className="mt-2 max-w-2xl text-sm text-slate-600">{need.notes}</p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex items-center gap-2">
                 <Button asChild variant="outline">
                   <Link href={`/needs/${need.id}`}>View need</Link>
                 </Button>
@@ -41,6 +42,17 @@ export default async function NeedsPage() {
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </Button>
+                <form action={deleteNeedAction.bind(null, need.id)}>
+                  <Button
+                    size="sm"
+                    type="submit"
+                    variant="ghost"
+                    aria-label="Delete need"
+                    className="px-2 text-slate-400 hover:text-rose-600"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </form>
               </div>
             </CardContent>
           </Card>

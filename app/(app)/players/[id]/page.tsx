@@ -16,7 +16,6 @@ import {
   getPlayerPrimaryProduction,
 } from "@/lib/football";
 import { getPlayerProfileData } from "@/lib/data/queries";
-import { FeaturedStats } from "@/components/players/featured-stats";
 import { PffStatsGrid } from "@/components/players/pff-stats-grid";
 import { AlignmentProfile } from "@/components/players/alignment-profile";
 
@@ -28,7 +27,7 @@ export default async function PlayerDetailPage({
   const data = await getPlayerProfileData(params.id);
   if (!data) notFound();
 
-  const { player, matchingNeeds, reviews, shortlists, sourceNotes, pffStats, schemeContext } = data;
+  const { player, matchingNeeds, reviews, shortlists, sourceNotes, pffStats } = data;
   const topNeed = matchingNeeds[0]?.need ?? null;
   const currentShortlist = shortlists[0] ?? null;
   const keyStats = getPlayerKeyStats(player);
@@ -97,64 +96,42 @@ export default async function PlayerDetailPage({
         </CardContent>
       </Card>
 
-      {/* ── Featured Stats / Scheme ───────────────────────────────────── */}
-      <FeaturedStats schemeContext={schemeContext} />
-
       {/* ── Two-column grid ──────────────────────────────────────────── */}
       <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
 
         {/* ── Left column ── */}
         <div className="grid gap-5">
 
-          {/* Profile Overview */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Profile Overview</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <div className="grid gap-3 sm:grid-cols-3">
-                <StatTile label="Height" value={formatHeightInFeetInches(player.measurements?.height_in)} />
-                <StatTile
-                  label="Weight"
-                  value={player.measurements?.weight_lbs ? `${player.measurements.weight_lbs} lbs` : "--"}
-                />
-                <StatTile
-                  label="Wingspan / Arm"
-                  value={
-                    player.measurements?.wing_span_in
-                      ? `${player.measurements.wing_span_in}"`
-                      : player.measurements?.arm_length_in
-                      ? `${player.measurements.arm_length_in}" arm`
-                      : "--"
-                  }
-                />
-              </div>
+          {/* Key stats + latest note */}
+          {(keyStats.length > 0 || reviews[0]?.note || player.notes) && (
+            <Card>
+              <CardContent className="grid gap-4 pt-6">
+                {keyStats.length > 0 && (
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {keyStats.map((stat) => (
+                      <div
+                        key={stat}
+                        className="rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-sm font-medium text-slate-700"
+                      >
+                        {stat}
+                      </div>
+                    ))}
+                  </div>
+                )}
 
-              {keyStats.length > 0 && (
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {keyStats.map((stat) => (
-                    <div
-                      key={stat}
-                      className="rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-sm font-medium text-slate-700"
-                    >
-                      {stat}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {(reviews[0]?.note || player.notes) && (
-                <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                  <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                    Latest note
-                  </p>
-                  <p className="mt-2 border-l-2 border-cyan-200 pl-3 text-sm text-slate-700">
-                    {reviews[0]?.note ?? player.notes}
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                {(reviews[0]?.note || player.notes) && (
+                  <div className="rounded-2xl border border-slate-100 bg-white p-4">
+                    <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                      Latest note
+                    </p>
+                    <p className="mt-2 border-l-2 border-cyan-200 pl-3 text-sm text-slate-700">
+                      {reviews[0]?.note ?? player.notes}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Production Stats */}
           <Card>
@@ -244,50 +221,44 @@ export default async function PlayerDetailPage({
         {/* ── Right column ── */}
         <div className="grid gap-5 self-start">
 
-          {/* Quick Actions */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-2.5">
-              {topNeed ? (
-                <>
-                  <form
-                    action={addPlayerToShortlistAction.bind(null, {
-                      playerId: player.id,
-                      needId: topNeed.id,
-                    })}
-                  >
-                    <Button className="w-full justify-between" type="submit">
-                      Add to shortlist
-                      <Trophy className="h-4 w-4" />
-                    </Button>
-                  </form>
-                  <form
-                    action={markPlayerNeedsFilmAction.bind(null, {
-                      playerId: player.id,
-                      needId: topNeed.id,
-                    })}
-                  >
-                    <Button className="w-full justify-between" type="submit" variant="secondary">
-                      Mark needs film
-                      <Film className="h-4 w-4" />
-                    </Button>
-                  </form>
-                  <Button asChild className="w-full justify-between" variant="outline">
-                    <Link href={`/review/${topNeed.id}`}>
-                      Open review mode
-                      <Radar className="h-4 w-4" />
-                    </Link>
+          {/* Quick Actions — only shown when there's a matching need */}
+          {topNeed && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-2.5">
+                <form
+                  action={addPlayerToShortlistAction.bind(null, {
+                    playerId: player.id,
+                    needId: topNeed.id,
+                  })}
+                >
+                  <Button className="w-full justify-between" type="submit">
+                    Add to shortlist
+                    <Trophy className="h-4 w-4" />
                   </Button>
-                </>
-              ) : (
-                <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
-                  No matching active need for direct actions.
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                </form>
+                <form
+                  action={markPlayerNeedsFilmAction.bind(null, {
+                    playerId: player.id,
+                    needId: topNeed.id,
+                  })}
+                >
+                  <Button className="w-full justify-between" type="submit" variant="secondary">
+                    Mark needs film
+                    <Film className="h-4 w-4" />
+                  </Button>
+                </form>
+                <Button asChild className="w-full justify-between" variant="outline">
+                  <Link href={`/review/${topNeed.id}`}>
+                    Open review mode
+                    <Radar className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Board Fit */}
           <Card>

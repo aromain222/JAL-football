@@ -22,11 +22,13 @@ function getFitVariant(score?: number) {
 export function PlayerCard({
   player,
   fitScore,
-  detailHref
+  detailHref,
+  onQuickView
 }: {
   player: Player;
   fitScore?: number;
   detailHref?: string;
+  onQuickView?: (id: string) => void;
 }) {
   const keyStats = getPlayerKeyStats(player).slice(0, 4);
   const productionMetrics = getPlayerProductionMetrics(player, 3);
@@ -50,7 +52,10 @@ export function PlayerCard({
         : `${player.current_school} • ${conference}`;
 
   return (
-    <Card className="overflow-hidden border-slate-200 bg-white/95 transition hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-2xl">
+    <Card
+      className={`overflow-hidden border-slate-200 bg-white/95 transition hover:-translate-y-0.5 hover:border-cyan-200 hover:shadow-2xl ${onQuickView ? "cursor-pointer" : ""}`}
+      onClick={onQuickView ? () => onQuickView(player.id) : undefined}
+    >
       <CardContent className="grid gap-0 p-0">
         <div className="border-b bg-slate-950 px-4 py-4 text-white">
           <div className="flex items-start gap-4">
@@ -127,11 +132,16 @@ export function PlayerCard({
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>
             <p className="line-clamp-2 text-sm text-slate-600">
               {player.notes ?? "No staff summary added yet."}
             </p>
-            {detailHref ? (
+            {onQuickView ? (
+              <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
+                View
+                <ArrowUpRight className="h-4 w-4" />
+              </Button>
+            ) : detailHref ? (
               <Button asChild size="sm" variant="outline">
                 <Link href={detailHref}>
                   View
