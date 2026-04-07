@@ -10,7 +10,7 @@ import {
 } from "@/lib/data/demo-store";
 import { insertTeamNeed } from "@/lib/data/mutations";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
-import { getViewerContext, getPlayerQuickViewData } from "@/lib/data/queries";
+import { getViewerContext, getPlayerQuickViewData, getPlayersFromSupabaseForAI, getPffStatsForPlayer } from "@/lib/data/queries";
 import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
@@ -430,6 +430,50 @@ export async function deleteNeedAction(needId: string) {
     .eq("team_id", teamId);
 
   revalidatePath("/needs");
+}
+
+export async function aiPlayerSearchAction(query: string): Promise<{
+  criteria: import("@/lib/ai/player-search").AiSearchCriteria;
+  results: Array<
+    import("@/lib/ai/player-search").AiPlayerSearchResult & {
+      player: import("@/lib/types").Player;
+    }
+  >;
+}> {
+  const { extractSearchCriteria, searchPlayersByAiCriteria } = await import("@/lib/ai/player-search");
+
+  // Phase 1: extract structured criteria from the natural language query
+  const criteria = await extractSearchCriteria(query);
+
+  // Phase 2: fetch players matching position / measurement / eligibility
+  const players = await getPlayersFromSupabaseForAI({
+    positions: criteria.positions.length > 0 ? criteria.positions : undefined,
+    minWeightLbs: criteria.min_weight_lbs,
+    maxWeightLbs: criteria.max_weight_lbs,
+    minHeightIn: criteria.min_height_in,
+    maxHeightIn: criteria.max_height_in,
+    minYearsRemaining: criteria.min_years_remaining
+  });
+
+  // Phase 3: fetch PFF stats in parallel (cap at 40 players for performance)
+  const candidates = players.slice(0, 40);
+  const pffResults = await Promise.all(
+    candidates.map((p) => getPffStatsForPlayer(p).then((stats) => ({ id: p.id, stats })))
+  );
+  const pffStatsMap: Record<string, Record<string, unknown> | null> = Object.fromEntries(
+    pffResults.map((r) => [r.id, r.stats])
+  );
+
+  // Phase 4: score + rank, return top 12
+  const ranked = searchPlayersByAiCriteria(criteria, candidates, pffStatsMap);
+
+  return {
+    criteria,
+    results: ranked.slice(0, 12).map((r) => ({
+      ...r,
+      player: candidates.find((p) => p.id === r.playerId)!
+    }))
+  };
 }
 
 export async function addPlayerSourceNoteAction(formData: FormData) {

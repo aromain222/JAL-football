@@ -355,7 +355,72 @@ export async function getPlayerSourceNotes(playerId: string) {
   return (data as PlayerSourceNote[] | null) ?? [];
 }
 
-async function getPffStatsForPlayer(
+export async function getPlayersFromSupabaseForAI(filters: {
+  positions?: string[];
+  minWeightLbs?: number;
+  maxWeightLbs?: number;
+  minHeightIn?: number;
+  maxHeightIn?: number;
+  minYearsRemaining?: number;
+}): Promise<Player[]> {
+  if (!hasSupabaseEnv()) return [];
+  const supabase = createSupabaseServerClient();
+  let query = supabase
+    .from("players")
+    .select("*, player_measurements(*), player_stats(*), player_tags(tag)")
+    .order("last_name");
+
+  if (filters.positions && filters.positions.length > 0) {
+    query = query.in("position", filters.positions);
+  }
+  if (typeof filters.minYearsRemaining === "number") {
+    query = query.gte("eligibility_remaining", filters.minYearsRemaining);
+  }
+
+  const { data } = await query;
+  if (!data) return [];
+
+  const pickSingle = <TRow>(value: TRow | TRow[] | null | undefined): TRow | null => {
+    if (Array.isArray(value)) return value[0] ?? null;
+    return value ?? null;
+  };
+
+  let players: Player[] = data.map((row: any) => ({
+    ...row,
+    conference: row.conference ?? getConferenceForSchool(row.current_school),
+    measurements: pickSingle(row.player_measurements),
+    latest_stats: Array.isArray(row.player_stats)
+      ? row.player_stats.sort((a: any, b: any) => b.season - a.season)[0] ?? null
+      : pickSingle(row.player_stats),
+    tags: Array.isArray(row.player_tags) ? row.player_tags.map((item: any) => item.tag) : []
+  }));
+
+  // Apply measurement filters in memory (measurements are in a related table)
+  if (typeof filters.minWeightLbs === "number") {
+    players = players.filter(
+      (p) => p.measurements?.weight_lbs == null || p.measurements.weight_lbs >= filters.minWeightLbs!
+    );
+  }
+  if (typeof filters.maxWeightLbs === "number") {
+    players = players.filter(
+      (p) => p.measurements?.weight_lbs == null || p.measurements.weight_lbs <= filters.maxWeightLbs!
+    );
+  }
+  if (typeof filters.minHeightIn === "number") {
+    players = players.filter(
+      (p) => p.measurements?.height_in == null || p.measurements.height_in >= filters.minHeightIn!
+    );
+  }
+  if (typeof filters.maxHeightIn === "number") {
+    players = players.filter(
+      (p) => p.measurements?.height_in == null || p.measurements.height_in <= filters.maxHeightIn!
+    );
+  }
+
+  return players;
+}
+
+export async function getPffStatsForPlayer(
   player: Player
 ): Promise<Record<string, unknown> | null> {
   if (!hasSupabaseEnv()) return null;

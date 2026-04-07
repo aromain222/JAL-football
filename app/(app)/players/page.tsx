@@ -1,6 +1,7 @@
 import { PlayersFilterBar } from "@/components/players/players-filter-bar";
 import { PlayersPagination } from "@/components/players/players-pagination";
 import { PlayerListClient } from "@/components/players/player-list-client";
+import { AiSearchPanel } from "@/components/players/ai-search-panel";
 import { SectionHeader } from "@/components/section-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -85,6 +86,8 @@ export default async function PlayersPage({
 
   return (
     <div className="grid gap-6">
+      <AiSearchPanel />
+
       <SectionHeader
         eyebrow="Player Database"
         title="Search the transfer board"
