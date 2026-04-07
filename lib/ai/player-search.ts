@@ -24,6 +24,7 @@ export type AiPlayerSearchResult = {
   matchScore: number;      // 0–100
   matchReasons: string[];
   pffHighlights: string[];
+  hasPffData: boolean;     // false = scored on physical profile only
 };
 
 const SYSTEM_PROMPT = `You are a college football recruiting analyst. Convert a coach's plain-English player description into structured JSON search criteria.
@@ -150,78 +151,101 @@ export function scorePlayer(
   player: Player,
   pffStats: Record<string, unknown> | null,
   criteria: AiSearchCriteria
-): { score: number; reasons: string[]; highlights: string[] } {
+): { score: number; reasons: string[]; highlights: string[]; hasPffData: boolean } {
   const reasons: string[] = [];
   const highlights: string[] = [];
   let totalWeight = 0;
   let earnedWeight = 0;
 
-  // Measurement scoring
+  // Measurement scoring — always evaluated regardless of PFF availability
   const w = player.measurements;
-  if (criteria.min_weight_lbs && w?.weight_lbs) {
-    const diff = w.weight_lbs - criteria.min_weight_lbs;
-    if (diff >= 0) {
-      const bonus = Math.min(0.3, diff / 50);
-      earnedWeight += 0.3 + bonus;
-      totalWeight += 0.3;
-      reasons.push(`${w.weight_lbs} lbs (target ≥ ${criteria.min_weight_lbs})`);
-    } else {
-      // Under target weight — partial credit if within 10 lbs
-      if (diff >= -10) {
+  if (criteria.min_weight_lbs) {
+    totalWeight += 0.3;
+    if (w?.weight_lbs != null) {
+      const diff = w.weight_lbs - criteria.min_weight_lbs;
+      if (diff >= 0) {
+        earnedWeight += 0.3 + Math.min(0.15, diff / 50);
+        reasons.push(`${w.weight_lbs} lbs`);
+      } else if (diff >= -15) {
         earnedWeight += 0.15;
-        totalWeight += 0.3;
-        reasons.push(`${w.weight_lbs} lbs (slightly under target ${criteria.min_weight_lbs})`);
-      } else {
-        totalWeight += 0.3;
+        reasons.push(`${w.weight_lbs} lbs (near target ${criteria.min_weight_lbs})`);
       }
     }
   }
 
-  if (criteria.min_height_in && w?.height_in) {
-    const diff = w.height_in - criteria.min_height_in;
+  if (criteria.max_weight_lbs) {
+    totalWeight += 0.15;
+    if (w?.weight_lbs != null && w.weight_lbs <= criteria.max_weight_lbs) {
+      earnedWeight += 0.15;
+      reasons.push(`${w.weight_lbs} lbs`);
+    }
+  }
+
+  if (criteria.min_height_in) {
     totalWeight += 0.2;
-    if (diff >= 0) {
-      earnedWeight += 0.2;
-      const feet = Math.floor(w.height_in / 12);
-      const inches = w.height_in % 12;
-      reasons.push(`${feet}'${inches}" height`);
+    if (w?.height_in != null) {
+      const diff = w.height_in - criteria.min_height_in;
+      if (diff >= 0) {
+        earnedWeight += 0.2;
+        const feet = Math.floor(w.height_in / 12);
+        const inches = w.height_in % 12;
+        reasons.push(`${feet}'${inches}"`);
+      } else if (diff >= -1) {
+        earnedWeight += 0.1;
+      }
+    }
+  }
+
+  if (criteria.max_height_in) {
+    totalWeight += 0.1;
+    if (w?.height_in != null && w.height_in <= criteria.max_height_in) {
+      earnedWeight += 0.1;
     }
   }
 
   // Eligibility scoring
   if (criteria.min_years_remaining != null) {
-    totalWeight += 0.2;
+    totalWeight += 0.25;
     if (player.eligibility_remaining >= criteria.min_years_remaining) {
-      earnedWeight += 0.2;
-      reasons.push(`${player.eligibility_remaining} yr eligibility remaining`);
+      earnedWeight += 0.25;
+      reasons.push(`${player.eligibility_remaining} yr eligibility`);
     }
   }
 
-  // PFF criteria scoring
-  for (const criterion of criteria.pff_criteria) {
-    totalWeight += criterion.weight;
-    if (!pffStats) continue;
-
-    const value = Number(pffStats[criterion.column] ?? 0);
-    if (value > 0) {
-      if (value >= criterion.min_value) {
-        // Full credit + bonus for exceeding
-        const excess = Math.min(20, value - criterion.min_value);
-        earnedWeight += criterion.weight * (1 + excess / 100);
-        highlights.push(`${criterion.label}: ${Math.round(value)}`);
-      } else if (value >= criterion.min_value * 0.85) {
-        // Close — partial credit
-        earnedWeight += criterion.weight * 0.5;
-        highlights.push(`${criterion.label}: ${Math.round(value)} (near threshold)`);
+  // PFF criteria scoring — only counts when data exists for that column.
+  // Players without PFF stats are NOT penalized; they score on physical profile only.
+  const hasPffData = pffStats !== null;
+  if (pffStats) {
+    for (const criterion of criteria.pff_criteria) {
+      const value = Number(pffStats[criterion.column] ?? 0);
+      // Only add this criterion to totalWeight if the column is present and non-zero
+      // (i.e., the player actually has this type of snap/grade data)
+      if (value > 0) {
+        totalWeight += criterion.weight;
+        if (value >= criterion.min_value) {
+          const excess = Math.min(20, value - criterion.min_value);
+          earnedWeight += criterion.weight * (1 + excess / 100);
+          highlights.push(`${criterion.label}: ${Math.round(value)}`);
+        } else if (value >= criterion.min_value * 0.8) {
+          earnedWeight += criterion.weight * 0.5;
+          highlights.push(`${criterion.label}: ${Math.round(value)} (near threshold)`);
+        } else {
+          // Has data but below threshold — count against them
+          earnedWeight += 0;
+        }
       }
     }
   }
 
-  if (totalWeight === 0) return { score: 0, reasons, highlights };
+  // If no scoring criteria fired at all, give a small base score so position-matched
+  // players without measurements or stats still surface (coaches can evaluate them manually)
+  if (totalWeight === 0) {
+    return { score: 15, reasons: ["Position match"], highlights, hasPffData };
+  }
 
   const rawScore = earnedWeight / totalWeight;
   const score = Math.round(Math.min(100, rawScore * 100));
-  return { score, reasons, highlights };
+  return { score, reasons, highlights, hasPffData };
 }
 
 export function searchPlayersByAiCriteria(
@@ -232,9 +256,13 @@ export function searchPlayersByAiCriteria(
   return players
     .map((player) => {
       const pffStats = pffStatsMap[player.id] ?? null;
-      const { score, reasons, highlights } = scorePlayer(player, pffStats, criteria);
-      return { playerId: player.id, matchScore: score, matchReasons: reasons, pffHighlights: highlights };
+      const { score, reasons, highlights, hasPffData } = scorePlayer(player, pffStats, criteria);
+      return { playerId: player.id, matchScore: score, matchReasons: reasons, pffHighlights: highlights, hasPffData };
     })
     .filter((r) => r.matchScore > 0)
-    .sort((a, b) => b.matchScore - a.matchScore);
+    .sort((a, b) => {
+      // Players with PFF data rank ahead of profile-only players at the same score tier
+      if (a.hasPffData !== b.hasPffData) return a.hasPffData ? -1 : 1;
+      return b.matchScore - a.matchScore;
+    });
 }

@@ -196,6 +196,11 @@ export function AiSearchPanel() {
                     <Badge variant={getScoreVariant(result.matchScore) as any}>
                       {result.matchScore}% match
                     </Badge>
+                    {!result.hasPffData && (
+                      <span className="rounded-full border border-slate-600 px-2.5 py-0.5 text-xs text-slate-400">
+                        Profile only
+                      </span>
+                    )}
                     {result.matchReasons.map((reason, i) => (
                       <span key={i} className="rounded-full bg-slate-800 px-2.5 py-0.5 text-xs text-slate-300">
                         {reason}
