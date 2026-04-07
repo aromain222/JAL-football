@@ -1,5 +1,4 @@
 import { PlayersFilterBar } from "@/components/players/players-filter-bar";
-import { PlayersPagination } from "@/components/players/players-pagination";
 import { PlayerListClient } from "@/components/players/player-list-client";
 import { AiSearchPanel } from "@/components/players/ai-search-panel";
 import { SectionHeader } from "@/components/section-header";
@@ -67,12 +66,6 @@ export default async function PlayersPage({
       baseParams.set(key, value);
     }
   }
-
-  const hrefForPage = (page: number) => {
-    const params = new URLSearchParams(baseParams);
-    params.set("page", String(page));
-    return `/players?${params.toString()}`;
-  };
 
   const activeFilterBadges = [
     filters.position,
@@ -143,7 +136,7 @@ export default async function PlayersPage({
           {result.items.length ? (
             <>
               <PlayerListClient
-                hrefForPage={hrefForPage}
+                baseSearchParams={baseParams.toString()}
                 items={result.items}
                 needId={filters.needId}
                 page={result.page}

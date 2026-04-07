@@ -14,10 +14,15 @@ interface Props {
   needId?: string;
   page: number;
   totalPages: number;
-  hrefForPage: (page: number) => string;
+  baseSearchParams: string;
 }
 
-export function PlayerListClient({ items, page, totalPages, hrefForPage }: Props) {
+export function PlayerListClient({ items, page, totalPages, baseSearchParams }: Props) {
+  const hrefForPage = (p: number) => {
+    const params = new URLSearchParams(baseSearchParams);
+    params.set("page", String(p));
+    return `/players?${params.toString()}`;
+  };
   const [activePlayerId, setActivePlayerId] = useState<string | null>(null);
 
   return (
