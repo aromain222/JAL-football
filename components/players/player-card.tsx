@@ -136,9 +136,20 @@ export function PlayerCard({
             <p className="line-clamp-2 text-sm text-slate-600">
               {player.notes ?? "No staff summary added yet."}
             </p>
-            {onQuickView ? (
+            {onQuickView && detailHref ? (
+              <div className="flex shrink-0 items-center gap-1.5">
+                <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
+                  Quick view
+                </Button>
+                <Button asChild size="sm" variant="ghost" className="px-2" onClick={(e) => e.stopPropagation()}>
+                  <Link href={detailHref} title="Open full profile">
+                    <ArrowUpRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            ) : onQuickView ? (
               <Button size="sm" variant="outline" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
-                View
+                Quick view
                 <ArrowUpRight className="h-4 w-4" />
               </Button>
             ) : detailHref ? (

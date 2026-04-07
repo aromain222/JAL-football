@@ -24,12 +24,9 @@ export function PlayerQuickView({ playerId }: { playerId: string | null }) {
     let cancelled = false;
     setLoading(true);
     setData(null);
-    getPlayerQuickDataAction(playerId).then((result) => {
-      if (!cancelled) {
-        setData(result);
-        setLoading(false);
-      }
-    });
+    getPlayerQuickDataAction(playerId)
+      .then((result) => { if (!cancelled) { setData(result); setLoading(false); } })
+      .catch(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [playerId]);
 
@@ -43,7 +40,20 @@ export function PlayerQuickView({ playerId }: { playerId: string | null }) {
     );
   }
 
-  if (!data) return null;
+  if (!data) {
+    return (
+      <div className="flex flex-1 flex-col items-center justify-center gap-4 p-10 text-center">
+        <p className="text-sm text-slate-500">Could not load player data.</p>
+        <Link
+          className="flex items-center gap-2 rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white hover:bg-slate-800"
+          href={`/players/${playerId}`}
+        >
+          Open full profile
+          <ArrowUpRight className="h-4 w-4" />
+        </Link>
+      </div>
+    );
+  }
 
   const { player, pffStats } = data;
   const initials = `${player.first_name[0] ?? ""}${player.last_name[0] ?? ""}`.toUpperCase();

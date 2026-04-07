@@ -1,13 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Film, PlayCircle, Radar, Trophy } from "lucide-react";
+import { Film, Radar, Trophy } from "lucide-react";
 import { addPlayerToShortlistAction, markPlayerNeedsFilmAction } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Paste247WriteUpForm } from "@/components/players/paste-247-writeup-form";
-import { SourceNoteForm } from "@/components/players/source-note-form";
 import {
   formatHeightInFeetInches,
   getPlayerKeyStats,
@@ -341,93 +339,38 @@ export default async function PlayerDetailPage({
             </CardContent>
           </Card>
 
-          {/* 247 Write-up */}
-          <Paste247WriteUpForm playerId={player.id} />
-
           {/* Source Notes */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Source Notes</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              <SourceNoteForm playerId={player.id} />
-              <div className="grid gap-2.5">
-                {sourceNotes.length ? (
-                  sourceNotes.map((note) => (
-                    <div key={note.id} className="rounded-2xl border border-slate-100 bg-white p-4">
-                      <div className="flex flex-wrap items-center gap-1.5">
-                        <Badge variant="default">{note.note_type}</Badge>
-                        {note.source_account && (
-                          <Badge variant="accent">@{note.source_account}</Badge>
-                        )}
-                        {note.status_signal && (
-                          <Badge variant="warning">{note.status_signal}</Badge>
-                        )}
-                        {note.confidence != null && (
-                          <Badge variant="success">{note.confidence.toFixed(1)} conf</Badge>
+          {sourceNotes.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Source Notes</CardTitle>
+              </CardHeader>
+              <CardContent className="grid gap-2.5">
+                {sourceNotes.map((note) => (
+                  <div key={note.id} className="rounded-2xl border border-slate-100 bg-white p-4">
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <Badge variant="default">{note.note_type}</Badge>
+                      {note.source_account && <Badge variant="accent">@{note.source_account}</Badge>}
+                      {note.status_signal && <Badge variant="warning">{note.status_signal}</Badge>}
+                      {note.confidence != null && <Badge variant="success">{note.confidence.toFixed(1)} conf</Badge>}
+                    </div>
+                    {note.summary && <p className="mt-2.5 text-sm font-semibold text-slate-900">{note.summary}</p>}
+                    <p className="mt-1.5 border-l-2 border-cyan-100 pl-3 text-sm text-slate-600">{note.source_text}</p>
+                    {(note.traits.length > 0 || note.source_url) && (
+                      <div className="mt-2.5 flex flex-wrap gap-1.5">
+                        {note.traits.map((trait) => <Badge key={trait} variant="default">{trait}</Badge>)}
+                        {note.source_url && (
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={note.source_url} target="_blank">Source</Link>
+                          </Button>
                         )}
                       </div>
-                      {note.summary && (
-                        <p className="mt-2.5 text-sm font-semibold text-slate-900">{note.summary}</p>
-                      )}
-                      <p className="mt-1.5 border-l-2 border-cyan-100 pl-3 text-sm text-slate-600">
-                        {note.source_text}
-                      </p>
-                      {(note.traits.length > 0 || note.source_url) && (
-                        <div className="mt-2.5 flex flex-wrap gap-1.5">
-                          {note.traits.map((trait) => (
-                            <Badge key={trait} variant="default">
-                              {trait}
-                            </Badge>
-                          ))}
-                          {note.source_url && (
-                            <Button asChild size="sm" variant="outline">
-                              <Link href={note.source_url} target="_blank">
-                                Source
-                              </Link>
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
-                    No source notes saved yet.
+                    )}
                   </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Film */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Highlight &amp; Film</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-2.5">
-              {player.film_url ? (
-                <>
-                  <Button asChild className="w-full justify-between" variant="outline">
-                    <Link href={player.film_url} target="_blank">
-                      Short highlight
-                      <PlayCircle className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                  <Button asChild className="w-full justify-between" variant="outline">
-                    <Link href={player.film_url} target="_blank">
-                      Full film
-                      <Film className="h-4 w-4" />
-                    </Link>
-                  </Button>
-                </>
-              ) : (
-                <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
-                  No film link attached yet.
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                ))}
+              </CardContent>
+            </Card>
+          )}
 
           {/* Shortlist Status */}
           {shortlists.length > 0 && (
