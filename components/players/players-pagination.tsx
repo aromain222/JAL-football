@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -5,13 +7,19 @@ import { Button } from "@/components/ui/button";
 export function PlayersPagination({
   page,
   totalPages,
-  hrefForPage
+  baseSearchParams
 }: {
   page: number;
   totalPages: number;
-  hrefForPage: (page: number) => string;
+  baseSearchParams: string;
 }) {
   if (totalPages <= 1) return null;
+
+  function href(p: number) {
+    const params = new URLSearchParams(baseSearchParams);
+    params.set("page", String(p));
+    return `/players?${params.toString()}`;
+  }
 
   return (
     <div className="flex flex-col items-center justify-between gap-3 rounded-3xl border bg-white/90 px-4 py-4 sm:flex-row">
@@ -26,7 +34,7 @@ export function PlayersPagination({
           </Button>
         ) : (
           <Button asChild variant="outline">
-            <Link href={hrefForPage(page - 1)}>
+            <Link href={href(page - 1)}>
               <ChevronLeft className="h-4 w-4" />
               Previous
             </Link>
@@ -39,7 +47,7 @@ export function PlayersPagination({
           </Button>
         ) : (
           <Button asChild variant="outline">
-            <Link href={hrefForPage(page + 1)}>
+            <Link href={href(page + 1)}>
               Next
               <ChevronRight className="h-4 w-4" />
             </Link>
