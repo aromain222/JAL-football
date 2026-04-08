@@ -124,15 +124,19 @@ export async function getNeeds() {
     return getDemoState().needs;
   }
 
-  const { team } = await getViewerContext();
-  const supabase = createSupabaseServerClient();
-  const { data } = await supabase
-    .from("team_needs")
-    .select("*")
-    .eq("team_id", team.id)
-    .order("created_at", { ascending: false });
+  try {
+    const { team } = await getViewerContext();
+    const supabase = createSupabaseServerClient();
+    const { data } = await supabase
+      .from("team_needs")
+      .select("*")
+      .eq("team_id", team.id)
+      .order("created_at", { ascending: false });
 
-  return (data as TeamNeed[] | null) ?? [];
+    return (data as TeamNeed[] | null) ?? [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getNeedById(id: string) {
@@ -150,6 +154,11 @@ export async function getPlayers(filters: PlayerFilters = {}) {
   const filtered = filterPlayers(basePlayers, filters);
 
   if (!need) {
+    if (filters.needId) {
+      // needId was given but need couldn't be loaded (auth failure, rate limit, etc.)
+      // Return empty array — callers expect PlayerFitResult[], not Player[]
+      return [];
+    }
     return filtered;
   }
 

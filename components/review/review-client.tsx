@@ -61,7 +61,7 @@ export function ReviewClient({
 
   const handleDecision = useCallback(
     async (decision: ReviewDecision) => {
-      if (!current) return;
+      if (!current || !current.player) return;
 
       const leavingIndex = currentIndex;
       const leavingPlayerId = current.player.id;

@@ -1,12 +1,11 @@
 import Link from "next/link";
-import { ArrowRight, Clock3, Eye, Film, Layers3, Radar, Target } from "lucide-react";
+import { ArrowRight, Clock3, Film, Layers3 } from "lucide-react";
 import { SectionHeader } from "@/components/section-header";
 import { StatCard } from "@/components/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPlayerPrimaryProduction } from "@/lib/football";
-import { Player } from "@/lib/types";
 import { cn, formatDate, formatNumber } from "@/lib/utils";
 import {
   getDashboardMetrics,
@@ -38,37 +37,6 @@ export default async function DashboardPage() {
     .slice()
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, 4);
-
-  const topCandidatesByNeed = (
-    await Promise.all(
-      needs
-        .filter((need) => need.status === "active")
-        .slice(0, 3)
-        .map(async (need) => {
-          const candidates = (await getPlayers({
-            needId: need.id,
-            position: need.position,
-            heightMin: need.min_height_in ?? undefined,
-            heightMax: need.max_height_in ?? undefined,
-            weightMin: need.min_weight_lbs ?? undefined,
-            weightMax: need.max_weight_lbs ?? undefined,
-            armLengthMin: need.min_arm_length_in ?? undefined,
-            fortyMax: need.max_forty_time ?? undefined,
-            yearsRemainingMin: need.min_years_remaining ?? undefined,
-            minFit: 70
-          })) as Array<{
-            player: Pick<Player, "id" | "first_name" | "last_name" | "current_school" | "position" | "latest_stats">;
-            fitScore: number;
-            fitSummary: string;
-          }>;
-
-          return {
-            need,
-            candidates: candidates.slice(0, 2)
-          };
-        })
-    )
-  ).filter((entry) => entry.candidates.length > 0);
 
   const activityFeed = [
     ...recentReviews.map((review) => ({
@@ -247,71 +215,8 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
+      {/* Recently shortlisted + Film queue */}
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        {/* Top candidates */}
-        <Card>
-          <CardHeader className="flex-row items-center justify-between">
-            <div>
-              <CardTitle>Top matching candidates</CardTitle>
-              <p className="text-sm text-slate-600">Best current fits surfaced for each active need.</p>
-            </div>
-            <Button asChild variant="outline">
-              <Link href="/players">
-                Open board
-                <Target className="h-4 w-4" />
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            {topCandidatesByNeed.length ? (
-              topCandidatesByNeed.map(({ need, candidates }) => (
-                <div key={need.id} className="rounded-2xl border bg-slate-50/60 p-5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge>{need.position}</Badge>
-                    <Badge variant={need.priority === "critical" ? "destructive" : "accent"}>{need.priority}</Badge>
-                  </div>
-                  <h3 className="mt-2.5 text-lg font-semibold text-slate-950">{need.title}</h3>
-                  <div className="mt-3 grid gap-2.5">
-                    {candidates.map((candidate) => (
-                      <div key={candidate.player.id} className="rounded-2xl border-l-4 border-l-emerald-400 bg-white px-4 py-3 shadow-sm">
-                        <div className="flex items-center justify-between gap-3">
-                          <div>
-                            <p className="font-semibold text-slate-950">
-                              {candidate.player.first_name} {candidate.player.last_name}
-                            </p>
-                            <p className="text-sm text-slate-500">
-                              {candidate.player.current_school} • {candidate.player.position}
-                            </p>
-                          </div>
-                          <Badge variant="success">{candidate.fitScore} fit</Badge>
-                        </div>
-                        <p className="mt-2 text-sm text-slate-600">{candidate.fitSummary}</p>
-                        <p className="mt-1.5 text-sm text-slate-500">{getPlayerPrimaryProduction(candidate.player)}</p>
-                        <div className="mt-3 flex gap-2">
-                          <Button asChild size="sm" variant="outline">
-                            <Link href={`/players/${candidate.player.id}`}>
-                              <Eye className="h-4 w-4" />
-                              Profile
-                            </Link>
-                          </Button>
-                          <Button asChild size="sm">
-                            <Link href={`/review/${need.id}`}>Review</Link>
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
-                No high-fit candidates surfaced yet for active needs.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Recently shortlisted */}
         <Card>
           <CardHeader className="flex-row items-center justify-between">
             <div>
@@ -355,21 +260,21 @@ export default async function DashboardPage() {
             )}
           </CardContent>
         </Card>
-      </div>
 
-      {/* Film queue */}
-      <Card className="border-amber-100/80 bg-white/95">
-        <CardHeader className="flex-row items-center justify-between">
-          <div>
-            <CardTitle>Needs Film Queue</CardTitle>
-            <p className="text-sm text-slate-600">Players flagged for deeper tape work before board promotion.</p>
-          </div>
-          <Badge variant="warning">
-            <Film className="mr-1 h-3 w-3" />
-            {playersNeedingFilm}
-          </Badge>
-        </CardHeader>
-      </Card>
+        {/* Film queue */}
+        <Card className="border-amber-100/80 bg-white/95">
+          <CardHeader className="flex-row items-center justify-between">
+            <div>
+              <CardTitle>Needs Film Queue</CardTitle>
+              <p className="text-sm text-slate-600">Players flagged for deeper tape work before board promotion.</p>
+            </div>
+            <Badge variant="warning">
+              <Film className="mr-1 h-3 w-3" />
+              {playersNeedingFilm}
+            </Badge>
+          </CardHeader>
+        </Card>
+      </div>
     </div>
   );
 }
