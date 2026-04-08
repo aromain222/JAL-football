@@ -22,7 +22,6 @@ import { demoProfile, demoTeam } from "@/lib/data/demo";
 import { resolveScheme } from "@/lib/scheme/registry";
 import { selectFeaturedStats } from "@/lib/scheme/featuredStats";
 import { computeSchemeDelta, generateSchemeSummary } from "@/lib/scheme/schemeFit";
-import { tableForPosition } from "@/lib/data/pff-position-tables";
 
 export interface PlayerFilters {
   position?: string;
@@ -433,35 +432,27 @@ export async function getPffStatsForPlayer(
   player: Player
 ): Promise<Record<string, unknown> | null> {
   if (!hasSupabaseEnv()) return null;
-  const table = tableForPosition(player.position);
-  if (!table) return null;
-
   const supabase = createSupabaseServerClient();
 
-  // Try combined player_name column first (common in PFF exports)
+  // Primary: match by player_id FK (accurate, works after import resolves names)
+  const { data } = await supabase
+    .from("player_pff_grades")
+    .select("*")
+    .eq("player_id", player.id)
+    .order("season", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (data) return data as Record<string, unknown>;
+
+  // Fallback: name match (player_id may be null for recently imported records)
   const fullName = `${player.first_name} ${player.last_name}`;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data } = await (supabase as any)
-    .from(table)
+  const { data: data2 } = await supabase
+    .from("player_pff_grades")
     .select("*")
     .ilike("player_name", fullName)
     .order("season", { ascending: false })
     .limit(1)
     .maybeSingle();
-
-  if (data) return data as Record<string, unknown>;
-
-  // Fallback: separate first_name / last_name columns
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { data: data2 } = await (supabase as any)
-    .from(table)
-    .select("*")
-    .ilike("last_name", player.last_name)
-    .ilike("first_name", player.first_name)
-    .order("season", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
   return (data2 as Record<string, unknown> | null) ?? null;
 }
 
@@ -469,46 +460,45 @@ export async function getBatchPffStatsForPlayers(
   players: Player[]
 ): Promise<Record<string, Record<string, unknown>>> {
   if (!hasSupabaseEnv() || players.length === 0) return {};
+  const supabase = createSupabaseServerClient();
+  const result: Record<string, Record<string, unknown>> = {};
 
-  // Group players by their PFF table name
-  const byTable = new Map<string, Player[]>();
-  for (const p of players) {
-    const table = tableForPosition(p.position);
-    if (!table) continue;
-    if (!byTable.has(table)) byTable.set(table, []);
-    byTable.get(table)!.push(p);
+  // Batch 1: by player_id FK — covers all players whose PFF records were linked
+  const ids = players.map((p) => p.id);
+  const { data: byId } = await supabase
+    .from("player_pff_grades")
+    .select("*")
+    .in("player_id", ids)
+    .order("season", { ascending: false });
+
+  const seen = new Set<string>();
+  for (const row of (byId ?? []) as Array<Record<string, unknown>>) {
+    const pid = row.player_id as string | undefined;
+    if (pid && !seen.has(pid)) { seen.add(pid); result[pid] = row; }
   }
 
-  const result: Record<string, Record<string, unknown>> = {};
-  const supabase = createSupabaseServerClient();
+  // Batch 2: name match for players not yet resolved in PFF data
+  const unmatched = players.filter((p) => !result[p.id]);
+  if (unmatched.length) {
+    const names = unmatched.map((p) => `${p.first_name} ${p.last_name}`);
+    const { data: byName } = await supabase
+      .from("player_pff_grades")
+      .select("*")
+      .in("player_name", names)
+      .order("season", { ascending: false });
 
-  // One query per position table — scales to any number of players
-  await Promise.all(
-    Array.from(byTable.entries()).map(async ([table, tablePlayers]) => {
-      const names = tablePlayers.map((p) => `${p.first_name} ${p.last_name}`);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data } = await (supabase as any)
-        .from(table)
-        .select("*")
-        .in("player_name", names)
-        .order("season", { ascending: false });
-
-      if (!data) return;
-
-      // Match each PFF row back to a player by name, keep only most recent per player
-      const seen = new Set<string>();
-      for (const row of data as Array<Record<string, unknown>>) {
-        const rowName = ((row.player_name as string | undefined) ?? "").toLowerCase();
-        const player = tablePlayers.find(
-          (p) => `${p.first_name} ${p.last_name}`.toLowerCase() === rowName
-        );
-        if (player && !seen.has(player.id)) {
-          seen.add(player.id);
-          result[player.id] = row;
-        }
+    const seenNames = new Set<string>();
+    for (const row of (byName ?? []) as Array<Record<string, unknown>>) {
+      const rowName = ((row.player_name as string | undefined) ?? "").toLowerCase();
+      const player = unmatched.find(
+        (p) => `${p.first_name} ${p.last_name}`.toLowerCase() === rowName
+      );
+      if (player && !seenNames.has(player.id)) {
+        seenNames.add(player.id);
+        result[player.id] = row;
       }
-    })
-  );
+    }
+  }
 
   return result;
 }
