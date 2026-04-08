@@ -16,10 +16,10 @@ export function SectionHeader({ eyebrow, title, description, cta }: SectionHeade
   return (
     <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
       <div className="max-w-3xl">
-        <div className="inline-flex items-center rounded-full border border-cyan-100 bg-cyan-50/90 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-800">
+        <div className="inline-flex items-center rounded-full border border-cyan-200/70 bg-gradient-to-r from-cyan-50 to-sky-50 px-3.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.28em] text-cyan-800 shadow-[0_0_16px_rgba(14,116,144,0.15)]">
           {eyebrow}
         </div>
-        <h1 className="mt-4 text-4xl font-semibold tracking-tight text-slate-950 lg:text-[2.8rem]">{title}</h1>
+        <h1 className="gradient-heading mt-4 text-4xl font-bold tracking-tight lg:text-[2.9rem]">{title}</h1>
         <p className="mt-3 max-w-2xl text-[15px] leading-7 text-slate-600 lg:text-base">{description}</p>
       </div>
       {cta ? (

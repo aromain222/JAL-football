@@ -95,8 +95,8 @@ export default async function AppLayout({
         </aside>
 
         <main className="flex-1 pb-6">
-          <div className="rounded-[34px] border border-white/60 bg-white/35 p-2 shadow-[0_18px_50px_rgba(15,23,42,0.05)] backdrop-blur-sm">
-            <div className="rounded-[30px] bg-white/25 p-1">{children}</div>
+          <div className="rounded-[32px] border border-white/65 bg-white/42 p-4 shadow-[0_20px_60px_rgba(15,23,42,0.07)] backdrop-blur-sm lg:p-5">
+            {children}
           </div>
         </main>
       </div>

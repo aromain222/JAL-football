@@ -8,16 +8,14 @@ interface StatCardProps {
 
 export function StatCard({ label, value, hint }: StatCardProps) {
   return (
-    <Card className="overflow-hidden bg-white/90">
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500">{label}</p>
-            <div className="mt-4 text-4xl font-semibold tracking-tight text-slate-950">{value}</div>
-          </div>
-          <div className="h-12 w-12 rounded-2xl bg-[radial-gradient(circle_at_top,_rgba(34,211,238,0.18),_rgba(255,255,255,0.55))]" />
+    <Card className="overflow-hidden border-t-[3px] border-t-cyan-400 bg-gradient-to-br from-white to-slate-50/60">
+      <CardContent className="p-6">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-slate-500">{label}</p>
+        <div className="gradient-heading mt-3 text-5xl font-bold tracking-tight">{value}</div>
+        <div className="mt-4 flex items-center gap-2">
+          <div className="h-1.5 w-1.5 rounded-full bg-cyan-400" />
+          <p className="text-sm text-slate-500">{hint}</p>
         </div>
-        <p className="mt-3 text-sm leading-6 text-slate-600">{hint}</p>
       </CardContent>
     </Card>
   );

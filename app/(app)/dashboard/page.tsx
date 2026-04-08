@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPlayerPrimaryProduction } from "@/lib/football";
 import { Player } from "@/lib/types";
-import { formatDate, formatNumber } from "@/lib/utils";
+import { cn, formatDate, formatNumber } from "@/lib/utils";
 import {
   getDashboardMetrics,
   getNeeds,
@@ -96,8 +96,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="grid gap-6">
-      <Card className="overflow-hidden border-none bg-[linear-gradient(145deg,#07111d_0%,#0f2740_52%,#0e7490_100%)] text-white shadow-[0_35px_80px_rgba(8,15,33,0.32)]">
-        <CardContent className="grid gap-8 p-8 lg:grid-cols-[1.1fr_0.9fr]">
+      {/* Hero card */}
+      <Card className="relative overflow-hidden border-none bg-[linear-gradient(145deg,#06101c_0%,#0f2740_52%,#0e7490_100%)] text-white shadow-[0_40px_90px_rgba(8,15,33,0.38)]">
+        {/* Decorative grid overlay */}
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.04]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,1) 39px,rgba(255,255,255,1) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,1) 39px,rgba(255,255,255,1) 40px)"
+          }}
+        />
+        {/* Top cyan glow */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
+        <CardContent className="relative grid gap-8 p-8 lg:grid-cols-[1.1fr_0.9fr]">
           <SectionHeader
             eyebrow="Control Room"
             title="Transfer board status"
@@ -105,20 +116,21 @@ export default async function DashboardPage() {
             cta={{ label: "Create new need", href: "/needs/new" }}
           />
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Portal pipeline</p>
-              <div className="mt-4 text-4xl font-semibold">{formatNumber(metrics.totalPlayers)}</div>
-              <p className="mt-2 text-sm text-slate-300">Imported players live in the internal eval board.</p>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur ring-1 ring-inset ring-white/8">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-300/80">Portal pipeline</p>
+              <div className="mt-3 text-5xl font-bold tracking-tight">{formatNumber(metrics.totalPlayers)}</div>
+              <p className="mt-2 text-sm text-slate-300/70">Imported players live in the internal eval board.</p>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Shortlisted now</p>
-              <div className="mt-4 text-4xl font-semibold">{metrics.shortlistedPlayers}</div>
-              <p className="mt-2 text-sm text-slate-300">Players currently held in staff review stages.</p>
+            <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur ring-1 ring-inset ring-white/8">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-300/80">Shortlisted now</p>
+              <div className="mt-3 text-5xl font-bold tracking-tight">{metrics.shortlistedPlayers}</div>
+              <p className="mt-2 text-sm text-slate-300/70">Players currently held in staff review stages.</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
+      {/* Stat cards row */}
       <div className="grid gap-4 lg:grid-cols-5">
         <StatCard label="Active needs" value={String(metrics.activeNeeds)} hint="Open recruiting priorities" />
         <StatCard label="Total players" value={String(metrics.totalPlayers)} hint="Searchable transfer board" />
@@ -128,6 +140,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        {/* Active needs */}
         <Card>
           <CardHeader className="flex-row items-center justify-between">
             <div>
@@ -138,18 +151,26 @@ export default async function DashboardPage() {
               <Link href="/needs">All needs</Link>
             </Button>
           </CardHeader>
-          <CardContent className="grid gap-4">
+          <CardContent className="grid gap-3">
             {needs.map((need) => (
-              <div key={need.id} className="flex flex-col gap-4 rounded-3xl border bg-slate-50 p-5 lg:flex-row lg:items-center lg:justify-between">
+              <div
+                key={need.id}
+                className={cn(
+                  "flex flex-col gap-4 rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md lg:flex-row lg:items-center lg:justify-between",
+                  need.priority === "critical"
+                    ? "border-l-4 border-l-rose-400"
+                    : "border-l-4 border-l-cyan-400"
+                )}
+              >
                 <div>
                   <div className="flex items-center gap-2">
                     <Badge variant={need.priority === "critical" ? "destructive" : "accent"}>{need.priority}</Badge>
                     <Badge>{need.position}</Badge>
                   </div>
-                  <h3 className="mt-3 text-xl font-semibold">{need.title}</h3>
-                  <p className="mt-1 text-sm text-slate-600">{need.notes}</p>
+                  <h3 className="mt-3 text-lg font-semibold text-slate-950">{need.title}</h3>
+                  <p className="mt-1 text-sm text-slate-500">{need.notes}</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex shrink-0 gap-3">
                   <Button asChild variant="outline">
                     <Link href={`/needs/${need.id}`}>View</Link>
                   </Button>
@@ -165,29 +186,60 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
+        {/* Activity feed — timeline style */}
         <Card>
           <CardHeader>
             <CardTitle>Recent activity</CardTitle>
+            <p className="text-sm text-slate-600">Latest reviews and shortlist movements.</p>
           </CardHeader>
-          <CardContent className="grid gap-3">
+          <CardContent>
             {activityFeed.length ? (
-              activityFeed.map((item) => (
-                <div key={item.id} className="rounded-3xl border bg-slate-50 p-4">
-                  <div className="flex items-center justify-between">
-                    <Badge variant={item.type === "shortlist" ? "accent" : item.label === "right" ? "success" : item.label === "needs_film" ? "warning" : "default"}>
-                      {item.label}
-                    </Badge>
-                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-500">
-                      <Clock3 className="h-3.5 w-3.5" />
-                      {formatDate(item.created_at)}
+              <div className="relative grid gap-0">
+                {/* Vertical connector line */}
+                <div className="absolute bottom-5 left-[19px] top-5 w-px bg-slate-200" />
+                {activityFeed.map((item) => {
+                  const isShortlist = item.type === "shortlist";
+                  const isPositive = item.label === "right";
+                  return (
+                    <div key={item.id} className="relative flex gap-4 pb-4 last:pb-0">
+                      {/* Dot */}
+                      <div
+                        className={cn(
+                          "relative z-10 mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-white shadow-sm",
+                          isShortlist ? "bg-cyan-100" : isPositive ? "bg-emerald-100" : "bg-slate-100"
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "h-2.5 w-2.5 rounded-full",
+                            isShortlist ? "bg-cyan-500" : isPositive ? "bg-emerald-500" : "bg-slate-400"
+                          )}
+                        />
+                      </div>
+                      {/* Card */}
+                      <div className="flex-1 rounded-2xl border bg-white p-4 shadow-sm">
+                        <div className="flex items-center justify-between">
+                          <Badge
+                            variant={
+                              isShortlist ? "accent" : isPositive ? "success" : item.label === "needs_film" ? "warning" : "default"
+                            }
+                          >
+                            {item.label}
+                          </Badge>
+                          <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-slate-400">
+                            <Clock3 className="h-3 w-3" />
+                            {formatDate(item.created_at)}
+                          </div>
+                        </div>
+                        <p className="mt-2.5 text-sm font-medium text-slate-900">{item.detail}</p>
+                        <p className="mt-1 text-sm text-slate-500">{item.meta}</p>
+                      </div>
                     </div>
-                  </div>
-                  <p className="mt-3 text-sm font-medium text-slate-900">{item.detail}</p>
-                  <p className="mt-2 text-sm text-slate-600">{item.meta}</p>
-                </div>
-              ))
+                  );
+                })}
+              </div>
             ) : (
-              <div className="rounded-3xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
+              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
                 No recent reviews yet.
               </div>
             )}
@@ -196,6 +248,7 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        {/* Top candidates */}
         <Card>
           <CardHeader className="flex-row items-center justify-between">
             <div>
@@ -212,31 +265,31 @@ export default async function DashboardPage() {
           <CardContent className="grid gap-4">
             {topCandidatesByNeed.length ? (
               topCandidatesByNeed.map(({ need, candidates }) => (
-                <div key={need.id} className="rounded-3xl border bg-slate-50 p-5">
+                <div key={need.id} className="rounded-2xl border bg-slate-50/60 p-5">
                   <div className="flex flex-wrap items-center gap-2">
                     <Badge>{need.position}</Badge>
                     <Badge variant={need.priority === "critical" ? "destructive" : "accent"}>{need.priority}</Badge>
                   </div>
-                  <h3 className="mt-3 text-xl font-semibold">{need.title}</h3>
-                  <div className="mt-4 grid gap-3">
+                  <h3 className="mt-2.5 text-lg font-semibold text-slate-950">{need.title}</h3>
+                  <div className="mt-3 grid gap-2.5">
                     {candidates.map((candidate) => (
-                        <div key={candidate.player.id} className="rounded-2xl border bg-white px-4 py-3">
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <p className="font-medium text-slate-950">
-                                {candidate.player.first_name} {candidate.player.last_name}
+                      <div key={candidate.player.id} className="rounded-2xl border-l-4 border-l-emerald-400 bg-white px-4 py-3 shadow-sm">
+                        <div className="flex items-center justify-between gap-3">
+                          <div>
+                            <p className="font-semibold text-slate-950">
+                              {candidate.player.first_name} {candidate.player.last_name}
                             </p>
-                            <p className="text-sm text-slate-600">
+                            <p className="text-sm text-slate-500">
                               {candidate.player.current_school} • {candidate.player.position}
                             </p>
                           </div>
                           <Badge variant="success">{candidate.fitScore} fit</Badge>
-                          </div>
-                          <p className="mt-2 text-sm text-slate-600">{candidate.fitSummary}</p>
-                          <p className="mt-2 text-sm text-slate-700">{getPlayerPrimaryProduction(candidate.player)}</p>
-                          <div className="mt-3 flex gap-2">
-                            <Button asChild size="sm" variant="outline">
-                              <Link href={`/players/${candidate.player.id}`}>
+                        </div>
+                        <p className="mt-2 text-sm text-slate-600">{candidate.fitSummary}</p>
+                        <p className="mt-1.5 text-sm text-slate-500">{getPlayerPrimaryProduction(candidate.player)}</p>
+                        <div className="mt-3 flex gap-2">
+                          <Button asChild size="sm" variant="outline">
+                            <Link href={`/players/${candidate.player.id}`}>
                               <Eye className="h-4 w-4" />
                               Profile
                             </Link>
@@ -251,13 +304,14 @@ export default async function DashboardPage() {
                 </div>
               ))
             ) : (
-              <div className="rounded-3xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
+              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
                 No high-fit candidates surfaced yet for active needs.
               </div>
             )}
           </CardContent>
         </Card>
 
+        {/* Recently shortlisted */}
         <Card>
           <CardHeader className="flex-row items-center justify-between">
             <div>
@@ -274,20 +328,20 @@ export default async function DashboardPage() {
           <CardContent className="grid gap-3">
             {recentShortlisted.length ? (
               recentShortlisted.map((item) => (
-                <div key={item.id} className="rounded-3xl border bg-slate-50 p-4">
+                <div key={item.id} className="rounded-2xl border border-l-4 border-l-cyan-400 bg-white p-4 shadow-sm">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-medium text-slate-950">
+                      <p className="font-semibold text-slate-950">
                         {item.player?.first_name} {item.player?.last_name}
                       </p>
-                      <p className="text-sm text-slate-600">
+                      <p className="text-sm text-slate-500">
                         {item.player?.current_school} • {item.need?.title}
                       </p>
                     </div>
                     <Badge variant="accent">{item.stage}</Badge>
                   </div>
-                  <p className="mt-3 text-sm text-slate-700">{item.latestNote ?? "No shortlist note attached."}</p>
-                  <div className="mt-3 flex gap-2">
+                  <p className="mt-2.5 text-sm text-slate-600">{item.latestNote ?? "No shortlist note attached."}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
                     {item.fitScore !== null ? <Badge variant="success">{item.fitScore} fit</Badge> : null}
                     <Badge variant="default">{formatDate(item.created_at)}</Badge>
                     {item.player ? <Badge variant="default">{getPlayerPrimaryProduction(item.player)}</Badge> : null}
@@ -295,7 +349,7 @@ export default async function DashboardPage() {
                 </div>
               ))
             ) : (
-              <div className="rounded-3xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
+              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
                 No shortlisted players yet.
               </div>
             )}
@@ -303,7 +357,8 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="border-amber-100 bg-white/95">
+      {/* Film queue */}
+      <Card className="border-amber-100/80 bg-white/95">
         <CardHeader className="flex-row items-center justify-between">
           <div>
             <CardTitle>Needs Film Queue</CardTitle>

@@ -33,19 +33,19 @@ export function AppSidebarNav({ items }: { items: readonly NavItem[] }) {
             key={item.href}
             href={item.href}
             className={cn(
-              "group flex items-center justify-between rounded-2xl border px-3 py-3 text-sm font-medium transition-all duration-150",
+              "group flex items-center justify-between rounded-2xl border px-3 py-3 text-sm font-medium transition-all duration-200",
               isActive
-                ? "border-cyan-200 bg-cyan-50/90 text-slate-950 shadow-[0_10px_20px_rgba(14,116,144,0.08)]"
-                : "border-transparent text-slate-600 hover:border-slate-200 hover:bg-white/80 hover:text-slate-950"
+                ? "border-cyan-300 bg-cyan-50 font-semibold text-cyan-900 shadow-[0_8px_24px_rgba(14,116,144,0.15)]"
+                : "border-transparent text-slate-500 hover:border-slate-200/80 hover:bg-white/70 hover:text-slate-800"
             )}
           >
             <span className="flex items-center gap-3">
               <span
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-xl border transition-colors",
+                  "flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-200",
                   isActive
-                    ? "border-cyan-200 bg-white text-cyan-700"
-                    : "border-transparent bg-slate-100 text-slate-600 group-hover:bg-slate-950 group-hover:text-white"
+                    ? "border-cyan-200 bg-cyan-600 text-white shadow-[0_4px_12px_rgba(14,116,144,0.35)]"
+                    : "border-transparent bg-slate-100/80 text-slate-500 group-hover:bg-slate-900 group-hover:text-white"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -54,7 +54,7 @@ export function AppSidebarNav({ items }: { items: readonly NavItem[] }) {
             </span>
             <span
               className={cn(
-                "h-2.5 w-2.5 rounded-full transition-colors",
+                "h-2.5 w-2.5 rounded-full transition-colors duration-200",
                 isActive ? "bg-cyan-500" : "bg-transparent group-hover:bg-slate-300"
               )}
             />
