@@ -16,6 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { needSchema } from "@/lib/validation";
 import { z } from "zod";
+import { getArchetypesForPosition } from "@/lib/archetypes";
 
 const positions = ["QB", "RB", "WR", "TE", "OL", "EDGE", "DL", "LB", "CB", "S", "ST"] as const;
 const priorities = ["critical", "high", "medium"] as const;
@@ -71,7 +72,6 @@ export function NeedForm() {
           max_height_in: null,
           min_weight_lbs: null,
           max_weight_lbs: null,
-          priority_traits: [],
           min_arm_length_in: null,
           max_forty_time: null
         });
@@ -116,6 +116,28 @@ export function NeedForm() {
                 <Input id="target_count" type="number" {...form.register("target_count", { valueAsNumber: true })} />
                 <FieldError message={form.formState.errors.target_count?.message} />
               </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label htmlFor="archetype">Target Archetype</Label>
+              <select
+                id="archetype"
+                className="h-10 rounded-xl border bg-white px-3 text-sm"
+                value={values.priority_traits?.[0] ?? ""}
+                onChange={(e) =>
+                  form.setValue(
+                    "priority_traits",
+                    e.target.value ? [e.target.value] : [],
+                    { shouldValidate: true }
+                  )
+                }
+              >
+                <option value="">Any build</option>
+                {getArchetypesForPosition(values.position).map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              <p className="text-xs text-slate-500">Optional. Players matching this physical build get a +6 fit bonus.</p>
             </div>
 
             <div className="grid gap-4 md:grid-cols-1">
@@ -183,6 +205,7 @@ export function NeedForm() {
                 </Badge>
                 <Badge>{values.target_count} target slot{values.target_count === 1 ? "" : "s"}</Badge>
                 {values.class_focus ? <Badge variant="default">{values.class_focus}</Badge> : null}
+                {values.priority_traits?.[0] ? <Badge variant="accent">{values.priority_traits[0]}</Badge> : null}
               </div>
 
               <SummaryLine label="Years remaining" value={singleLabel(values.min_years_remaining, "+")} />

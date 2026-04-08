@@ -1,4 +1,5 @@
 import { Player, PlayerFitResult, TeamNeed } from "@/lib/types";
+import { detectArchetype } from "@/lib/archetypes";
 
 function clamp(value: number, min = 0, max = 100) {
   return Math.max(min, Math.min(max, value));
@@ -110,6 +111,17 @@ export function calculateFit(player: Player, need: TeamNeed): PlayerFitResult {
       : 0;
   fitScore += player.eligibility_remaining >= 2 ? 4 : 0;
 
+  if (need.priority_traits?.length) {
+    const archetype = detectArchetype(
+      player.position,
+      player.measurements?.height_in,
+      player.measurements?.weight_lbs
+    );
+    if (archetype && need.priority_traits.includes(archetype)) {
+      fitScore += 6;
+    }
+  }
+
   const matchReasons = [
     player.position === need.position ? "Exact position match" : "Adjacent fit only",
     starts >= (need.min_starts ?? 0) ? "Meets experience threshold" : "Below target starts",
@@ -122,6 +134,21 @@ export function calculateFit(player: Player, need: TeamNeed): PlayerFitResult {
       ? "Production clears need threshold"
       : "Production below target"
   ];
+
+  if (need.priority_traits?.length) {
+    const archetype = detectArchetype(
+      player.position,
+      player.measurements?.height_in,
+      player.measurements?.weight_lbs
+    );
+    matchReasons.push(
+      archetype && need.priority_traits.includes(archetype)
+        ? `Build matches target archetype (${archetype})`
+        : need.priority_traits[0]
+          ? `Target archetype: ${need.priority_traits[0]}`
+          : "No archetype target"
+    );
+  }
 
   if (need.max_forty_time) {
     matchReasons.push(

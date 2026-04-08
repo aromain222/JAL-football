@@ -35,6 +35,7 @@ export default async function PlayersPage({
     yearsRemaining?: string;
     school?: string;
     conference?: string;
+    archetype?: string;
   };
 }) {
   const filters = {
@@ -52,7 +53,8 @@ export default async function PlayersPage({
     classYear: normalizeString(searchParams?.classYear),
     yearsRemaining: normalizeNumber(searchParams?.yearsRemaining),
     school: normalizeString(searchParams?.school),
-    conference: normalizeString(searchParams?.conference)
+    conference: normalizeString(searchParams?.conference),
+    archetype: normalizeString(searchParams?.archetype)
   };
 
   const [result, need] = await Promise.all([
@@ -105,7 +107,8 @@ export default async function PlayersPage({
           classYear: searchParams?.classYear,
           yearsRemaining: searchParams?.yearsRemaining,
           school: searchParams?.school,
-          conference: searchParams?.conference
+          conference: searchParams?.conference,
+          archetype: searchParams?.archetype
         }}
       />
 

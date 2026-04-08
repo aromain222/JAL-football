@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { FilterGroup, NumberRangeFields } from "@/components/players/player-filter-controls";
+import { getArchetypesByPosition } from "@/lib/archetypes";
 
 const positions = ["ALL", "EDGE", "DL", "LB", "CB", "WR", "RB", "OL"];
 const classYears = ["ALL", "FR", "SO", "JR", "SR", "GR"];
@@ -33,7 +34,10 @@ export interface PlayersFilterDefaults {
   yearsRemaining?: string;
   school?: string;
   conference?: string;
+  archetype?: string;
 }
+
+const archetypesByPosition = getArchetypesByPosition();
 
 export function PlayersFilterBar({
   defaults
@@ -132,6 +136,19 @@ export function PlayersFilterBar({
                 <option key={option} value={option}>
                   {option === "ALL" ? "All conferences" : option}
                 </option>
+              ))}
+            </select>
+          </FilterGroup>
+
+          <FilterGroup label="Archetype">
+            <select className="h-10 rounded-xl border bg-white px-3 text-sm" defaultValue={defaults.archetype ?? "ALL"} name="archetype">
+              <option value="ALL">All archetypes</option>
+              {Object.entries(archetypesByPosition).map(([pos, names]) => (
+                <optgroup key={pos} label={pos}>
+                  {names.map((n) => (
+                    <option key={n} value={n}>{n}</option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </FilterGroup>

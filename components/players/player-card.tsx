@@ -12,6 +12,7 @@ import {
   getPlayerProductionMetrics
 } from "@/lib/football";
 import { Player, PlayerFitResult } from "@/lib/types";
+import { detectArchetype } from "@/lib/archetypes";
 
 function getFitVariant(score?: number) {
   if (!score) return "default";
@@ -35,6 +36,7 @@ export function PlayerCard({
   const keyStats = getPlayerKeyStats(player).slice(0, 4);
   const productionMetrics = getPlayerProductionMetrics(player, 3);
   const conference = getPlayerDisplayConference(player);
+  const archetype = detectArchetype(player.position, player.measurements?.height_in, player.measurements?.weight_lbs);
   const initials = `${player.first_name[0] ?? ""}${player.last_name[0] ?? ""}`.toUpperCase();
   const heightWeightLabel = [
     formatHeightInFeetInches(player.measurements?.height_in),
@@ -65,7 +67,9 @@ export function PlayerCard({
               {initials}
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-cyan-400/80">{player.position}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-cyan-400/80">
+                {player.position}{archetype ? <span className="ml-1.5 font-normal text-cyan-300/60">· {archetype}</span> : null}
+              </p>
               <h3 className="mt-1 truncate text-xl font-semibold">
                 {player.first_name} {player.last_name}
               </h3>

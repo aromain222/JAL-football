@@ -22,6 +22,7 @@ import { demoProfile, demoTeam } from "@/lib/data/demo";
 import { resolveScheme } from "@/lib/scheme/registry";
 import { selectFeaturedStats } from "@/lib/scheme/featuredStats";
 import { computeSchemeDelta, generateSchemeSummary } from "@/lib/scheme/schemeFit";
+import { detectArchetype } from "@/lib/archetypes";
 
 export interface PlayerFilters {
   position?: string;
@@ -41,6 +42,7 @@ export interface PlayerFilters {
   needId?: string;
   page?: number;
   pageSize?: number;
+  archetype?: string;
 }
 
 function matchesSearch(player: Player, search?: string) {
@@ -265,6 +267,11 @@ function filterPlayers(players: Player[], filters: PlayerFilters) {
       measurements.forty_time > filters.fortyMax
     ) {
       return false;
+    }
+
+    if (filters.archetype) {
+      const a = detectArchetype(player.position, measurements?.height_in, measurements?.weight_lbs);
+      if (a !== filters.archetype) return false;
     }
 
     return true;
