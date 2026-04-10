@@ -10,7 +10,7 @@ import {
   updateDemoShortlistStage
 } from "@/lib/data/demo-store";
 import { insertTeamNeed } from "@/lib/data/mutations";
-import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
+import { createSupabaseDataClient, createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { getViewerContext, getPlayerQuickViewData, getPlayers, getBatchPffStatsForPlayers } from "@/lib/data/queries";
 import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
@@ -44,48 +44,10 @@ export async function setWorkspaceRoleAction(role: string) {
 
 export async function createNeedAction(input: z.infer<typeof needSchema>) {
   const parsed = needSchema.parse(input);
-  const supabase = hasSupabaseEnv() ? createSupabaseServerClient() : null;
+  const { profile: viewerProfile, team: viewerTeam } = await getViewerContext();
 
-  let viewerProfile = null as Awaited<ReturnType<typeof getViewerContext>>["profile"] | null;
-  let viewerTeam = null as Awaited<ReturnType<typeof getViewerContext>>["team"] | null;
-
-  if (supabase) {
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error("Sign in again before creating a need.");
-    }
-
-    const { data: profileRaw, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-    const profile = profileRaw as Profile | null;
-
-    if (profileError || !profile) {
-      throw new Error("Workspace access is not set up for this account.");
-    }
-
-    const { data: teamRaw, error: teamError } = await supabase
-      .from("teams")
-      .select("*")
-      .eq("id", profile.team_id)
-      .single();
-    const team = teamRaw as Team | null;
-
-    if (teamError || !team) {
-      throw new Error("Your team record could not be found.");
-    }
-
-    viewerProfile = profile;
-    viewerTeam = team;
-  } else {
-    const { profile, team } = await getViewerContext();
-    viewerProfile = profile;
-    viewerTeam = team;
+  if (!viewerProfile || !viewerTeam) {
+    throw new Error("Workspace context is not configured.");
   }
 
   const needId = crypto.randomUUID();
@@ -137,7 +99,7 @@ export async function submitReviewAction(formData: FormData) {
   });
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
     await supabase.from("player_reviews" as never).upsert(
       {
         need_id: parsed.needId,
@@ -218,7 +180,7 @@ export async function updateShortlistStageAction(formData: FormData) {
   });
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
     await supabase
       .from("shortlists" as never)
       .update({ stage: parsed.stage, updated_at: new Date().toISOString() } as never)
@@ -238,7 +200,7 @@ export async function addPlayerToShortlistAction(input: {
   const { profile } = await getViewerContext();
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
 
     await supabase.from("player_reviews" as never).upsert(
       {
@@ -301,7 +263,7 @@ export async function markPlayerNeedsFilmAction(input: {
   const { profile } = await getViewerContext();
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
 
     await supabase.from("player_reviews" as never).upsert(
       {
@@ -445,19 +407,11 @@ export async function deleteNeedAction(needId: string) {
     return;
   }
 
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  if (!user) throw new Error("Sign in to delete a need.");
-
-  const { data: profileRaw } = await supabase
-    .from("profiles")
-    .select("team_id")
-    .eq("id", user.id)
-    .single();
-  const teamId = (profileRaw as { team_id: string } | null)?.team_id;
+  const { team } = await getViewerContext();
+  const teamId = team?.id;
   if (!teamId) throw new Error("Team not found.");
+
+  const supabase = createSupabaseDataClient();
 
   await supabase
     .from("team_needs" as never)

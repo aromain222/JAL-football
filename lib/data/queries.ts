@@ -18,7 +18,13 @@ import {
   Team,
   TeamNeed
 } from "@/lib/types";
-import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
+import {
+  createSupabaseAdminClient,
+  createSupabaseDataClient,
+  createSupabaseServerClient,
+  hasSupabaseEnv,
+  hasSupabaseServiceRoleEnv
+} from "@/lib/supabase/server";
 import { demoProfile, demoTeam } from "@/lib/data/demo";
 import { resolveScheme } from "@/lib/scheme/registry";
 import { selectFeaturedStats } from "@/lib/scheme/featuredStats";
@@ -72,7 +78,75 @@ export async function getViewerContext() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { profile: demoProfile, team: demoTeam };
+    if (!hasSupabaseServiceRoleEnv()) {
+      return { profile: demoProfile, team: demoTeam };
+    }
+
+    const admin = createSupabaseAdminClient();
+    const defaultProfileId = process.env.DEFAULT_PROFILE_ID;
+    const defaultTeamId = process.env.DEFAULT_TEAM_ID;
+
+    let profile = null as Profile | null;
+    if (defaultProfileId) {
+      const { data: defaultProfileRaw } = await admin
+        .from("profiles")
+        .select("*")
+        .eq("id", defaultProfileId)
+        .maybeSingle();
+      profile = (defaultProfileRaw as Profile | null) ?? null;
+    }
+
+    if (!profile && defaultTeamId) {
+      const { data: teamProfileRaw } = await admin
+        .from("profiles")
+        .select("*")
+        .eq("team_id", defaultTeamId)
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      profile = (teamProfileRaw as Profile | null) ?? null;
+    }
+
+    if (!profile) {
+      const { data: firstProfileRaw } = await admin
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      profile = (firstProfileRaw as Profile | null) ?? null;
+    }
+
+    let team = null as Team | null;
+    const workspaceTeamId = defaultTeamId ?? profile?.team_id ?? null;
+    if (workspaceTeamId) {
+      const { data: teamRaw } = await admin
+        .from("teams")
+        .select("*")
+        .eq("id", workspaceTeamId)
+        .maybeSingle();
+      team = (teamRaw as Team | null) ?? null;
+    }
+
+    if (!team) {
+      const { data: firstTeamRaw } = await admin
+        .from("teams")
+        .select("*")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      team = (firstTeamRaw as Team | null) ?? null;
+    }
+
+    const resolvedProfile = profile ?? demoProfile;
+    const resolvedTeam = team ?? demoTeam;
+
+    return {
+      profile: roleOverride
+        ? { ...resolvedProfile, role: roleOverride }
+        : resolvedProfile,
+      team: resolvedTeam
+    };
   }
 
   const { data: profileRaw } = await supabase
@@ -110,7 +184,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     };
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const [{ count: activeNeeds }, { count: totalPlayers }, { count: shortlistedPlayers }, { count: recentReviews }] =
     await Promise.all([
       supabase.from("team_needs").select("*", { count: "exact", head: true }).eq("status", "active"),
@@ -138,7 +212,7 @@ export async function getNeeds() {
 
   try {
     const { team } = await getViewerContext();
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
     const { data } = await supabase
       .from("team_needs")
       .select("*")
@@ -316,7 +390,7 @@ function filterPlayers(players: Player[], filters: PlayerFilters) {
 }
 
 async function getPlayersFromSupabase(filters: PlayerFilters = {}): Promise<Player[]> {
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   let query = supabase
     .from("players")
     .select("*, player_measurements(*), player_stats(*), player_tags(tag)")
@@ -370,7 +444,7 @@ export async function getPlayerReviewHistory(playerId: string) {
       .sort((a, b) => b.created_at.localeCompare(a.created_at));
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const { data } = await supabase
     .from("player_reviews")
     .select("*")
@@ -386,7 +460,7 @@ export async function getPlayerShortlistEntries(playerId: string) {
     return getDemoState().shortlists.filter((item) => item.player_id === playerId);
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const { data } = await supabase.from("shortlists").select("*").eq("player_id", playerId);
   return (data as ShortlistItem[] | null) ?? [];
 }
@@ -397,7 +471,7 @@ export async function getPlayerSourceNotes(playerId: string) {
     return [] as PlayerSourceNote[];
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const { data } = await supabase
     .from("player_source_notes")
     .select("*")
@@ -416,7 +490,7 @@ export async function getPlayersFromSupabaseForAI(filters: {
   minYearsRemaining?: number;
 }): Promise<Player[]> {
   if (!hasSupabaseEnv()) return [];
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   let query = supabase
     .from("players")
     .select("*, player_measurements(*), player_stats(*), player_tags(tag)")
@@ -476,7 +550,7 @@ export async function getPffStatsForPlayer(
   player: Player
 ): Promise<Record<string, unknown> | null> {
   if (!hasSupabaseEnv()) return null;
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
 
   // Primary: match by player_id FK (accurate, works after import resolves names)
   const { data } = await supabase
@@ -501,7 +575,7 @@ export async function getBatchPffStatsForPlayers(
   players: Player[]
 ): Promise<Record<string, Record<string, unknown>>> {
   if (!hasSupabaseEnv() || players.length === 0) return {};
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const result: Record<string, Record<string, unknown>> = {};
 
   // Batch 1: by player_id FK — covers all players whose PFF records were linked
@@ -641,7 +715,7 @@ export async function getReviewsByNeed(needId: string) {
     return getDemoState().reviews.filter((review) => review.need_id === needId);
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const { data } = await supabase
     .from("player_reviews")
     .select("*")
@@ -657,7 +731,7 @@ export async function getShortlists() {
     return getDemoState().shortlists;
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const { data } = await supabase.from("shortlists").select("*");
   return (data as ShortlistItem[] | null) ?? [];
 }
@@ -703,7 +777,7 @@ async function getAllReviews() {
     return getDemoState().reviews;
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const { data } = await supabase.from("player_reviews").select("*");
   return data ?? [];
 }
