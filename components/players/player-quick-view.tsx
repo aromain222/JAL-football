@@ -80,7 +80,6 @@ export function PlayerQuickView({ playerId }: { playerId: string | null }) {
             <div className="mt-2 flex flex-wrap gap-1.5">
               <Badge>{player.position}</Badge>
               <Badge variant="accent">{player.status}</Badge>
-              {player.stars ? <Badge variant="warning">{player.stars}-star</Badge> : null}
             </div>
           </div>
         </div>

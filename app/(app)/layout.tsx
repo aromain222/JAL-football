@@ -1,10 +1,8 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { LogOut, ShieldCheck, Sparkles, UsersRound } from "lucide-react";
 import { getViewerContext } from "@/lib/data/queries";
 import { AppSidebarNav } from "@/components/app-sidebar-nav";
 import { Button } from "@/components/ui/button";
-import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
 
 const navigation = [
   { href: "/dashboard", label: "Dashboard", icon: "dashboard" },
@@ -19,17 +17,6 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      redirect("/login");
-    }
-  }
-
   await getViewerContext();
 
   return (

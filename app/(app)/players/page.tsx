@@ -100,40 +100,31 @@ export default async function PlayersPage({
               {boardSummary}
             </p>
 
-            <div className="mt-6 flex flex-wrap gap-2">
-              {need ? (
+            {need ? (
+              <div className="mt-6">
                 <Badge className="border border-[#d3b26c]/35 bg-[#d3b26c]/14 text-[#f5deb1]" variant="default">
                   Need Fit Active
                 </Badge>
-              ) : null}
-              {activeFilterBadges.slice(0, 6).map((label) => (
-                <Badge
-                  key={label}
-                  className="border border-white/10 bg-white/8 text-[#dce7d9]"
-                  variant="default"
-                >
-                  {label}
-                </Badge>
-              ))}
-            </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="grid gap-3 self-end sm:grid-cols-3 lg:grid-cols-1">
-            <div className="rounded-[24px] border border-white/10 bg-black/16 p-4 backdrop-blur-sm">
+            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
               <p className="field-label text-[#8ac7b7]">Board Pool</p>
               <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
                 {result.total}
               </div>
               <p className="mt-2 text-sm text-[#d7e0d3]/70">Players in the current search field.</p>
             </div>
-            <div className="rounded-[24px] border border-white/10 bg-black/16 p-4 backdrop-blur-sm">
+            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
               <p className="field-label text-[#8ac7b7]">Page</p>
               <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
                 {result.page}/{result.totalPages}
               </div>
               <p className="mt-2 text-sm text-[#d7e0d3]/70">Working slice of the scouting board.</p>
             </div>
-            <div className="rounded-[24px] border border-white/10 bg-black/16 p-4 backdrop-blur-sm">
+            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
               <p className="field-label text-[#8ac7b7]">Mode</p>
               <div className={`${scoutingDisplay.className} mt-2 text-[2.1rem] leading-none text-white`}>
                 {need ? "Need" : "Open"}
@@ -146,7 +137,47 @@ export default async function PlayersPage({
         </div>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.12fr)_minmax(340px,0.88fr)]">
+      <section className="grid gap-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="field-label text-[#2c5947]">Primary Workflow</p>
+            <h2 className={`${scoutingDisplay.className} mt-2 text-[2.7rem] uppercase leading-none tracking-[0.04em] text-[#13251d]`}>
+              Start with AI Search
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              Describe the football role first. The board will rank players by alignment usage, physical fit, production, and PFF-backed evidence before you tighten the pool manually.
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Badge className="bg-[#153728] text-[#d8f1e1]" variant="default">AI-first board</Badge>
+          </div>
+        </div>
+
+        <AiSearchPanel boardFilters={searchParams ?? {}} />
+      </section>
+
+      <section className="grid gap-4">
+        <div className="flex flex-col gap-2 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="field-label text-[#4e6d5d]">Secondary Controls</p>
+            <h3 className={`${scoutingDisplay.className} mt-2 text-[2.15rem] uppercase leading-none tracking-[0.04em] text-[#16261f]`}>
+              Refine the Board Manually
+            </h3>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              Use manual filters after the AI pass when you need to hard-gate measurables, conference, class, or school context.
+            </p>
+          </div>
+          {activeFilterBadges.length ? (
+            <div className="flex flex-wrap gap-2">
+              {activeFilterBadges.slice(0, 4).map((label) => (
+                <Badge key={label} className="border border-[#d9e1dc] bg-white/[0.72] text-[#365647]" variant="default">
+                  {label}
+                </Badge>
+              ))}
+            </div>
+          ) : null}
+        </div>
+
         <PlayersFilterBar
           defaults={{
             search: searchParams?.search,
@@ -165,8 +196,7 @@ export default async function PlayersPage({
             archetype: searchParams?.archetype
           }}
         />
-        <AiSearchPanel boardFilters={searchParams ?? {}} />
-      </div>
+      </section>
 
       <section className="relative overflow-hidden rounded-[32px] border border-[#17211c]/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.92),rgba(244,247,244,0.88))] shadow-[0_30px_70px_rgba(15,23,42,0.10)]">
         <div className="absolute inset-x-0 top-0 h-px bg-[linear-gradient(90deg,transparent,rgba(16,37,30,0.18),transparent)]" />
@@ -184,8 +214,8 @@ export default async function PlayersPage({
 
             <div className="flex flex-wrap items-center gap-2">
               {need ? <Badge className="bg-[#123928] text-[#d9f3e1]" variant="default">Need Fit Mode</Badge> : null}
-              {activeFilterBadges.map((label) => (
-                <Badge key={label} className="border border-[#d9e1dc] bg-white/72 text-[#365647]" variant="default">
+              {activeFilterBadges.slice(0, 3).map((label) => (
+                <Badge key={label} className="border border-[#d9e1dc] bg-white/[0.72] text-[#365647]" variant="default">
                   {label}
                 </Badge>
               ))}

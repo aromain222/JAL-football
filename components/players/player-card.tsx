@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Gauge, Star } from "lucide-react";
+import { ArrowUpRight, Gauge } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -35,8 +35,8 @@ export function PlayerCard({
   detailHref?: string;
   onQuickView?: (id: string) => void;
 }) {
-  const keyStats = getPlayerKeyStats(player).slice(0, 4);
-  const productionMetrics = getPlayerProductionMetrics(player, 3);
+  const keyStats = getPlayerKeyStats(player).slice(0, 3);
+  const productionMetrics = getPlayerProductionMetrics(player, 2);
   const conference = getPlayerDisplayConference(player);
   const archetype = detectArchetype(player.position, player.measurements?.height_in, player.measurements?.weight_lbs);
   const pffPrimary = getPffPrimaryGrade(player.pffStats ?? null, player.position);
@@ -93,41 +93,39 @@ export function PlayerCard({
           </div>
         </div>
 
-        <div className="grid gap-4 p-5">
-          <div className="grid gap-3 rounded-[24px] border border-[#d9dfdb] bg-[linear-gradient(180deg,rgba(250,251,250,0.92),rgba(241,245,242,0.92))] px-4 py-4 lg:grid-cols-[1.25fr_0.85fr]">
+        <div className="grid gap-3 p-4">
+          <div className="grid gap-3 rounded-[22px] border border-[#d9dfdb] bg-[linear-gradient(180deg,rgba(250,251,250,0.92),rgba(241,245,242,0.92))] px-4 py-3 lg:grid-cols-[1.25fr_0.85fr]">
             <div className="grid gap-1">
               <p className="field-label text-[#51685c]">Profile</p>
               <div className="text-base font-semibold text-[#13251d]">{heightWeightLabel}</div>
               {armFortyLabel ? <div className="text-sm text-slate-500">{armFortyLabel}</div> : null}
             </div>
-            <div className="grid gap-1 lg:justify-items-end">
-              <p className="field-label text-[#51685c]">Latest season</p>
-              {player.latest_stats ? (
+            {player.latest_stats ? (
+              <div className="grid gap-1 lg:justify-items-end">
+                <p className="field-label text-[#51685c]">Latest season</p>
                 <span className="inline-flex items-center gap-1 text-sm font-medium text-[#274536]">
                   <Gauge className="h-3.5 w-3.5" />
                   {player.latest_stats.season}
                 </span>
-              ) : (
-                <span className="text-sm text-slate-500">No production feed</span>
-              )}
-            </div>
+              </div>
+            ) : null}
           </div>
 
           <div className="grid grid-cols-2 gap-2">
             {keyStats.map((stat) => (
               <div
                 key={stat}
-                className="rounded-[20px] border border-[#dce3de] bg-white/84 px-3 py-3 text-sm font-medium text-[#294838] transition hover:border-[#24483a]/20 hover:bg-white"
+                className="rounded-[18px] border border-[#dce3de] bg-white/[0.84] px-3 py-2.5 text-sm font-medium text-[#294838] transition hover:border-[#24483a]/20 hover:bg-white"
               >
                 {stat}
               </div>
             ))}
           </div>
 
-          <div className="rounded-[24px] border border-[#d9dfdb] bg-[#f3f6f3] p-3">
+          {productionMetrics.length ? (
+          <div className="rounded-[22px] border border-[#d9dfdb] bg-[#f3f6f3] p-3">
             <div className="mb-3 flex items-center justify-between gap-2">
               <p className="field-label text-[#51685c]">Signals</p>
-              <p className="text-[11px] uppercase tracking-[0.16em] text-slate-400">Snapshot</p>
             </div>
             <div className="flex flex-wrap gap-2">
               {productionMetrics.map((metric) => (
@@ -138,9 +136,10 @@ export function PlayerCard({
               ))}
             </div>
           </div>
+          ) : null}
 
           <div className="flex flex-wrap items-center gap-2">
-            {(player.tags ?? []).slice(0, 2).map((tag) => (
+            {(player.tags ?? []).slice(0, 1).map((tag) => (
               <Badge key={tag} className="border border-[#d8dfda] bg-white text-[#355546]" variant="default">
                 {tag}
               </Badge>
@@ -150,16 +149,8 @@ export function PlayerCard({
                 PFF {pffOverall}
                 {pffSeason ? ` · ${pffSeason}` : ""}
               </Badge>
-            ) : player.pffStats ? (
-              <Badge className="bg-[#254a3b] text-[#d8f1e1]" variant="default">PFF loaded</Badge>
             ) : null}
-            {player.stars ? (
-              <Badge variant="warning" className="gap-1 border border-amber-200/70">
-                <Star className="h-3 w-3 fill-current" />
-                {player.stars}-star
-              </Badge>
-            ) : null}
-            {player.latest_stats ? (
+            {player.latest_stats && (player.latest_stats.starts ?? 0) > 0 ? (
               <Badge className="gap-1 border border-[#d8dfda] bg-white text-[#355546]" variant="default">
                 <Gauge className="h-3 w-3" />
                 {player.latest_stats.starts ?? 0} starts
@@ -167,13 +158,13 @@ export function PlayerCard({
             ) : null}
           </div>
 
-          <div className="flex items-center justify-between gap-3 border-t border-[#e0e5e1] pt-1" onClick={(e) => e.stopPropagation()}>
+          <div className="flex items-center justify-between gap-3 border-t border-[#e0e5e1] pt-2" onClick={(e) => e.stopPropagation()}>
             <p className="line-clamp-2 text-sm leading-6 text-slate-500">
               {player.notes ?? "No staff summary added yet."}
             </p>
             {onQuickView && detailHref ? (
               <div className="flex shrink-0 items-center gap-1.5">
-                <Button size="sm" variant="outline" className="border-[#ccd5d0] bg-white/84" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
+                <Button size="sm" variant="outline" className="border-[#ccd5d0] bg-white/[0.84]" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
                   Quick view
                 </Button>
                 <Button asChild size="sm" variant="ghost" className="px-2 text-[#284737]" onClick={(e) => e.stopPropagation()}>
@@ -183,12 +174,12 @@ export function PlayerCard({
                 </Button>
               </div>
             ) : onQuickView ? (
-              <Button size="sm" variant="outline" className="border-[#ccd5d0] bg-white/84" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
+              <Button size="sm" variant="outline" className="border-[#ccd5d0] bg-white/[0.84]" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
                 Quick view
                 <ArrowUpRight className="h-4 w-4" />
               </Button>
             ) : detailHref ? (
-              <Button asChild size="sm" variant="outline" className="border-[#ccd5d0] bg-white/84">
+              <Button asChild size="sm" variant="outline" className="border-[#ccd5d0] bg-white/[0.84]">
                 <Link href={detailHref}>
                   View
                   <ArrowUpRight className="h-4 w-4" />

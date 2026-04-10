@@ -65,7 +65,6 @@ export default async function PlayerDetailPage({
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <Badge>{player.position}</Badge>
                 <Badge variant="accent">{player.status}</Badge>
-                {player.stars ? <Badge variant="warning">{player.stars}-star</Badge> : null}
                 {currentShortlist ? <Badge variant="success">{currentShortlist.stage}</Badge> : null}
               </div>
             </div>

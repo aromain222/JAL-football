@@ -145,7 +145,8 @@ a {
 }
 
 .scouting-panel {
-  @apply overflow-hidden rounded-[30px] border border-white/12 text-white shadow-[0_28px_80px_rgba(8,15,20,0.30)];
+  @apply overflow-hidden rounded-[30px] border text-white shadow-[0_28px_80px_rgba(8,15,20,0.30)];
+  border-color: rgba(255, 255, 255, 0.12);
   background:
     linear-gradient(180deg, rgba(205, 170, 95, 0.12), rgba(205, 170, 95, 0) 18%),
     linear-gradient(145deg, #091410 0%, #10251e 48%, #142e24 100%);

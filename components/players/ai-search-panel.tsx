@@ -72,65 +72,88 @@ export function AiSearchPanel({ boardFilters }: { boardFilters?: AiBoardFilters 
       <div className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(135deg,#11251d_0%,#183327_60%,#1f4435_100%)]" />
       <div className="absolute inset-x-0 top-0 h-28 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[length:84px_84px] opacity-50" />
       <CardContent className="relative grid gap-5 p-6">
-        <div className="flex flex-col gap-4 rounded-[28px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,21,16,0.92),rgba(18,40,30,0.88))] p-5 text-white shadow-[0_20px_50px_rgba(7,12,10,0.24)]">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-white/10 bg-white/8">
-              <Sparkles className="h-4 w-4 text-[#d3b26c]" />
+        <div className="grid gap-4 rounded-[30px] border border-white/10 bg-[linear-gradient(145deg,rgba(10,21,16,0.94),rgba(18,40,30,0.90))] p-5 text-white shadow-[0_20px_50px_rgba(7,12,10,0.24)] lg:grid-cols-[minmax(0,1.25fr)_minmax(240px,0.72fr)]">
+          <div className="grid gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08]">
+                <Sparkles className="h-4.5 w-4.5 text-[#d3b26c]" />
+              </div>
+              <div>
+                <p className="field-label text-[#d3b26c]">AI Search Desk</p>
+                <h2 className={`${scoutingDisplay.className} mt-1 text-[3rem] uppercase leading-none tracking-[0.04em] text-[#f4efe2] sm:text-[3.4rem]`}>
+                  Find the Fit
+                </h2>
+              </div>
             </div>
-            <div>
-              <p className="field-label text-[#d3b26c]">AI Search Desk</p>
-              <h2 className={`${scoutingDisplay.className} mt-1 text-[2.2rem] uppercase leading-none tracking-[0.04em] text-[#f4efe2]`}>
-                Find the Fit
-              </h2>
-            </div>
-          </div>
-          <p className="max-w-2xl text-sm leading-6 text-[#d8e1d5]/76">
-            Describe the role in football language. The search model converts it into board scope, traits, PFF evidence, and projection logic.
-          </p>
-          {scopeBadges.length ? (
-            <div className="flex flex-wrap gap-1.5">
-              {scopeBadges.slice(0, 6).map((badge) => (
-                <Badge key={badge} className="border border-white/10 bg-white/8 text-[#dce7d9]" variant="default">
-                  {badge}
-                </Badge>
+            <p className="max-w-3xl text-[15px] leading-7 text-[#d8e1d5]/80">
+              Describe the football role in plain language and let the board do the first pass. AI search reads alignment usage, PFF profile, physical build, and production context before you touch the manual filters.
+            </p>
+            <form onSubmit={handleSearch} className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder='e.g. "physical off-ball linebacker who plays in the box and tackles"'
+                className="min-w-0 rounded-[22px] border border-white/10 bg-white/10 px-5 py-4 text-base text-white placeholder:text-slate-400 focus:border-[#d3b26c]/55 focus:outline-none focus:ring-1 focus:ring-[#d3b26c]/30"
+                disabled={loading}
+              />
+              <Button
+                type="submit"
+                disabled={loading || !query.trim()}
+                className="h-[58px] shrink-0 gap-2 rounded-[20px] bg-[#d3b26c] px-6 text-sm text-[#0d1a14] hover:bg-[#e2c380] disabled:opacity-50"
+              >
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {loading ? "Searching…" : "Run AI Search"}
+              </Button>
+            </form>
+
+            <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
+              {EXAMPLE_QUERIES.map((ex) => (
+                <button
+                  key={ex}
+                  type="button"
+                  onClick={() => handleExample(ex)}
+                  className="rounded-[18px] border border-white/10 bg-white/[0.06] px-4 py-3 text-left text-sm text-[#dce7d9] transition hover:-translate-y-0.5 hover:border-[#d3b26c]/35 hover:bg-white/[0.1]"
+                >
+                  {ex}
+                </button>
               ))}
             </div>
-          ) : null}
-
-          <form onSubmit={handleSearch} className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_auto]">
-            <input
-              type="text"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder='e.g. "big nose tackle with 2 years of eligibility"'
-              className="min-w-0 rounded-[20px] border border-white/10 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-400 focus:border-[#d3b26c]/55 focus:outline-none focus:ring-1 focus:ring-[#d3b26c]/30"
-              disabled={loading}
-            />
-            <Button
-              type="submit"
-              disabled={loading || !query.trim()}
-              className="h-12 shrink-0 gap-2 rounded-[18px] bg-[#d3b26c] text-[#0d1a14] hover:bg-[#e2c380] disabled:opacity-50"
-            >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              {loading ? "Searching…" : "Run search"}
-            </Button>
-          </form>
-        </div>
-
-        {!results && !loading && (
-          <div className="grid gap-2 sm:grid-cols-2">
-            {EXAMPLE_QUERIES.map((ex) => (
-              <button
-                key={ex}
-                type="button"
-                onClick={() => handleExample(ex)}
-                className="rounded-[20px] border border-[#d7ded9] bg-white/72 px-4 py-3 text-left text-sm text-slate-700 transition hover:-translate-y-0.5 hover:border-[#1f4435]/30 hover:bg-white"
-              >
-                {ex}
-              </button>
-            ))}
           </div>
-        )}
+
+          <div className="grid content-start gap-3 rounded-[24px] border border-white/10 bg-black/[0.18] p-4">
+            <div>
+              <p className="field-label text-[#8ac7b7]">What AI Uses</p>
+              <h3 className={`${scoutingDisplay.className} mt-2 text-[1.8rem] uppercase leading-none tracking-[0.04em] text-white`}>Signals</h3>
+            </div>
+            <div className="grid gap-3">
+              <div className="rounded-[18px] border border-white/10 bg-white/[0.06] p-3">
+                <p className="field-label text-[#d3b26c]">Role Usage</p>
+                <p className="mt-2 text-sm leading-6 text-[#d8e1d5]/78">Alignment snaps like slot, box, boundary, inline, edge, or interior DL.</p>
+              </div>
+              <div className="rounded-[18px] border border-white/10 bg-white/[0.06] p-3">
+                <p className="field-label text-[#d3b26c]">Evidence</p>
+                <p className="mt-2 text-sm leading-6 text-[#d8e1d5]/78">PFF grades, featured stats, and sample-aware flash production.</p>
+              </div>
+              <div className="rounded-[18px] border border-white/10 bg-white/[0.06] p-3">
+                <p className="field-label text-[#d3b26c]">Projection</p>
+                <p className="mt-2 text-sm leading-6 text-[#d8e1d5]/78">Size, eligibility, measurables, and position-specific physical fit.</p>
+              </div>
+            </div>
+            {scopeBadges.length ? (
+              <div className="border-t border-white/10 pt-3">
+                <p className="field-label text-[#8ac7b7]">Current Board Scope</p>
+                <div className="mt-2 flex flex-wrap gap-1.5">
+                  {scopeBadges.slice(0, 3).map((badge) => (
+                    <Badge key={badge} className="border border-white/10 bg-white/[0.08] text-[#dce7d9]" variant="default">
+                      {badge}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        </div>
 
         {error && (
           <div className="rounded-[20px] border border-rose-500/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-700">
@@ -140,7 +163,7 @@ export function AiSearchPanel({ boardFilters }: { boardFilters?: AiBoardFilters 
 
         {results !== null && criteria && (
           <div className="grid gap-4">
-            <div className="rounded-[24px] border border-[#d9e0db] bg-white/72 px-4 py-4">
+            <div className="rounded-[22px] border border-[#d9e0db] bg-white/[0.72] px-4 py-3">
               <button
                 type="button"
                 onClick={() => setShowReasoning((v) => !v)}
@@ -148,7 +171,7 @@ export function AiSearchPanel({ boardFilters }: { boardFilters?: AiBoardFilters 
               >
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="field-label text-[#456253]">AI matched</span>
-                  {criteria.positions.map((pos) => (
+                  {criteria.positions.slice(0, 2).map((pos) => (
                     <Badge key={pos} className="bg-[#143828] text-[#d8f1e1]" variant="default">
                       {pos}
                     </Badge>
@@ -163,19 +186,14 @@ export function AiSearchPanel({ boardFilters }: { boardFilters?: AiBoardFilters 
                       {criteria.min_weight_lbs}+ lbs
                     </Badge>
                   )}
-                  {criteria.roles.map((role) => (
+                  {criteria.roles.slice(0, 2).map((role) => (
                     <Badge key={`${role.key}-${role.label}`} className="border border-[#d7ded9] bg-white text-[#355546]" variant="default">
                       {role.label}
                     </Badge>
                   ))}
-                  {criteria.traits.map((trait) => (
+                  {criteria.traits.slice(0, 2).map((trait) => (
                     <Badge key={`${trait.key}-${trait.label}`} className="border border-[#d7ded9] bg-white text-[#355546]" variant="default">
                       {trait.label}
-                    </Badge>
-                  ))}
-                  {criteria.pff_criteria.map((criterion) => (
-                    <Badge key={criterion.column} className="border border-[#d7ded9] bg-white text-[#355546]" variant="default">
-                      {criterion.label}
                     </Badge>
                   ))}
                 </div>
@@ -207,7 +225,7 @@ export function AiSearchPanel({ boardFilters }: { boardFilters?: AiBoardFilters 
               </div>
             )}
 
-            <div className="grid gap-6 2xl:grid-cols-2">
+            <div className="grid gap-5 2xl:grid-cols-2">
               {results.map((result) => (
                 <div key={result.playerId} className="grid gap-2">
                   <PlayerCard
@@ -220,28 +238,14 @@ export function AiSearchPanel({ boardFilters }: { boardFilters?: AiBoardFilters 
                     <Badge className="border border-transparent" variant={getScoreVariant(result.matchScore) as "success" | "accent" | "warning" | "default"}>
                       {result.matchScore}% match
                     </Badge>
-                    {!result.hasPffData && (
-                      <span className="rounded-full border border-[#c8d0cb] px-2.5 py-0.5 text-xs uppercase tracking-[0.18em] text-slate-500">
-                        Profile only
-                      </span>
-                    )}
-                    <span className="rounded-full bg-[#153728] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-[#d8f1e1]">
-                      Fit {result.fitScore}
-                    </span>
-                    <span className="rounded-full bg-[#24483a] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-[#d8f1e1]">
-                      Prod {result.productionScore}
-                    </span>
-                    <span className="rounded-full bg-[#35584b] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-[#d8f1e1]">
-                      PFF {result.pffScore}
-                    </span>
-                    {result.reasonBadges.map((reason) => (
-                      <span key={reason} className="rounded-full border border-[#d7ded9] bg-white/76 px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-[#355546]">
+                    {result.reasonBadges.slice(0, 2).map((reason) => (
+                      <span key={reason} className="rounded-full border border-[#d7ded9] bg-white/[0.76] px-2.5 py-1 text-[11px] uppercase tracking-[0.16em] text-[#355546]">
                         {reason}
                       </span>
                     ))}
                   </div>
                   {result.searchExplanation.length ? (
-                    <div className="rounded-[20px] border border-[#d8e0db] bg-white/72 px-4 py-3">
+                    <div className="rounded-[18px] border border-[#d8e0db] bg-white/[0.72] px-4 py-3">
                       <div className="grid gap-1.5">
                         {result.searchExplanation.map((line) => (
                           <p key={line} className="text-sm leading-6 text-slate-600">
@@ -252,10 +256,10 @@ export function AiSearchPanel({ boardFilters }: { boardFilters?: AiBoardFilters 
                     </div>
                   ) : null}
                   {result.featuredStats.length ? (
-                    <div className="rounded-[20px] border border-[#d8e0db] bg-[#f4f7f4] px-4 py-3">
+                    <div className="rounded-[18px] border border-[#d8e0db] bg-[#f4f7f4] px-4 py-3">
                       <p className="field-label text-[#456253]">Featured Stats</p>
                       <div className="mt-2 flex flex-wrap gap-2">
-                        {result.featuredStats.map((stat) => (
+                        {result.featuredStats.slice(0, 3).map((stat) => (
                           <div
                             key={`${stat.label}-${stat.value}`}
                             className="flex items-center gap-1.5 rounded-full border border-[#d5ddd8] bg-white px-3 py-1.5 text-sm"

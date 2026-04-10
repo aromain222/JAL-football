@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ArrowRight, Clock3, Film, Layers3 } from "lucide-react";
-import { SectionHeader } from "@/components/section-header";
 import { StatCard } from "@/components/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPlayerPrimaryProduction } from "@/lib/football";
+import { scoutingDisplay } from "@/lib/football-ui";
 import { cn, formatDate, formatNumber } from "@/lib/utils";
 import {
   getDashboardMetrics,
@@ -64,39 +64,47 @@ export default async function DashboardPage() {
 
   return (
     <div className="grid gap-6">
-      {/* Hero card */}
-      <Card className="relative overflow-hidden border-none bg-[linear-gradient(145deg,#06101c_0%,#0f2740_52%,#0e7490_100%)] text-white shadow-[0_40px_90px_rgba(8,15,33,0.38)]">
-        {/* Decorative grid overlay */}
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,1) 39px,rgba(255,255,255,1) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,1) 39px,rgba(255,255,255,1) 40px)"
-          }}
-        />
-        {/* Top cyan glow */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent" />
-        <CardContent className="relative grid gap-8 p-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <SectionHeader
-            eyebrow="Control Room"
-            title="Transfer board status"
-            description="Track roster needs, move quickly through first-pass eval, and keep the internal board moving toward coordinator and head coach review."
-            cta={{ label: "Create new need", href: "/needs/new" }}
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur ring-1 ring-inset ring-white/8">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-300/80">Portal pipeline</p>
-              <div className="mt-3 text-5xl font-bold tracking-tight">{formatNumber(metrics.totalPlayers)}</div>
-              <p className="mt-2 text-sm text-slate-300/70">Imported players live in the internal eval board.</p>
-            </div>
-            <div className="rounded-3xl border border-white/15 bg-white/10 p-5 backdrop-blur ring-1 ring-inset ring-white/8">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-300/80">Shortlisted now</p>
-              <div className="mt-3 text-5xl font-bold tracking-tight">{metrics.shortlistedPlayers}</div>
-              <p className="mt-2 text-sm text-slate-300/70">Players currently held in staff review stages.</p>
+      <section className="scouting-panel relative isolate">
+        <div className="field-grid-lines absolute inset-0 opacity-40" />
+        <div className="absolute inset-y-0 left-[12%] w-px bg-white/10" />
+        <div className="absolute inset-y-0 right-[18%] w-px bg-white/10" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(5,12,10,0.42))]" />
+        <div className="relative grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.9fr)] lg:px-8 lg:py-8">
+          <div>
+            <p className="field-label text-[#d3b26c]">Control Room</p>
+            <h1 className={`${scoutingDisplay.className} mt-3 text-[3.2rem] uppercase leading-[0.88] tracking-[0.04em] text-[#f5efe0] sm:text-[4.4rem]`}>
+              Transfer Board Status
+            </h1>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#d7e0d3]/78 sm:text-[15px]">
+              Track roster needs, move quickly through first-pass eval, and keep the internal board moving toward coordinator and head coach review.
+            </p>
+            <div className="mt-6">
+              <Button asChild className="bg-[#d3b26c] text-[#0d1a14] hover:bg-[#e2c380]">
+                <Link href="/needs/new">
+                  Create new need
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div className="grid gap-3 self-end sm:grid-cols-2">
+            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
+              <p className="field-label text-[#8ac7b7]">Portal Pipeline</p>
+              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
+                {formatNumber(metrics.totalPlayers)}
+              </div>
+              <p className="mt-2 text-sm text-[#d7e0d3]/70">Imported players live in the internal eval board.</p>
+            </div>
+            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
+              <p className="field-label text-[#8ac7b7]">Shortlisted Now</p>
+              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
+                {metrics.shortlistedPlayers}
+              </div>
+              <p className="mt-2 text-sm text-[#d7e0d3]/70">Players currently held in staff review stages.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Stat cards row */}
       <div className="grid gap-4 lg:grid-cols-5">
@@ -109,7 +117,7 @@ export default async function DashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         {/* Active needs */}
-        <Card>
+        <Card className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Active needs</CardTitle>
@@ -124,18 +132,17 @@ export default async function DashboardPage() {
               <div
                 key={need.id}
                 className={cn(
-                  "flex flex-col gap-4 rounded-2xl border bg-white p-5 shadow-sm transition hover:shadow-md lg:flex-row lg:items-center lg:justify-between",
+                  "flex flex-col gap-3 rounded-[24px] border bg-white/[0.86] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(15,23,42,0.09)] lg:flex-row lg:items-center lg:justify-between",
                   need.priority === "critical"
                     ? "border-l-4 border-l-rose-400"
                     : "border-l-4 border-l-cyan-400"
                 )}
               >
                 <div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={need.priority === "critical" ? "destructive" : "accent"}>{need.priority}</Badge>
-                    <Badge>{need.position}</Badge>
-                  </div>
-                  <h3 className="mt-3 text-lg font-semibold text-slate-950">{need.title}</h3>
+                  <p className="field-label text-[#52695d]">
+                    {need.priority === "critical" ? "Critical need" : "Live need"} • {need.position}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold text-slate-950">{need.title}</h3>
                   <p className="mt-1 text-sm text-slate-500">{need.notes}</p>
                 </div>
                 <div className="flex shrink-0 gap-3">
@@ -155,7 +162,7 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Activity feed — timeline style */}
-        <Card>
+        <Card className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
           <CardHeader>
             <CardTitle>Recent activity</CardTitle>
             <p className="text-sm text-slate-600">Latest reviews and shortlist movements.</p>
@@ -185,7 +192,7 @@ export default async function DashboardPage() {
                         />
                       </div>
                       {/* Card */}
-                      <div className="flex-1 rounded-2xl border bg-white p-4 shadow-sm">
+                      <div className="flex-1 rounded-[24px] border border-[#d8ddd7] bg-white/[0.88] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
                         <div className="flex items-center justify-between">
                           <Badge
                             variant={
@@ -217,7 +224,7 @@ export default async function DashboardPage() {
 
       {/* Recently shortlisted + Film queue */}
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <Card>
+        <Card className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Recently shortlisted</CardTitle>
@@ -233,24 +240,26 @@ export default async function DashboardPage() {
           <CardContent className="grid gap-3">
             {recentShortlisted.length ? (
               recentShortlisted.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-l-4 border-l-cyan-400 bg-white p-4 shadow-sm">
+                <div key={item.id} className="rounded-[24px] border border-l-4 border-l-cyan-400 bg-white/[0.88] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
                   <div className="flex items-center justify-between gap-3">
                     <div>
+                      <p className="field-label text-[#52695d]">
+                        {item.need?.title ?? "Shortlist update"} • {formatDate(item.created_at)}
+                      </p>
                       <p className="font-semibold text-slate-950">
                         {item.player?.first_name} {item.player?.last_name}
                       </p>
                       <p className="text-sm text-slate-500">
-                        {item.player?.current_school} • {item.need?.title}
+                        {item.player?.current_school}
                       </p>
                     </div>
                     <Badge variant="accent">{item.stage}</Badge>
                   </div>
                   <p className="mt-2.5 text-sm text-slate-600">{item.latestNote ?? "No shortlist note attached."}</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {item.fitScore !== null ? <Badge variant="success">{item.fitScore} fit</Badge> : null}
-                    <Badge variant="default">{formatDate(item.created_at)}</Badge>
-                    {item.player ? <Badge variant="default">{getPlayerPrimaryProduction(item.player)}</Badge> : null}
-                  </div>
+                  <p className="mt-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+                    {item.fitScore !== null ? `Fit ${item.fitScore}` : "Staff eval pending"}
+                    {item.player ? ` • ${getPlayerPrimaryProduction(item.player)}` : ""}
+                  </p>
                 </div>
               ))
             ) : (
@@ -262,7 +271,7 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Film queue */}
-        <Card className="border-amber-100/80 bg-white/95">
+        <Card className="overflow-hidden border-[#e7d8b3] bg-[linear-gradient(180deg,rgba(255,252,245,0.98),rgba(250,246,236,0.95))]">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Needs Film Queue</CardTitle>

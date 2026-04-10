@@ -51,13 +51,13 @@ export function PlayersFilterBar({
         <div className="relative overflow-hidden border-b border-[#d6ddd8] bg-[linear-gradient(135deg,#10251e_0%,#183327_55%,#204234_100%)] px-5 py-5 text-white">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[length:84px_84px] opacity-50" />
           <div className="relative flex items-start gap-3">
-            <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/8">
+            <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08]">
               <SlidersHorizontal className="h-4 w-4 text-[#d3b26c]" />
             </div>
             <div>
-              <p className="field-label text-[#d3b26c]">Board Filters</p>
-              <h2 className={`${scoutingDisplay.className} mt-2 text-[2.2rem] uppercase leading-none tracking-[0.04em] text-[#f4efe2]`}>
-                Set the Search Field
+              <p className="field-label text-[#d3b26c]">Manual Filters</p>
+              <h2 className={`${scoutingDisplay.className} mt-2 text-[1.9rem] uppercase leading-none tracking-[0.04em] text-[#f4efe2]`}>
+                Refine the Pool
               </h2>
               <p className="mt-2 max-w-xl text-sm leading-6 text-[#d8e1d5]/75">
                 Work from broad scope to tight scope. Lock in hard requirements first, then narrow by measurables.

@@ -23,7 +23,7 @@ export function AppSidebarNav({ items }: { items: readonly NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="grid gap-2.5">
+    <nav className="grid gap-2">
       {items.map((item) => {
         const Icon = iconMap[item.icon];
         const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -33,19 +33,19 @@ export function AppSidebarNav({ items }: { items: readonly NavItem[] }) {
             key={item.href}
             href={item.href}
             className={cn(
-              "group flex items-center justify-between rounded-2xl border px-3 py-3 text-sm font-medium transition-all duration-200",
+              "group flex items-center justify-between rounded-[22px] border px-3 py-3 text-sm font-medium transition-all duration-200",
               isActive
-                ? "border-cyan-300 bg-cyan-50 font-semibold text-cyan-900 shadow-[0_8px_24px_rgba(14,116,144,0.15)]"
-                : "border-transparent text-slate-500 hover:border-slate-200/80 hover:bg-white/70 hover:text-slate-800"
+                ? "border-[#204234]/18 bg-[#123928] font-semibold text-[#e4f5ea] shadow-[0_10px_28px_rgba(17,48,33,0.28)]"
+                : "border-transparent text-slate-500 hover:border-[#d8ddd7] hover:bg-white/82 hover:text-slate-800"
             )}
           >
             <span className="flex items-center gap-3">
               <span
                 className={cn(
-                  "flex h-10 w-10 items-center justify-center rounded-xl border transition-all duration-200",
+                  "flex h-10 w-10 items-center justify-center rounded-2xl border transition-all duration-200",
                   isActive
-                    ? "border-cyan-200 bg-cyan-600 text-white shadow-[0_4px_12px_rgba(14,116,144,0.35)]"
-                    : "border-transparent bg-slate-100/80 text-slate-500 group-hover:bg-slate-900 group-hover:text-white"
+                    ? "border-[#d3b26c]/35 bg-[#d3b26c]/18 text-[#f4e2b9]"
+                    : "border-transparent bg-slate-100/80 text-slate-500 group-hover:bg-[#163627] group-hover:text-[#ebf4ee]"
                 )}
               >
                 <Icon className="h-4 w-4" />
@@ -55,7 +55,7 @@ export function AppSidebarNav({ items }: { items: readonly NavItem[] }) {
             <span
               className={cn(
                 "h-2.5 w-2.5 rounded-full transition-colors duration-200",
-                isActive ? "bg-cyan-500" : "bg-transparent group-hover:bg-slate-300"
+                isActive ? "bg-[#d3b26c]" : "bg-transparent group-hover:bg-slate-300"
               )}
             />
           </Link>
