@@ -17,7 +17,6 @@ import {
   Zap
 } from "lucide-react";
 import { submitReviewAction } from "@/app/actions";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -27,6 +26,7 @@ import {
   getPlayerPhotoUrl,
   getPlayerProductionMetrics
 } from "@/lib/football";
+import { scoutingDisplay } from "@/lib/football-ui";
 import { PlayerFitResult, ReviewDecision, TeamNeed } from "@/lib/types";
 
 interface ReviewClientProps {
@@ -141,12 +141,12 @@ export function ReviewClient({
 
   if (!current) {
     return (
-      <Card className="overflow-hidden">
+      <Card className="overflow-hidden scouting-surface">
         <CardContent className="p-0">
-          <div className="bg-slate-950 px-8 py-7 text-white">
-            <p className="text-xs uppercase tracking-[0.28em] text-emerald-300">Queue cleared</p>
+          <div className="scouting-dark-surface px-8 py-7 text-white">
+            <p className="text-xs uppercase tracking-[0.28em] text-[var(--scout-gold-soft)]">Queue cleared</p>
             <h2 className="mt-3 text-4xl font-semibold">Board triage complete.</h2>
-            <p className="mt-3 max-w-2xl text-sm text-slate-300">
+            <p className="mt-3 max-w-2xl text-sm text-[#d7e0d3]/75">
               Every matching player for {need.title} has been logged into the review trail. Move the best fits into shortlist management or reopen the need detail page.
             </p>
           </div>
@@ -157,7 +157,7 @@ export function ReviewClient({
               <p className="mt-2 text-sm text-slate-600">Reviewed against the current need profile.</p>
             </div>
             <div className="grid gap-3">
-              <Button asChild size="lg">
+              <Button asChild size="lg" className="scouting-cta">
                 <Link href="/shortlist">Open shortlist board</Link>
               </Button>
               <Button asChild variant="outline">
@@ -181,20 +181,22 @@ export function ReviewClient({
 
   return (
     <div className="grid gap-6">
-      <Card className="overflow-hidden border-cyan-950/10 bg-slate-950 text-white">
+      <Card className="scouting-dark-surface overflow-hidden border-[#1a342b] text-white">
         <CardContent className="grid gap-5 p-6 lg:grid-cols-[1fr_auto] lg:items-center">
           <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-cyan-300">{need.position} triage deck</p>
-            <h2 className="mt-2 text-3xl font-semibold">{need.title}</h2>
-            <p className="mt-2 text-sm text-slate-300">{progressLabel}</p>
+            <p className="field-label text-[var(--scout-teal)]">{need.position} Triage Deck</p>
+            <h2 className={`${scoutingDisplay.className} mt-2 text-[2.8rem] uppercase leading-[0.9] tracking-[0.04em] text-[#f5efe0]`}>
+              {need.title}
+            </h2>
+            <p className="mt-3 text-sm text-[#d7e0d3]/76">{progressLabel}</p>
           </div>
           <div className="min-w-[240px]">
-            <div className="flex items-center justify-between text-sm text-slate-300">
+            <div className="flex items-center justify-between text-sm text-[#d7e0d3]/76">
               <span>Progress</span>
               <span>{progressWidth}%</span>
             </div>
             <div className="mt-3 h-2 rounded-full bg-white/10">
-              <div className="h-2 rounded-full bg-cyan-400 transition-all" style={{ width: `${progressWidth}%` }} />
+              <div className="h-2 rounded-full bg-[#d3b26c] transition-all" style={{ width: `${progressWidth}%` }} />
             </div>
           </div>
         </CardContent>
@@ -209,15 +211,15 @@ export function ReviewClient({
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
         <div className="relative min-h-[640px]">
-          <div className="absolute inset-6 rounded-[32px] border border-cyan-200/60 bg-white/40" />
-          <div className="absolute inset-3 rounded-[32px] border border-cyan-100/80 bg-white/60" />
+          <div className="absolute inset-6 rounded-[32px] border border-[#d8ddd7] bg-white/35" />
+          <div className="absolute inset-3 rounded-[32px] border border-[#e5ebe6] bg-white/55" />
           <Card
-            className="relative z-10 overflow-hidden border-slate-900/10 bg-white/95 shadow-2xl transition-transform"
+            className="relative z-10 overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,247,245,0.95))] shadow-[0_28px_60px_rgba(15,23,42,0.14)] transition-transform"
             style={{ transform: `translateX(${dragX}px) rotate(${dragX / 45}deg)` }}
           >
             <CardContent className="p-0">
               <div
-                className="bg-gradient-to-br from-slate-950 via-slate-900 to-cyan-950 px-6 py-6 text-white select-none"
+                className="scouting-dark-surface select-none px-6 py-6 text-white"
                 onPointerDown={handlePointerDown}
                 onPointerMove={handlePointerMove}
                 onPointerUp={handlePointerUp}
@@ -234,12 +236,10 @@ export function ReviewClient({
                     />
                   </div>
                   <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge variant="accent">{current.player.position}</Badge>
-                      <Badge variant="default">{current.player.class_year}</Badge>
-                      <Badge variant="success">{current.fitScore} fit</Badge>
-                    </div>
-                    <h3 className="mt-3 text-4xl font-semibold tracking-tight">
+                    <p className="field-label text-[var(--scout-teal)]">
+                      {current.player.position} • {current.player.class_year} • Fit {current.fitScore}
+                    </p>
+                    <h3 className={`${scoutingDisplay.className} mt-3 text-[3.3rem] uppercase leading-[0.88] tracking-[0.03em] text-[#f5efe0]`}>
                       {current.player.first_name} {current.player.last_name}
                     </h3>
                     <p className="mt-2 text-sm text-slate-300">
@@ -279,10 +279,9 @@ export function ReviewClient({
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                      <Badge variant="accent">Prod {current.productionScore}</Badge>
-                      <Badge variant="warning">Measure {current.measurementScore}</Badge>
-                    </div>
+                    <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">
+                      Production {current.productionScore} • Measurement {current.measurementScore}
+                    </p>
                   </div>
 
                   <div className="rounded-[28px] border bg-slate-50 p-5">
@@ -297,23 +296,11 @@ export function ReviewClient({
                         </div>
                       ))}
                     </div>
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <Badge variant="default">{current.player.latest_stats?.season ?? "No season"}</Badge>
-                      {current.player.measurements?.arm_length_in ? (
-                        <Badge>Arm {current.player.measurements.arm_length_in}&quot;</Badge>
-                      ) : null}
-                      {current.player.measurements?.forty_time ? (
-                        <Badge variant="accent">
-                          <Timer className="mr-1 h-3 w-3" />
-                          {current.player.measurements.forty_time}s
-                        </Badge>
-                      ) : null}
-                      {(current.player.tags ?? []).slice(0, 3).map((tag) => (
-                        <Badge key={tag} variant="default">
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
+                    <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">
+                      {current.player.latest_stats?.season ?? "No season logged"}
+                      {current.player.measurements?.forty_time ? ` • Forty ${current.player.measurements.forty_time}s` : ""}
+                      {(current.player.tags ?? []).length ? ` • ${(current.player.tags ?? []).slice(0, 2).join(" • ")}` : ""}
+                    </p>
                   </div>
                 </div>
 
@@ -322,7 +309,9 @@ export function ReviewClient({
                     <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
                       Latest Production
                     </div>
-                    <Badge variant="default">{current.player.latest_stats?.season ?? "No season"}</Badge>
+                    <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
+                      {current.player.latest_stats?.season ?? "No season"}
+                    </div>
                   </div>
                   <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                     {productionMetrics.map((metric) => (
@@ -338,13 +327,13 @@ export function ReviewClient({
                   <Button asChild variant="outline">
                     <Link href={current.player.film_url ?? "#"} target="_blank">
                       <Film className="h-4 w-4" />
-                      Full film
+                      Open film
                     </Link>
                   </Button>
                   <Button asChild variant="outline">
-                    <Link href={current.player.film_url ?? "#"} target="_blank">
+                    <Link href={`/players/${current.player.id}`}>
                       <Eye className="h-4 w-4" />
-                      Short highlight
+                      Full player detail
                     </Link>
                   </Button>
                 </div>
@@ -354,9 +343,21 @@ export function ReviewClient({
         </div>
 
         <div className="grid gap-4">
-          <Card className="bg-white/95">
+          <Card className="scouting-surface">
             <CardContent className="p-5">
-              <p className="text-xs uppercase tracking-[0.24em] text-slate-500">Reviewer note</p>
+              <p className="field-label text-[#52695d]">Decision Keys</p>
+              <div className="mt-3 grid gap-2 text-sm text-slate-700">
+                <p>Left arrow: pass</p>
+                <p>Right arrow: shortlist</p>
+                <p>S: save for later</p>
+                <p>F: needs film</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="scouting-surface">
+            <CardContent className="p-5">
+              <p className="field-label text-[#52695d]">Reviewer Note</p>
               <Textarea
                 className="mt-4"
                 placeholder="Context for coordinator, concern to verify on film, or roster usage note..."
@@ -371,7 +372,7 @@ export function ReviewClient({
               disabled={isPending}
               icon={<MoveLeft className="h-4 w-4" />}
               label="Pass"
-              meta="Swipe left"
+              meta="Left"
               variant="outline"
               onClick={() => void handleDecision("left")}
             />
@@ -380,7 +381,7 @@ export function ReviewClient({
               icon={<Bookmark className="h-4 w-4" />}
               label="Save for later"
               meta="S"
-              variant="secondary"
+              variant="outline"
               onClick={() => void handleDecision("save")}
             />
             <DecisionButton
@@ -395,18 +396,12 @@ export function ReviewClient({
               disabled={isPending}
               icon={<MoveRight className="h-4 w-4" />}
               label="Shortlist"
-              meta="Swipe right"
+              meta="Right"
               variant="default"
+              className="scouting-cta border-0"
               onClick={() => void handleDecision("right")}
             />
           </div>
-
-          <Button asChild variant="ghost">
-            <Link href={`/players/${current.player.id}`}>
-              <ArrowRight className="h-4 w-4" />
-              Open full player detail
-            </Link>
-          </Button>
         </div>
       </div>
     </div>
@@ -428,7 +423,8 @@ function DecisionButton({
   meta,
   onClick,
   variant,
-  disabled
+  disabled,
+  className
 }: {
   icon: ReactNode;
   label: string;
@@ -436,9 +432,10 @@ function DecisionButton({
   onClick: () => void;
   variant: "default" | "outline" | "secondary";
   disabled: boolean;
+  className?: string;
 }) {
   return (
-    <Button className="w-full justify-between" disabled={disabled} onClick={onClick} type="button" variant={variant}>
+    <Button className={`h-12 w-full justify-between ${className ?? ""}`} disabled={disabled} onClick={onClick} type="button" variant={variant}>
       <span className="flex items-center gap-2">
         {icon}
         {label}

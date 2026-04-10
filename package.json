@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
+    "typecheck:scripts": "tsc --noEmit -p tsconfig.scripts.json",
     "seed:demo": "tsx scripts/seed-demo.ts",
     "reset:needs": "tsx scripts/reset-needs-workflow.ts",
     "sync:portal": "tsx scripts/sync-transfer-portal.ts",

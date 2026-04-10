@@ -40,19 +40,30 @@ export function addOrUpdateDemoShortlist(item: ShortlistItem) {
   );
 
   if (existingIndex >= 0) {
+    const existing = state.shortlists[existingIndex];
     state.shortlists[existingIndex] = {
-      ...state.shortlists[existingIndex],
-      ...item
+      ...existing,
+      ...item,
+      created_at: existing.created_at,
+      updated_at: item.updated_at ?? new Date().toISOString()
     };
     return;
   }
 
-  state.shortlists = [item, ...state.shortlists];
+  const timestamp = item.updated_at ?? item.created_at ?? new Date().toISOString();
+  state.shortlists = [
+    {
+      ...item,
+      created_at: item.created_at ?? timestamp,
+      updated_at: timestamp
+    },
+    ...state.shortlists
+  ];
 }
 
 export function updateDemoShortlistStage(shortlistId: string, stage: ShortlistItem["stage"]) {
   state.shortlists = state.shortlists.map((item) =>
-    item.id === shortlistId ? { ...item, stage } : item
+    item.id === shortlistId ? { ...item, stage, updated_at: new Date().toISOString() } : item
   );
 }
 

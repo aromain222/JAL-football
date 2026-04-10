@@ -35,8 +35,29 @@ export default async function DashboardPage() {
 
   const recentShortlisted = shortlistBoard
     .slice()
-    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .sort((a, b) => (b.updated_at ?? b.created_at).localeCompare(a.updated_at ?? a.created_at))
     .slice(0, 4);
+
+  function buildShortlistActivity(item: (typeof recentShortlisted)[number]) {
+    const activityAt = item.updated_at ?? item.created_at;
+    const movedLater = activityAt !== item.created_at;
+    const detail = item.player
+      ? movedLater
+        ? `${item.player.first_name} ${item.player.last_name} moved to ${item.stage.replace("_", " ")}.`
+        : `${item.player.first_name} ${item.player.last_name} moved into shortlist.`
+      : movedLater
+        ? `Player moved to ${item.stage.replace("_", " ")}.`
+        : "Player moved into shortlist.";
+
+    return {
+      id: item.id,
+      type: "shortlist" as const,
+      created_at: activityAt,
+      label: item.stage,
+      detail,
+      meta: item.need?.title ?? "Shortlist update"
+    };
+  }
 
   const activityFeed = [
     ...recentReviews.map((review) => ({
@@ -47,17 +68,7 @@ export default async function DashboardPage() {
       detail: review.note ?? "Review logged without note.",
       meta: `Fit ${review.fit_score}`
     })),
-    ...recentShortlisted.map((item) => ({
-      id: item.id,
-      type: "shortlist" as const,
-      created_at: item.created_at,
-      label: item.stage,
-      detail:
-        item.player
-          ? `${item.player.first_name} ${item.player.last_name} moved into shortlist.`
-          : "Player moved into shortlist.",
-      meta: item.need?.title ?? "Shortlist update"
-    }))
+    ...recentShortlisted.map(buildShortlistActivity)
   ]
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, 6);
@@ -71,15 +82,15 @@ export default async function DashboardPage() {
         <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(5,12,10,0.42))]" />
         <div className="relative grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.9fr)] lg:px-8 lg:py-8">
           <div>
-            <p className="field-label text-[#d3b26c]">Control Room</p>
+            <p className="field-label scouting-kicker">Control Room</p>
             <h1 className={`${scoutingDisplay.className} mt-3 text-[3.2rem] uppercase leading-[0.88] tracking-[0.04em] text-[#f5efe0] sm:text-[4.4rem]`}>
               Transfer Board Status
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#d7e0d3]/78 sm:text-[15px]">
+            <p className="scouting-support mt-4 max-w-2xl text-sm leading-6 sm:text-[15px]">
               Track roster needs, move quickly through first-pass eval, and keep the internal board moving toward coordinator and head coach review.
             </p>
             <div className="mt-6">
-              <Button asChild className="bg-[#d3b26c] text-[#0d1a14] hover:bg-[#e2c380]">
+              <Button asChild className="scouting-cta">
                 <Link href="/needs/new">
                   Create new need
                   <ArrowRight className="h-4 w-4" />
@@ -88,19 +99,19 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div className="grid gap-3 self-end sm:grid-cols-2">
-            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
-              <p className="field-label text-[#8ac7b7]">Portal Pipeline</p>
+            <div className="scouting-hero-stat">
+              <p className="field-label text-[var(--scout-teal)]">Portal Pipeline</p>
               <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
                 {formatNumber(metrics.totalPlayers)}
               </div>
-              <p className="mt-2 text-sm text-[#d7e0d3]/70">Imported players live in the internal eval board.</p>
+              <p className="mt-2 text-sm text-white/70">Imported players live in the internal eval board.</p>
             </div>
-            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
-              <p className="field-label text-[#8ac7b7]">Shortlisted Now</p>
+            <div className="scouting-hero-stat">
+              <p className="field-label text-[var(--scout-teal)]">Shortlisted Now</p>
               <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
                 {metrics.shortlistedPlayers}
               </div>
-              <p className="mt-2 text-sm text-[#d7e0d3]/70">Players currently held in staff review stages.</p>
+              <p className="mt-2 text-sm text-white/70">Players currently held in staff review stages.</p>
             </div>
           </div>
         </div>
@@ -117,7 +128,7 @@ export default async function DashboardPage() {
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
         {/* Active needs */}
-        <Card className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
+        <Card className="scouting-surface overflow-hidden">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Active needs</CardTitle>
@@ -162,7 +173,7 @@ export default async function DashboardPage() {
         </Card>
 
         {/* Activity feed — timeline style */}
-        <Card className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
+        <Card className="scouting-surface overflow-hidden">
           <CardHeader>
             <CardTitle>Recent activity</CardTitle>
             <p className="text-sm text-slate-600">Latest reviews and shortlist movements.</p>
@@ -224,7 +235,7 @@ export default async function DashboardPage() {
 
       {/* Recently shortlisted + Film queue */}
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <Card className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
+        <Card className="scouting-surface overflow-hidden">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Recently shortlisted</CardTitle>
@@ -244,7 +255,7 @@ export default async function DashboardPage() {
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <p className="field-label text-[#52695d]">
-                        {item.need?.title ?? "Shortlist update"} • {formatDate(item.created_at)}
+                        {item.need?.title ?? "Shortlist update"} • {formatDate(item.updated_at ?? item.created_at)}
                       </p>
                       <p className="font-semibold text-slate-950">
                         {item.player?.first_name} {item.player?.last_name}

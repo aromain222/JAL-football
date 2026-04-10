@@ -38,7 +38,7 @@ export default async function PlayerDetailPage({
   return (
     <div className="grid gap-5">
       {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <Card className="overflow-hidden border-none bg-[linear-gradient(145deg,#060c18_0%,#09192b_48%,#0f2941_72%,#0d4d67_100%)] text-white shadow-[0_35px_80px_rgba(8,15,33,0.34)]">
+      <Card className="scouting-dark-surface overflow-hidden border-none text-white shadow-[0_35px_80px_rgba(8,15,20,0.32)]">
         <CardContent className="grid gap-8 p-8 lg:grid-cols-[1.2fr_0.8fr]">
           {/* Left: identity */}
           <div className="flex items-start gap-5">
@@ -52,7 +52,7 @@ export default async function PlayerDetailPage({
               />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.36em] text-cyan-300">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.36em] text-[var(--scout-gold)]">
                 {player.position}
               </p>
               <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
@@ -133,7 +133,7 @@ export default async function PlayerDetailPage({
                     <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                       Latest note
                     </p>
-                    <p className="mt-2 border-l-2 border-cyan-200 pl-3 text-sm text-slate-700">
+                    <p className="mt-2 border-l-2 border-[rgba(211,178,108,0.4)] pl-3 text-sm text-slate-700">
                       {reviews[0]?.note ?? player.notes}
                     </p>
                   </div>
@@ -366,7 +366,7 @@ export default async function PlayerDetailPage({
                       {note.confidence != null && <Badge variant="success">{note.confidence.toFixed(1)} conf</Badge>}
                     </div>
                     {note.summary && <p className="mt-2.5 text-sm font-semibold text-slate-900">{note.summary}</p>}
-                    <p className="mt-1.5 border-l-2 border-cyan-100 pl-3 text-sm text-slate-600">{note.source_text}</p>
+                    <p className="mt-1.5 border-l-2 border-[rgba(211,178,108,0.3)] pl-3 text-sm text-slate-600">{note.source_text}</p>
                     {(note.traits.length > 0 || note.source_url) && (
                       <div className="mt-2.5 flex flex-wrap gap-1.5">
                         {note.traits.map((trait) => <Badge key={trait} variant="default">{trait}</Badge>)}
@@ -426,7 +426,7 @@ function HeroMetric({
       <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-300">{label}</p>
       <div
         className={`mt-2 text-2xl font-bold ${
-          highlight ? "text-cyan-300" : "text-white"
+          highlight ? "text-[var(--scout-gold-soft)]" : "text-white"
         }`}
       >
         {value}

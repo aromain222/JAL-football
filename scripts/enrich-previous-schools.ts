@@ -20,8 +20,15 @@ import {
   normalizeNameForMatch
 } from "@/lib/scrapers/on3-headlines";
 
-type PlayerRow = Database["public"]["Tables"]["players"]["Row"];
-type PlayerUpdate = Database["public"]["Tables"]["players"]["Update"];
+type PlayerRow = Pick<
+  Database["public"]["Tables"]["players"]["Row"],
+  "id" | "first_name" | "last_name" | "position" | "previous_school" | "current_school"
+>;
+type PreviousSchoolUpdate = {
+  id: string;
+  previous_school: string;
+  current_school?: string;
+};
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -51,17 +58,18 @@ async function main() {
   }
 
   // Load our players that are from Sportradar and missing previous_school
-  const { data: players, error: fetchError } = await supabase
+  const { data: playersRaw, error: fetchError } = await supabase
     .from("players")
     .select("id, first_name, last_name, position, previous_school, current_school")
     .not("sportradar_id", "is", null)
     .is("previous_school", null);
+  const players = (playersRaw ?? []) as PlayerRow[];
 
   if (fetchError) {
     console.error("Fetch players error:", fetchError);
     process.exit(1);
   }
-  if (!players?.length) {
+  if (!players.length) {
     console.log("No players with missing previous_school to enrich.");
     return;
   }
@@ -74,7 +82,7 @@ async function main() {
     nameToPlayer.get(key)!.push(p);
   }
 
-  const updates: PlayerUpdate[] = [];
+  const updates: PreviousSchoolUpdate[] = [];
   const matched = new Set<string>();
 
   for (const { previousSchool, newSchool, playerName } of parsed) {
@@ -97,10 +105,10 @@ async function main() {
   }
 
   for (const u of updates) {
-    const { error } = await supabase.from("players").update({
+    const { error } = await supabase.from("players" as never).update({
       previous_school: u.previous_school,
       ...(u.current_school != null ? { current_school: u.current_school } : {})
-    }).eq("id", u.id);
+    } as never).eq("id", u.id);
     if (error) {
       console.error("Update error for", u.id, error);
     }

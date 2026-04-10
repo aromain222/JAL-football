@@ -202,6 +202,7 @@ export interface ShortlistItem {
   priority_rank: number | null;
   note: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface DashboardMetrics {

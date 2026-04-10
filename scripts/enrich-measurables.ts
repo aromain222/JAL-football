@@ -27,6 +27,11 @@ import {
 import { fetch247ProfileMeasurables } from "@/lib/scrapers/247-profile";
 
 type MeasurementInsert = Database["public"]["Tables"]["player_measurements"]["Insert"];
+type MeasurementRow = Database["public"]["Tables"]["player_measurements"]["Row"];
+type PlayerRow = Pick<
+  Database["public"]["Tables"]["players"]["Row"],
+  "id" | "first_name" | "last_name" | "position" | "previous_school" | "current_school"
+>;
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -43,18 +48,25 @@ function normalizeName(name: string): string {
 }
 
 async function main() {
-  const { data: players, error: playersErr } = await supabase
+  const { data: playersRaw, error: playersErr } = await supabase
     .from("players")
     .select("id, first_name, last_name, position, previous_school, current_school");
+  const players = (playersRaw ?? []) as PlayerRow[];
 
-  if (playersErr || !players?.length) {
+  if (playersErr || !players.length) {
     console.error("No players or error:", playersErr);
     process.exit(1);
   }
 
-  const { data: existingMeas } = await supabase.from("player_measurements").select("player_id, height_in, weight_lbs");
+  const { data: existingMeasRaw } = await supabase
+    .from("player_measurements")
+    .select("player_id, height_in, weight_lbs");
+  const existingMeas = (existingMeasRaw ?? []) as Pick<
+    MeasurementRow,
+    "player_id" | "height_in" | "weight_lbs"
+  >[];
   const measByPlayer = new Map<string, { height_in: number | null; weight_lbs: number | null }>();
-  for (const m of existingMeas ?? []) {
+  for (const m of existingMeas) {
     measByPlayer.set(m.player_id, { height_in: m.height_in, weight_lbs: m.weight_lbs });
   }
 
@@ -124,7 +136,7 @@ async function main() {
 
   if (MEASURABLES_247_PROFILES.length > 0) {
     console.log("Fetching 247 high school profiles...");
-    const nameToPlayer = new Map<string, (typeof players)[0]>();
+    const nameToPlayer = new Map<string, PlayerRow>();
     for (const p of players) {
       nameToPlayer.set(normalizeName(`${p.first_name} ${p.last_name}`), p);
     }
@@ -178,8 +190,8 @@ async function main() {
   }
 
   const { error: upsertErr } = await supabase
-    .from("player_measurements")
-    .upsert(updates, { onConflict: "player_id" });
+    .from("player_measurements" as never)
+    .upsert(updates as never, { onConflict: "player_id" });
 
   if (upsertErr) {
     console.error("Upsert error:", upsertErr);

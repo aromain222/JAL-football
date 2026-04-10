@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import {
   addDemoPlayerTag,
   addDemoNeed,
@@ -14,6 +15,7 @@ import { getViewerContext, getPlayerQuickViewData, getPlayers, getBatchPffStatsF
 import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
+import { normalizeWorkspaceRole } from "@/lib/workspace-role";
 
 function normalizeString(value?: string) {
   return value && value !== "ALL" ? value : undefined;
@@ -23,6 +25,21 @@ function normalizeNumber(value?: string) {
   if (!value || value === "ALL") return undefined;
   const parsed = Number(value);
   return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+export async function setWorkspaceRoleAction(role: string) {
+  const normalizedRole = normalizeWorkspaceRole(role);
+  if (!normalizedRole) {
+    throw new Error("Invalid workspace role.");
+  }
+
+  cookies().set("workspace-role", normalizedRole, {
+    path: "/",
+    sameSite: "lax",
+    httpOnly: false
+  });
+
+  revalidatePath("/", "layout");
 }
 
 export async function createNeedAction(input: z.infer<typeof needSchema>) {
@@ -134,13 +151,15 @@ export async function submitReviewAction(formData: FormData) {
     );
 
     if (parsed.decision === "right" || parsed.decision === "save") {
+      const now = new Date().toISOString();
       await supabase.from("shortlists" as never).upsert(
         {
           need_id: parsed.needId,
           player_id: parsed.playerId,
           created_by: profile.id,
           stage: parsed.decision === "right" ? "assistant" : "final_watch",
-          note: parsed.note || null
+          note: parsed.note || null,
+          updated_at: now
         } as never,
         { onConflict: "need_id,player_id" }
       );
@@ -168,6 +187,7 @@ export async function submitReviewAction(formData: FormData) {
     });
 
     if (parsed.decision === "right" || parsed.decision === "save") {
+      const now = new Date().toISOString();
       addOrUpdateDemoShortlist({
         id: crypto.randomUUID(),
         need_id: parsed.needId,
@@ -176,7 +196,8 @@ export async function submitReviewAction(formData: FormData) {
         stage: parsed.decision === "right" ? "assistant" : "final_watch",
         priority_rank: null,
         note: parsed.note || null,
-        created_at: new Date().toISOString()
+        created_at: now,
+        updated_at: now
       });
     }
 
@@ -200,13 +221,14 @@ export async function updateShortlistStageAction(formData: FormData) {
     const supabase = createSupabaseServerClient();
     await supabase
       .from("shortlists" as never)
-      .update({ stage: parsed.stage } as never)
+      .update({ stage: parsed.stage, updated_at: new Date().toISOString() } as never)
       .eq("id", parsed.shortlistId);
   } else {
     updateDemoShortlistStage(parsed.shortlistId, parsed.stage);
   }
 
   revalidatePath("/shortlist");
+  revalidatePath("/dashboard");
 }
 
 export async function addPlayerToShortlistAction(input: {
@@ -236,11 +258,13 @@ export async function addPlayerToShortlistAction(input: {
         player_id: input.playerId,
         created_by: profile.id,
         stage: "assistant",
-        note: "Added from player profile."
+        note: "Added from player profile.",
+        updated_at: new Date().toISOString()
       } as never,
       { onConflict: "need_id,player_id" }
     );
   } else {
+    const now = new Date().toISOString();
     addOrUpdateDemoReview({
       id: crypto.randomUUID(),
       need_id: input.needId,
@@ -249,7 +273,7 @@ export async function addPlayerToShortlistAction(input: {
       decision: "right",
       fit_score: 80,
       note: "Added from player profile.",
-      created_at: new Date().toISOString()
+      created_at: now
     });
 
     addOrUpdateDemoShortlist({
@@ -260,12 +284,14 @@ export async function addPlayerToShortlistAction(input: {
       stage: "assistant",
       priority_rank: null,
       note: "Added from player profile.",
-      created_at: new Date().toISOString()
+      created_at: now,
+      updated_at: now
     });
   }
 
   revalidatePath(`/players/${input.playerId}`);
   revalidatePath("/shortlist");
+  revalidatePath("/dashboard");
 }
 
 export async function markPlayerNeedsFilmAction(input: {

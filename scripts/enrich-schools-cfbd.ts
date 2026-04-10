@@ -23,9 +23,13 @@ config({ path: ".env" });
 
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/database.types";
-import { fetchCfbdTransferPortal } from "@/lib/cfbd/player-season-stats";
+import { fetchCfbdTransferPortal, type CfbdClientConfig } from "@/lib/cfbd/player-season-stats";
 
-type PlayerUpdate = Database["public"]["Tables"]["players"]["Update"];
+type PlayerRow = Pick<
+  Database["public"]["Tables"]["players"]["Row"],
+  "id" | "first_name" | "last_name" | "position" | "previous_school" | "current_school" | "stars"
+>;
+type PlayerUpdate = Pick<Database["public"]["Tables"]["players"]["Update"], "id" | "previous_school" | "current_school" | "stars">;
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -60,9 +64,13 @@ function makeKey(first: string, last: string): string {
 
 async function main() {
   console.log(`Fetching CFBD transfer portal (${portalYear})...`);
+  const cfbdConfig: CfbdClientConfig = {
+    apiKey: cfbdKey!,
+    ...(cfbdBaseUrl ? { baseUrl: cfbdBaseUrl } : {})
+  };
   const portal = await fetchCfbdTransferPortal({
     year: portalYear,
-    config: { apiKey: cfbdKey, ...(cfbdBaseUrl ? { baseUrl: cfbdBaseUrl } : {}) }
+    config: cfbdConfig
   });
   console.log(`CFBD returned ${portal.length} portal rows.`);
 
@@ -74,17 +82,18 @@ async function main() {
     byName.set(key, arr);
   }
 
-  const { data: players, error } = await supabase
+  const { data: playersRaw, error } = await supabase
     .from("players")
     .select("id, first_name, last_name, position, previous_school, current_school, stars")
     .not("sportradar_id", "is", null)
     .order("last_name");
+  const players = (playersRaw ?? []) as PlayerRow[];
 
   if (error) {
     console.error("Fetch players error:", error);
     process.exit(1);
   }
-  if (!players?.length) {
+  if (!players.length) {
     console.log("No players found.");
     return;
   }
@@ -125,8 +134,8 @@ async function main() {
     if (!hasAny) continue;
 
     const { error: upErr } = await supabase
-      .from("players")
-      .update(update)
+      .from("players" as never)
+      .update(update as never)
       .eq("id", p.id);
 
     if (upErr) {
@@ -145,4 +154,3 @@ main().catch((err) => {
   console.error(err);
   process.exit(1);
 });
-

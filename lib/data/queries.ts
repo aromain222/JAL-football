@@ -1,4 +1,5 @@
 import { unstable_noStore as noStore } from "next/cache";
+import { cookies } from "next/headers";
 import { getDemoState } from "@/lib/data/demo-store";
 import { getConferenceForSchool } from "@/lib/football";
 import { calculateFit } from "@/lib/scoring";
@@ -24,6 +25,7 @@ import { selectFeaturedStats } from "@/lib/scheme/featuredStats";
 import { computeSchemeDelta, generateSchemeSummary } from "@/lib/scheme/schemeFit";
 import { detectArchetype } from "@/lib/archetypes";
 import { choosePreferredPffRow } from "@/lib/pff/summary";
+import { normalizeWorkspaceRole } from "@/lib/workspace-role";
 
 export interface PlayerFilters {
   position?: string;
@@ -54,9 +56,14 @@ function matchesSearch(player: Player, search?: string) {
 
 export async function getViewerContext() {
   noStore();
+  const roleOverride = normalizeWorkspaceRole(cookies().get("workspace-role")?.value);
+
   if (!hasSupabaseEnv()) {
     const state = getDemoState();
-    return { profile: state.profile, team: state.team };
+    return {
+      profile: roleOverride ? { ...state.profile, role: roleOverride } : state.profile,
+      team: state.team
+    };
   }
 
   const supabase = createSupabaseServerClient();
@@ -83,7 +90,10 @@ export async function getViewerContext() {
   const team = teamRaw as Team | null;
 
   return {
-    profile: profile ?? demoProfile,
+    profile:
+      roleOverride
+        ? { ...(profile ?? demoProfile), role: roleOverride }
+        : profile ?? demoProfile,
     team: team ?? demoTeam
   };
 }

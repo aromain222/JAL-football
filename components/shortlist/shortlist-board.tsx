@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
 import { Filter, SearchCheck } from "lucide-react";
 import { ShortlistColumn } from "@/components/shortlist/shortlist-column";
@@ -25,9 +26,22 @@ export function ShortlistBoard({
     () =>
       columns.map((column) => ({
         ...column,
+        items: boardItems.filter((item) => item.stage === column.key),
         count: boardItems.filter((item) => item.stage === column.key).length
       })),
     [boardItems]
+  );
+
+  const boardGridStyle = useMemo(
+    () =>
+      ({
+        "--shortlist-board-columns": counts
+          .map((column) =>
+            column.count > 0 ? "minmax(22rem, 1.35fr)" : "minmax(15rem, 0.78fr)"
+          )
+          .join(" ")
+      }) as CSSProperties,
+    [counts]
   );
 
   function handleStageChange(shortlistId: string, stage: ShortlistStage) {
@@ -56,11 +70,15 @@ export function ShortlistBoard({
       </Card>
 
       {boardItems.length ? (
-        <div className="grid gap-4 xl:grid-cols-4">
-          {columns.map((column) => (
+        <div
+          className="grid items-start gap-4 md:grid-cols-2 xl:overflow-x-auto xl:pb-2 xl:[grid-template-columns:var(--shortlist-board-columns)]"
+          style={boardGridStyle}
+        >
+          {counts.map((column) => (
             <ShortlistColumn
               key={column.key}
-              items={boardItems.filter((item) => item.stage === column.key)}
+              isEmpty={column.count === 0}
+              items={column.items}
               onStageChange={handleStageChange}
               stage={column.key}
               title={column.label}

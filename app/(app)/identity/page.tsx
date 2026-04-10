@@ -39,27 +39,27 @@ export default async function IdentityQueuePage() {
         <div className="absolute inset-y-0 right-[17%] w-px bg-white/10" />
         <div className="relative grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.85fr)] lg:px-8 lg:py-8">
           <div>
-            <p className="field-label text-[#d3b26c]">Identity Queue</p>
+            <p className="field-label scouting-kicker">Identity Queue</p>
             <h1 className={`${scoutingDisplay.className} mt-3 text-[3.2rem] uppercase leading-[0.9] tracking-[0.04em] text-[#f5efe0] sm:text-[4.2rem]`}>
               Resolve Player Links
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#d7e0d3]/78 sm:text-[15px]">
+            <p className="scouting-support mt-4 max-w-2xl text-sm leading-6 sm:text-[15px]">
               Connect ESPN and roster identities so player records can feed stat enrichment and monitoring workflows cleanly.
             </p>
           </div>
           <div className="grid gap-3 self-end sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-[24px] border border-white/10 bg-black/[0.16] p-4 backdrop-blur-sm">
-              <p className="field-label text-[#8ac7b7]">Need Review</p>
+            <div className="scouting-hero-stat">
+              <p className="field-label text-[var(--scout-teal)]">Need Review</p>
               <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
                 {needsReview.length}
               </div>
-              <p className="mt-2 text-sm text-[#d7e0d3]/70">Players missing ESPN or roster links.</p>
+              <p className="mt-2 text-sm text-white/70">Players missing ESPN or roster links.</p>
             </div>
           </div>
         </div>
       </section>
 
-      <Card className="border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
+      <Card className="scouting-surface">
         <CardHeader>
           <CardTitle>Tracked X source accounts</CardTitle>
         </CardHeader>
@@ -80,7 +80,7 @@ export default async function IdentityQueuePage() {
                     <div className="flex items-start justify-between gap-3">
                       <div>
                         <p className="font-medium text-slate-950">{account.display_name}</p>
-                        <p className="text-sm text-cyan-700">@{account.handle}</p>
+                      <p className="text-sm text-[#355546]">@{account.handle}</p>
                       </div>
                       <Badge variant="default">{account.category}</Badge>
                     </div>
@@ -93,11 +93,11 @@ export default async function IdentityQueuePage() {
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(140deg,#10251e_0%,#183327_60%,#204234_100%)] text-white">
+      <Card className="scouting-dark-surface overflow-hidden border-[var(--scout-card-border)] text-white">
         <CardContent className="flex flex-col gap-3 p-7">
-          <p className="text-xs uppercase tracking-[0.32em] text-cyan-200">Identity Resolution</p>
+          <p className="text-xs uppercase tracking-[0.32em] text-[var(--scout-gold-soft)]">Identity Resolution</p>
           <h1 className={`${scoutingDisplay.className} text-[2.6rem] uppercase leading-none tracking-[0.04em]`}>Manual review queue</h1>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-[#d7e0d3]/75">
             Paste the correct ESPN player URL or official roster profile. Both links feed direct stat backfill scripts for missing-player coverage.
           </p>
           <div className="mt-2 flex flex-wrap gap-2">
@@ -110,7 +110,7 @@ export default async function IdentityQueuePage() {
       <div className="grid gap-4">
         {needsReview.length ? (
           needsReview.slice(0, 200).map((p: any) => (
-            <Card key={p.id} className="overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))]">
+            <Card key={p.id} className="scouting-surface overflow-hidden">
               <CardHeader className="flex-row items-start justify-between gap-4">
                 <div>
                   <CardTitle className="text-base">
