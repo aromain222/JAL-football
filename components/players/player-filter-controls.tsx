@@ -10,7 +10,7 @@ export function FilterGroup({
 }) {
   return (
     <div className="grid gap-2">
-      <Label className="text-xs uppercase tracking-[0.24em] text-slate-500">{label}</Label>
+      <Label className="text-[10px] font-semibold uppercase tracking-[0.28em] text-[#52695d]">{label}</Label>
       {children}
     </div>
   );
@@ -34,14 +34,14 @@ export function NumberRangeFields({
   return (
     <div className="grid grid-cols-2 gap-2">
       <input
-        className="h-10 rounded-xl border bg-white px-3 text-sm"
+        className="h-11 rounded-[18px] border border-[#cfd8d2] bg-white/90 px-3 text-sm"
         defaultValue={minDefaultValue}
         name={minName}
         placeholder={minPlaceholder}
         type="number"
       />
       <input
-        className="h-10 rounded-xl border bg-white px-3 text-sm"
+        className="h-11 rounded-[18px] border border-[#cfd8d2] bg-white/90 px-3 text-sm"
         defaultValue={maxDefaultValue}
         name={maxName}
         placeholder={maxPlaceholder}

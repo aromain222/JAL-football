@@ -1,3 +1,5 @@
+import { getPffPrimaryGrade } from "@/lib/pff/summary";
+
 // System/meta columns to exclude from display
 const SKIP_COLUMNS = new Set([
   "id", "player_id", "pff_player_id", "created_at", "updated_at",
@@ -130,8 +132,8 @@ export function PffStatsGrid({ pffStats, position }: Props) {
   }
 
   const season = pffStats.season as number | undefined;
-  const overallRaw = pffStats.grades_overall;
-  const overall = overallRaw != null ? formatValue(overallRaw) : null;
+  const primaryGrade = getPffPrimaryGrade(pffStats, position);
+  const overall = primaryGrade ? formatValue(primaryGrade.value) : null;
 
   const grades: { label: string; value: string }[] = [];
   const stats: { label: string; value: string }[] = [];
@@ -170,7 +172,9 @@ export function PffStatsGrid({ pffStats, position }: Props) {
         </div>
         {overall && (
           <div className="flex items-center gap-1.5">
-            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">Overall</span>
+            <span className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+              {primaryGrade?.label ?? "Grade"}
+            </span>
             <span className={`text-2xl font-bold ${gradeTier(overall).text}`}>{overall}</span>
           </div>
         )}
@@ -184,7 +188,7 @@ export function PffStatsGrid({ pffStats, position }: Props) {
           </p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {grades
-              .filter((g) => g.label !== "Overall") // already shown in header
+              .filter((g) => g.label !== (primaryGrade?.label ?? "")) // already shown in header
               .map(({ label, value }) => {
                 const tier = gradeTier(value);
                 return (

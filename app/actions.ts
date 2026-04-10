@@ -10,10 +10,20 @@ import {
 } from "@/lib/data/demo-store";
 import { insertTeamNeed } from "@/lib/data/mutations";
 import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
-import { getViewerContext, getPlayerQuickViewData, getPlayersFromSupabaseForAI, getBatchPffStatsForPlayers } from "@/lib/data/queries";
+import { getViewerContext, getPlayerQuickViewData, getPlayers, getBatchPffStatsForPlayers } from "@/lib/data/queries";
 import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
+
+function normalizeString(value?: string) {
+  return value && value !== "ALL" ? value : undefined;
+}
+
+function normalizeNumber(value?: string) {
+  if (!value || value === "ALL") return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
 
 export async function createNeedAction(input: z.infer<typeof needSchema>) {
   const parsed = needSchema.parse(input);
@@ -432,7 +442,10 @@ export async function deleteNeedAction(needId: string) {
   revalidatePath("/needs");
 }
 
-export async function aiPlayerSearchAction(query: string): Promise<{
+export async function aiPlayerSearchAction(input: {
+  query: string;
+  boardFilters?: import("@/lib/ai/player-search").AiBoardFilters;
+}): Promise<{
   criteria: import("@/lib/ai/player-search").AiSearchCriteria;
   results: Array<
     import("@/lib/ai/player-search").AiPlayerSearchResult & {
@@ -440,33 +453,51 @@ export async function aiPlayerSearchAction(query: string): Promise<{
     }
   >;
 }> {
-  const { extractSearchCriteria, searchPlayersByAiCriteria } = await import("@/lib/ai/player-search");
+  const { extractSearchCriteria, filterPlayersByAiCriteria, searchPlayersByAiCriteria } = await import("@/lib/ai/player-search");
+  const query = input.query.trim();
+  if (!query) {
+    throw new Error("Search query is required.");
+  }
 
   // Phase 1: extract structured criteria from the natural language query
   const criteria = await extractSearchCriteria(query);
 
-  // Phase 2: fetch players matching position / measurement / eligibility
-  const players = await getPlayersFromSupabaseForAI({
-    positions: criteria.positions.length > 0 ? criteria.positions : undefined,
-    minWeightLbs: criteria.min_weight_lbs,
-    maxWeightLbs: criteria.max_weight_lbs,
-    minHeightIn: criteria.min_height_in,
-    maxHeightIn: criteria.max_height_in,
-    minYearsRemaining: criteria.min_years_remaining
-  });
+  // Phase 2: scope the AI search within the currently active board filters
+  const boardFilters = input.boardFilters ?? {};
+  const scopedPlayers = (await getPlayers({
+    position: normalizeString(boardFilters.position),
+    search: normalizeString(boardFilters.search),
+    heightMin: normalizeNumber(boardFilters.heightMin),
+    heightMax: normalizeNumber(boardFilters.heightMax),
+    weightMin: normalizeNumber(boardFilters.weightMin),
+    weightMax: normalizeNumber(boardFilters.weightMax),
+    armLengthMin: normalizeNumber(boardFilters.armLengthMin),
+    fortyMax: normalizeNumber(boardFilters.fortyMax),
+    classYear: normalizeString(boardFilters.classYear),
+    yearsRemaining: normalizeNumber(boardFilters.yearsRemaining),
+    school: normalizeString(boardFilters.school),
+    conference: normalizeString(boardFilters.conference),
+    archetype: normalizeString(boardFilters.archetype)
+  })) as import("@/lib/types").Player[];
 
-  // Phase 3: batch-fetch PFF stats — one query per position table, not one per player
-  // This scales to any number of players (100, 300, etc.)
+  // Phase 3: apply AI-derived hard filters inside the board-scoped pool
+  const players = filterPlayersByAiCriteria(criteria, scopedPlayers);
+
+  // Phase 4: batch-fetch PFF stats
   const pffStatsMap = await getBatchPffStatsForPlayers(players);
 
-  // Phase 4: score + rank, return top 15
+  // Phase 5: score + rank, return top 15
   const ranked = searchPlayersByAiCriteria(criteria, players, pffStatsMap);
+  const playerById = new Map(players.map((player) => [player.id, player]));
 
   return {
     criteria,
-    results: ranked.slice(0, 15).map((r) => ({
-      ...r,
-      player: players.find((p) => p.id === r.playerId)!
+    results: ranked.slice(0, 15).map((result) => ({
+      ...result,
+      player: {
+        ...playerById.get(result.playerId)!,
+        pffStats: (pffStatsMap[result.playerId] as import("@/lib/types").Player["pffStats"]) ?? null,
+      }
     }))
   };
 }

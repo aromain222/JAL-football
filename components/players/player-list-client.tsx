@@ -22,7 +22,7 @@ export function PlayerListClient({ items, page, totalPages, baseSearchParams }: 
 
   return (
     <>
-      <div className="grid gap-4 xl:grid-cols-2">
+      <div className="grid gap-5 xl:grid-cols-2 2xl:grid-cols-3">
         {items.map((item) => {
           const isResult = "player" in item;
           const player = isResult ? item.player : item;
@@ -33,7 +33,7 @@ export function PlayerListClient({ items, page, totalPages, baseSearchParams }: 
               detailHref={`/players/${player.id}`}
               fitScore={fitScore}
               player={player}
-              onQuickView={(id) => setActivePlayerId(id)}
+              onQuickView={(id: string) => setActivePlayerId(id)}
             />
           );
         })}

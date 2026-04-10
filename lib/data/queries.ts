@@ -23,6 +23,7 @@ import { resolveScheme } from "@/lib/scheme/registry";
 import { selectFeaturedStats } from "@/lib/scheme/featuredStats";
 import { computeSchemeDelta, generateSchemeSummary } from "@/lib/scheme/schemeFit";
 import { detectArchetype } from "@/lib/archetypes";
+import { choosePreferredPffRow } from "@/lib/pff/summary";
 
 export interface PlayerFilters {
   position?: string;
@@ -179,7 +180,7 @@ export async function getPlayersPage(
   const total = all.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const start = (page - 1) * pageSize;
-  const items = all.slice(start, start + pageSize);
+  const items = await enrichPlayersPageWithPff(all.slice(start, start + pageSize));
 
   return {
     items,
@@ -188,6 +189,32 @@ export async function getPlayersPage(
     pageSize,
     totalPages
   };
+}
+
+async function enrichPlayersPageWithPff(
+  items: Array<Player | PlayerFitResult>
+): Promise<Array<Player | PlayerFitResult>> {
+  if (!items.length || !hasSupabaseEnv()) return items;
+
+  const players: Player[] = items.map((item) => ("player" in item ? item.player : item));
+  const pffByPlayerId = await getBatchPffStatsForPlayers(players);
+
+  return items.map((item) => {
+    if ("player" in item) {
+      return {
+        ...item,
+        player: {
+          ...item.player,
+          pffStats: (pffByPlayerId[item.player.id] as PlayerPffGrade | undefined) ?? null,
+        },
+      };
+    }
+
+    return {
+      ...item,
+      pffStats: (pffByPlayerId[item.id] as PlayerPffGrade | undefined) ?? null,
+    };
+  });
 }
 
 function filterPlayers(players: Player[], filters: PlayerFilters) {
@@ -446,10 +473,9 @@ export async function getPffStatsForPlayer(
     .from("player_pff_grades")
     .select("*")
     .eq("player_id", player.id)
-    .order("season", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  if (data) return data as Record<string, unknown>;
+    .order("season", { ascending: false });
+  const preferredById = choosePreferredPffRow((data ?? []) as Array<Record<string, unknown>>);
+  if (preferredById) return preferredById;
 
   // Fallback: name match (player_id may be null for recently imported records)
   const fullName = `${player.first_name} ${player.last_name}`;
@@ -457,10 +483,8 @@ export async function getPffStatsForPlayer(
     .from("player_pff_grades")
     .select("*")
     .ilike("player_name", fullName)
-    .order("season", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-  return (data2 as Record<string, unknown> | null) ?? null;
+    .order("season", { ascending: false });
+  return choosePreferredPffRow((data2 ?? []) as Array<Record<string, unknown>>);
 }
 
 export async function getBatchPffStatsForPlayers(
@@ -478,10 +502,17 @@ export async function getBatchPffStatsForPlayers(
     .in("player_id", ids)
     .order("season", { ascending: false });
 
-  const seen = new Set<string>();
+  const rowsByPlayerId = new Map<string, Array<Record<string, unknown>>>();
   for (const row of (byId ?? []) as Array<Record<string, unknown>>) {
     const pid = row.player_id as string | undefined;
-    if (pid && !seen.has(pid)) { seen.add(pid); result[pid] = row; }
+    if (!pid) continue;
+    const existing = rowsByPlayerId.get(pid) ?? [];
+    existing.push(row);
+    rowsByPlayerId.set(pid, existing);
+  }
+  for (const [pid, rows] of rowsByPlayerId.entries()) {
+    const preferred = choosePreferredPffRow(rows);
+    if (preferred) result[pid] = preferred;
   }
 
   // Batch 2: name match for players not yet resolved in PFF data
@@ -494,15 +525,20 @@ export async function getBatchPffStatsForPlayers(
       .in("player_name", names)
       .order("season", { ascending: false });
 
-    const seenNames = new Set<string>();
+    const rowsByName = new Map<string, Array<Record<string, unknown>>>();
     for (const row of (byName ?? []) as Array<Record<string, unknown>>) {
       const rowName = ((row.player_name as string | undefined) ?? "").toLowerCase();
-      const player = unmatched.find(
-        (p) => `${p.first_name} ${p.last_name}`.toLowerCase() === rowName
-      );
-      if (player && !seenNames.has(player.id)) {
-        seenNames.add(player.id);
-        result[player.id] = row;
+      if (!rowName) continue;
+      const existing = rowsByName.get(rowName) ?? [];
+      existing.push(row);
+      rowsByName.set(rowName, existing);
+    }
+
+    for (const player of unmatched) {
+      const fullName = `${player.first_name} ${player.last_name}`.toLowerCase();
+      const preferred = choosePreferredPffRow(rowsByName.get(fullName) ?? []);
+      if (preferred) {
+        result[player.id] = preferred;
       }
     }
   }

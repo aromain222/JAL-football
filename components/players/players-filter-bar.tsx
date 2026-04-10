@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { FilterGroup, NumberRangeFields } from "@/components/players/player-filter-controls";
+import { scoutingDisplay } from "@/lib/football-ui";
 import { getArchetypesByPosition } from "@/lib/archetypes";
 
 const positions = ["ALL", "EDGE", "DL", "LB", "CB", "WR", "RB", "OL"];
@@ -45,13 +46,23 @@ export function PlayersFilterBar({
   defaults: PlayersFilterDefaults;
 }) {
   return (
-    <Card className="overflow-hidden border-cyan-100 bg-white/95">
+    <Card className="overflow-hidden border-[#17211c]/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(244,247,244,0.94))] shadow-[0_24px_60px_rgba(15,23,42,0.10)]">
       <CardContent className="p-0">
-        <div className="flex items-center gap-3 border-b bg-slate-950 px-5 py-4 text-white">
-          <SlidersHorizontal className="h-4 w-4 text-cyan-300" />
-          <div>
-            <p className="text-xs uppercase tracking-[0.28em] text-slate-300">Board Filters</p>
-            <p className="text-sm text-slate-300">Keep the board broad by default. Layer in measurable filters only when needed.</p>
+        <div className="relative overflow-hidden border-b border-[#d6ddd8] bg-[linear-gradient(135deg,#10251e_0%,#183327_55%,#204234_100%)] px-5 py-5 text-white">
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[length:84px_84px] opacity-50" />
+          <div className="relative flex items-start gap-3">
+            <div className="mt-1 flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/8">
+              <SlidersHorizontal className="h-4 w-4 text-[#d3b26c]" />
+            </div>
+            <div>
+              <p className="field-label text-[#d3b26c]">Board Filters</p>
+              <h2 className={`${scoutingDisplay.className} mt-2 text-[2.2rem] uppercase leading-none tracking-[0.04em] text-[#f4efe2]`}>
+                Set the Search Field
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[#d8e1d5]/75">
+                Work from broad scope to tight scope. Lock in hard requirements first, then narrow by measurables.
+              </p>
+            </div>
           </div>
         </div>
         <form className="grid gap-4 p-5 lg:grid-cols-4">
@@ -59,7 +70,7 @@ export function PlayersFilterBar({
           <div className="relative lg:col-span-2">
             <Search className="absolute left-3 top-3.5 h-4 w-4 text-slate-400" />
             <Input
-              className="pl-9"
+              className="h-11 rounded-[18px] border-[#cfd8d2] bg-white/90 pl-9"
               defaultValue={defaults.search}
               name="search"
               placeholder="Search player, school, or tag signal"
@@ -67,7 +78,7 @@ export function PlayersFilterBar({
           </div>
 
           <FilterGroup label="Position">
-            <select className="h-10 rounded-xl border bg-white px-3 text-sm" defaultValue={defaults.position ?? "ALL"} name="position">
+            <select className="h-11 rounded-[18px] border border-[#cfd8d2] bg-white/90 px-3 text-sm" defaultValue={defaults.position ?? "ALL"} name="position">
               {positions.map((option) => (
                 <option key={option} value={option}>
                   {option === "ALL" ? "All positions" : option}
@@ -77,7 +88,7 @@ export function PlayersFilterBar({
           </FilterGroup>
 
           <FilterGroup label="Class Year">
-            <select className="h-10 rounded-xl border bg-white px-3 text-sm" defaultValue={defaults.classYear ?? "ALL"} name="classYear">
+            <select className="h-11 rounded-[18px] border border-[#cfd8d2] bg-white/90 px-3 text-sm" defaultValue={defaults.classYear ?? "ALL"} name="classYear">
               {classYears.map((option) => (
                 <option key={option} value={option}>
                   {option === "ALL" ? "All classes" : option}
@@ -109,15 +120,15 @@ export function PlayersFilterBar({
           </FilterGroup>
 
           <FilterGroup label="Arm Length Min">
-            <Input defaultValue={defaults.armLengthMin} name="armLengthMin" placeholder="Optional" type="number" />
+            <Input className="h-11 rounded-[18px] border-[#cfd8d2] bg-white/90" defaultValue={defaults.armLengthMin} name="armLengthMin" placeholder="Optional" type="number" />
           </FilterGroup>
 
           <FilterGroup label="Forty Max">
-            <Input defaultValue={defaults.fortyMax} name="fortyMax" placeholder="Optional" type="number" />
+            <Input className="h-11 rounded-[18px] border-[#cfd8d2] bg-white/90" defaultValue={defaults.fortyMax} name="fortyMax" placeholder="Optional" type="number" />
           </FilterGroup>
 
           <FilterGroup label="Years Remaining">
-            <select className="h-10 rounded-xl border bg-white px-3 text-sm" defaultValue={defaults.yearsRemaining ?? "ALL"} name="yearsRemaining">
+            <select className="h-11 rounded-[18px] border border-[#cfd8d2] bg-white/90 px-3 text-sm" defaultValue={defaults.yearsRemaining ?? "ALL"} name="yearsRemaining">
               {yearsRemainingOptions.map((option) => (
                 <option key={option} value={option}>
                   {option === "ALL" ? "Any years left" : `${option} year${option === "1" ? "" : "s"}`}
@@ -127,11 +138,11 @@ export function PlayersFilterBar({
           </FilterGroup>
 
           <FilterGroup label="School">
-            <Input defaultValue={defaults.school} name="school" placeholder="School name" />
+            <Input className="h-11 rounded-[18px] border-[#cfd8d2] bg-white/90" defaultValue={defaults.school} name="school" placeholder="School name" />
           </FilterGroup>
 
           <FilterGroup label="Conference">
-            <select className="h-10 rounded-xl border bg-white px-3 text-sm" defaultValue={defaults.conference ?? "ALL"} name="conference">
+            <select className="h-11 rounded-[18px] border border-[#cfd8d2] bg-white/90 px-3 text-sm" defaultValue={defaults.conference ?? "ALL"} name="conference">
               {conferences.map((option) => (
                 <option key={option} value={option}>
                   {option === "ALL" ? "All conferences" : option}
@@ -141,7 +152,7 @@ export function PlayersFilterBar({
           </FilterGroup>
 
           <FilterGroup label="Archetype">
-            <select className="h-10 rounded-xl border bg-white px-3 text-sm" defaultValue={defaults.archetype ?? "ALL"} name="archetype">
+            <select className="h-11 rounded-[18px] border border-[#cfd8d2] bg-white/90 px-3 text-sm" defaultValue={defaults.archetype ?? "ALL"} name="archetype">
               <option value="ALL">All archetypes</option>
               {Object.entries(archetypesByPosition).map(([pos, names]) => (
                 <optgroup key={pos} label={pos}>
@@ -153,9 +164,11 @@ export function PlayersFilterBar({
             </select>
           </FilterGroup>
 
-          <div className="flex items-end gap-3 lg:col-span-4">
-            <Button type="submit">Apply filters</Button>
-            <Button asChild type="button" variant="outline">
+          <div className="flex items-end gap-3 pt-2 lg:col-span-4">
+            <Button className="bg-[#163627] text-[#ebf4ee] hover:bg-[#1b4330]" type="submit">
+              Apply field
+            </Button>
+            <Button asChild type="button" variant="outline" className="border-[#cdd6d1] bg-white/80">
               <a href={defaults.needId ? `/players?needId=${defaults.needId}` : "/players"}>Reset</a>
             </Button>
           </div>

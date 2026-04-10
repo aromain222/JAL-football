@@ -31,6 +31,7 @@
     "enrich:measurables": "tsx scripts/enrich-measurables.ts",
     "pff:download": "tsx scripts/pff-computer-use.ts",
     "pff:import": "tsx scripts/import-pff-stats.ts",
+    "pff:workbook": "tsx scripts/import-pff-workbook.ts",
     "pff:spreadsheet": "tsx scripts/generate-pff-spreadsheet.ts",
     "pff:snap-counts": "tsx scripts/pff-player-snap-counts.ts",
     "pff:sync-players": "tsx scripts/pff-sync-players.ts",

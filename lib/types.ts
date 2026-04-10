@@ -101,6 +101,7 @@ export interface Player {
   measurements?: PlayerMeasurement | null;
   latest_stats?: PlayerStat | null;
   tags?: string[];
+  pffStats?: PlayerPffGrade | null;
 }
 
 export interface PlayerSourceNote {

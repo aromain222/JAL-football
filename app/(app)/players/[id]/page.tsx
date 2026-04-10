@@ -16,6 +16,8 @@ import {
 import { getPlayerProfileData } from "@/lib/data/queries";
 import { PffStatsGrid } from "@/components/players/pff-stats-grid";
 import { AlignmentProfile } from "@/components/players/alignment-profile";
+import { FeaturedStats } from "@/components/players/featured-stats";
+import { getPffPrimaryGrade } from "@/lib/pff/summary";
 
 export default async function PlayerDetailPage({
   params,
@@ -25,12 +27,13 @@ export default async function PlayerDetailPage({
   const data = await getPlayerProfileData(params.id);
   if (!data) notFound();
 
-  const { player, matchingNeeds, reviews, shortlists, sourceNotes, pffStats } = data;
+  const { player, matchingNeeds, reviews, shortlists, sourceNotes, pffStats, schemeContext } = data;
   const topNeed = matchingNeeds[0]?.need ?? null;
   const currentShortlist = shortlists[0] ?? null;
   const keyStats = getPlayerKeyStats(player);
   const productionMetrics = getPlayerProductionMetrics(player, 8);
-  const pffOverall = pffStats?.grades_overall != null ? Number(pffStats.grades_overall).toFixed(1) : null;
+  const pffPrimary = getPffPrimaryGrade(pffStats ?? null, player.position);
+  const pffOverall = pffPrimary ? pffPrimary.value.toFixed(1) : null;
 
   return (
     <div className="grid gap-5">
@@ -83,7 +86,7 @@ export default async function PlayerDetailPage({
               value={`${player.latest_stats?.starts ?? 0} / ${player.latest_stats?.games_played ?? 0}`}
             />
             {pffOverall ? (
-              <HeroMetric label="PFF Overall" value={pffOverall} highlight />
+              <HeroMetric label={`PFF ${pffPrimary?.label ?? "Grade"}`} value={pffOverall} highlight />
             ) : (
               <HeroMetric
                 label="Board Fit"
@@ -91,6 +94,15 @@ export default async function PlayerDetailPage({
               />
             )}
           </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle>Featured Stats</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <FeaturedStats schemeContext={schemeContext} />
         </CardContent>
       </Card>
 
@@ -332,9 +344,9 @@ export default async function PlayerDetailPage({
                   </div>
                 ))
               ) : (
-                <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
-                  No active needs match this player's position.
-                </div>
+                  <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
+                    No active needs match this player&rsquo;s position.
+                  </div>
               )}
             </CardContent>
           </Card>
