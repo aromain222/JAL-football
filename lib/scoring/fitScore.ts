@@ -251,6 +251,7 @@ function calculateProductionScore(
 
   if (
     template.production.secondaryStat &&
+    secondaryValue !== null &&
     template.production.secondaryGood !== undefined &&
     template.production.secondaryElite !== undefined
   ) {
