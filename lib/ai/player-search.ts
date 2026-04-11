@@ -203,6 +203,7 @@ RULES:
 - Use roles for alignment or deployment intent.
 - Use traits for play-style intent.
 - Only use min/max height or weight when the query gives an explicit measurable or a clearly hard requirement.
+- For words like tall, lengthy, long, rangy, or big-framed at receiver/corner/safety/tight end/edge, set a reasonable min_height_in instead of leaving height unconstrained.
 - For words like big, heavy, long, twitchy, explosive, use body_type_hint and/or traits instead of hard measurable gates.
 - Explicit years remaining should be treated as a hard minimum.
 - production_priorities are optional but should be included when the coach clearly asks for production, proven output, sacks, tackles, yards, etc.
@@ -508,6 +509,51 @@ function parseHeightBounds(query: string): { min?: number; max?: number } {
   return { min: exact, max: exact };
 }
 
+function inferImplicitHeightFloor(query: string, positions: PositionGroup[]): number | undefined {
+  if (!/(tall|length|lengthy|long|rangy|big-framed|big framed)/i.test(query)) {
+    return undefined;
+  }
+
+  const position = positions[0];
+  switch (position) {
+    case "WR":
+      return 73;
+    case "TE":
+      return 76;
+    case "CB":
+      return 72;
+    case "S":
+      return 72;
+    case "EDGE":
+      return 75;
+    case "DL":
+      return 74;
+    case "LB":
+      return 73;
+    case "OL":
+      return 76;
+    case "QB":
+      return 74;
+    case "RB":
+      return 71;
+    default:
+      return 73;
+  }
+}
+
+function applyImplicitSizeHints(query: string, criteria: AiSearchCriteria): AiSearchCriteria {
+  const implicitHeightFloor = inferImplicitHeightFloor(query, criteria.positions);
+  const bodyTypeHint =
+    criteria.body_type_hint ??
+    (/(tall|length|lengthy|long|rangy|big-framed|big framed)/i.test(query) ? "tall-bodied" : undefined);
+
+  return {
+    ...criteria,
+    min_height_in: criteria.min_height_in ?? implicitHeightFloor,
+    body_type_hint: bodyTypeHint,
+  };
+}
+
 function buildHeuristicCriteria(query: string): AiSearchCriteria {
   const text = query.trim();
   const lower = text.toLowerCase();
@@ -702,7 +748,7 @@ function buildHeuristicCriteria(query: string): AiSearchCriteria {
       ? `Parsed from the query using built-in football heuristics: ${reasoningBits.join(", ")}.`
       : "Parsed from the query using built-in football heuristics.";
 
-  return {
+  const criteria: AiSearchCriteria = {
     positions,
     min_years_remaining: yearsRemaining,
     min_weight_lbs: weightBounds.min,
@@ -713,9 +759,15 @@ function buildHeuristicCriteria(query: string): AiSearchCriteria {
     traits,
     pff_criteria: pffCriteria,
     production_priorities: productionPriorities,
-    body_type_hint: /(physical|big|heavy|long|big-bodied|big bodied)/.test(lower) ? "big-bodied" : undefined,
+    body_type_hint: /(physical|big|heavy|big-bodied|big bodied)/.test(lower)
+      ? "big-bodied"
+      : /(tall|length|lengthy|long|rangy|big-framed|big framed)/.test(lower)
+        ? "tall-bodied"
+        : undefined,
     reasoning,
   };
+
+  return applyImplicitSizeHints(lower, criteria);
 }
 
 function gradeToScore(value: number | null): number {
@@ -798,7 +850,7 @@ export async function extractSearchCriteria(query: string): Promise<AiSearchCrit
 
     const rawText = message.content[0]?.type === "text" ? message.content[0].text : "";
     const parsedJson = JSON.parse(stripCodeFences(rawText));
-    return normalizeCriteria(criteriaSchema.parse(parsedJson));
+    return applyImplicitSizeHints(query, normalizeCriteria(criteriaSchema.parse(parsedJson)));
   } catch (error) {
     console.error(
       `[ai-search] Falling back to heuristic parser: ${error instanceof Error ? error.message : "unknown error"}`
