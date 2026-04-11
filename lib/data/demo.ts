@@ -224,10 +224,10 @@ const previewSnapshot = previewWorkspace as {
 
 export const demoTeam: Team = previewSnapshot.team ?? baseDemoTeam;
 
-export const demoProfile: Profile =
-  previewSnapshot.profile
-    ? { ...previewSnapshot.profile, team_id: previewSnapshot.profile.team_id ?? demoTeam.id }
-    : { ...baseDemoProfile, team_id: demoTeam.id };
+export const demoProfile: Profile = {
+  ...baseDemoProfile,
+  team_id: demoTeam.id
+};
 
 export const demoPlayers: Player[] =
   previewSnapshot.players && previewSnapshot.players.length > 0

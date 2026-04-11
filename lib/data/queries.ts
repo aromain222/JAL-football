@@ -125,27 +125,6 @@ export async function getViewerContext() {
       profile = (defaultProfileRaw as Profile | null) ?? null;
     }
 
-    if (!profile && defaultTeamId) {
-      const { data: teamProfileRaw } = await admin
-        .from("profiles")
-        .select("*")
-        .eq("team_id", defaultTeamId)
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      profile = (teamProfileRaw as Profile | null) ?? null;
-    }
-
-    if (!profile) {
-      const { data: firstProfileRaw } = await admin
-        .from("profiles")
-        .select("*")
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      profile = (firstProfileRaw as Profile | null) ?? null;
-    }
-
     let team = null as Team | null;
     const workspaceTeamId = defaultTeamId ?? profile?.team_id ?? null;
     if (workspaceTeamId) {
@@ -167,7 +146,12 @@ export async function getViewerContext() {
       team = (firstTeamRaw as Team | null) ?? null;
     }
 
-    const resolvedProfile = profile ?? demoProfile;
+    const resolvedProfile = profile
+      ? profile
+      : {
+          ...demoProfile,
+          team_id: (team ?? demoTeam).id
+        };
     const resolvedTeam = team ?? demoTeam;
 
     return {
