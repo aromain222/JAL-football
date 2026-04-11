@@ -60,6 +60,35 @@ function matchesSearch(player: Player, search?: string) {
   return haystack.includes(search.toLowerCase());
 }
 
+function getDemoMetrics(): DashboardMetrics {
+  const state = getDemoState();
+  return {
+    activeNeeds: state.needs.filter((need) => need.status === "active").length,
+    totalPlayers: state.players.length,
+    shortlistedPlayers: state.shortlists.length,
+    recentReviews: state.reviews.length
+  };
+}
+
+function logDataAccessIssue(scope: string, message: string) {
+  console.error(`[data:${scope}] ${message}`);
+}
+
+async function isAnonymousWorkspaceRequest() {
+  if (!hasSupabaseEnv()) return true;
+
+  try {
+    const supabase = createSupabaseServerClient();
+    const {
+      data: { user }
+    } = await supabase.auth.getUser();
+
+    return !user;
+  } catch {
+    return true;
+  }
+}
+
 export async function getViewerContext() {
   noStore();
   const roleOverride = normalizeWorkspaceRole(cookies().get("workspace-role")?.value);
@@ -175,17 +204,16 @@ export async function getViewerContext() {
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
   noStore();
   if (!hasSupabaseEnv()) {
-    const state = getDemoState();
-    return {
-      activeNeeds: state.needs.filter((need) => need.status === "active").length,
-      totalPlayers: state.players.length,
-      shortlistedPlayers: state.shortlists.length,
-      recentReviews: state.reviews.length
-    };
+    return getDemoMetrics();
   }
 
   const supabase = createSupabaseDataClient();
-  const [{ count: activeNeeds }, { count: totalPlayers }, { count: shortlistedPlayers }, { count: recentReviews }] =
+  const [
+    { count: activeNeeds, error: activeNeedsError },
+    { count: totalPlayers, error: totalPlayersError },
+    { count: shortlistedPlayers, error: shortlistedPlayersError },
+    { count: recentReviews, error: recentReviewsError }
+  ] =
     await Promise.all([
       supabase.from("team_needs").select("*", { count: "exact", head: true }).eq("status", "active"),
       supabase.from("players").select("*", { count: "exact", head: true }),
@@ -195,6 +223,35 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
         .select("*", { count: "exact", head: true })
         .gte("created_at", new Date(Date.now() - 1000 * 60 * 60 * 24 * 14).toISOString())
     ]);
+
+  const metricErrors = [
+    activeNeedsError,
+    totalPlayersError,
+    shortlistedPlayersError,
+    recentReviewsError
+  ].filter(Boolean);
+
+  if (metricErrors.length > 0) {
+    logDataAccessIssue(
+      "dashboard-metrics",
+      metricErrors.map((error) => error?.message ?? "unknown error").join(" | ")
+    );
+
+    if (await isAnonymousWorkspaceRequest()) {
+      return getDemoMetrics();
+    }
+  }
+
+  if (
+    (activeNeeds ?? 0) === 0 &&
+    (totalPlayers ?? 0) === 0 &&
+    (shortlistedPlayers ?? 0) === 0 &&
+    (recentReviews ?? 0) === 0 &&
+    await isAnonymousWorkspaceRequest()
+  ) {
+    logDataAccessIssue("dashboard-metrics", "All metrics resolved to zero for anonymous request; using demo fallback.");
+    return getDemoMetrics();
+  }
 
   return {
     activeNeeds: activeNeeds ?? 0,
@@ -213,15 +270,27 @@ export async function getNeeds() {
   try {
     const { team } = await getViewerContext();
     const supabase = createSupabaseDataClient();
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("team_needs")
       .select("*")
       .eq("team_id", team.id)
       .order("created_at", { ascending: false });
 
+    if (error) {
+      logDataAccessIssue("needs", error.message);
+      if (await isAnonymousWorkspaceRequest()) {
+        return getDemoState().needs;
+      }
+    }
+
+    if ((!data || data.length === 0) && await isAnonymousWorkspaceRequest()) {
+      return getDemoState().needs;
+    }
+
     return (data as TeamNeed[] | null) ?? [];
-  } catch {
-    return [];
+  } catch (error) {
+    logDataAccessIssue("needs", error instanceof Error ? error.message : "unknown error");
+    return await isAnonymousWorkspaceRequest() ? getDemoState().needs : [];
   }
 }
 
@@ -411,9 +480,16 @@ async function getPlayersFromSupabase(filters: PlayerFilters = {}): Promise<Play
     );
   }
 
-  const { data } = await query;
+  const { data, error } = await query;
 
-  if (!data) return [];
+  if (error) {
+    logDataAccessIssue("players", error.message);
+    return await isAnonymousWorkspaceRequest() ? getDemoState().players : [];
+  }
+
+  if (!data || data.length === 0) {
+    return await isAnonymousWorkspaceRequest() ? getDemoState().players : [];
+  }
 
   const pickSingle = <TRow>(value: TRow | TRow[] | null | undefined): TRow | null => {
     if (Array.isArray(value)) return value[0] ?? null;
@@ -445,11 +521,18 @@ export async function getPlayerReviewHistory(playerId: string) {
   }
 
   const supabase = createSupabaseDataClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("player_reviews")
     .select("*")
     .eq("player_id", playerId)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    logDataAccessIssue("player-review-history", error.message);
+    return await isAnonymousWorkspaceRequest()
+      ? getDemoState().reviews.filter((review) => review.player_id === playerId)
+      : [];
+  }
 
   return data ?? [];
 }
@@ -461,7 +544,13 @@ export async function getPlayerShortlistEntries(playerId: string) {
   }
 
   const supabase = createSupabaseDataClient();
-  const { data } = await supabase.from("shortlists").select("*").eq("player_id", playerId);
+  const { data, error } = await supabase.from("shortlists").select("*").eq("player_id", playerId);
+  if (error) {
+    logDataAccessIssue("player-shortlists", error.message);
+    return await isAnonymousWorkspaceRequest()
+      ? getDemoState().shortlists.filter((item) => item.player_id === playerId)
+      : [];
+  }
   return (data as ShortlistItem[] | null) ?? [];
 }
 
@@ -472,11 +561,16 @@ export async function getPlayerSourceNotes(playerId: string) {
   }
 
   const supabase = createSupabaseDataClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("player_source_notes")
     .select("*")
     .eq("player_id", playerId)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    logDataAccessIssue("player-source-notes", error.message);
+    return [];
+  }
 
   return (data as PlayerSourceNote[] | null) ?? [];
 }
@@ -503,8 +597,14 @@ export async function getPlayersFromSupabaseForAI(filters: {
     query = query.gte("eligibility_remaining", filters.minYearsRemaining);
   }
 
-  const { data } = await query;
-  if (!data) return [];
+  const { data, error } = await query;
+  if (error) {
+    logDataAccessIssue("ai-players", error.message);
+    return await isAnonymousWorkspaceRequest() ? getDemoState().players : [];
+  }
+  if (!data || data.length === 0) {
+    return await isAnonymousWorkspaceRequest() ? getDemoState().players : [];
+  }
 
   const pickSingle = <TRow>(value: TRow | TRow[] | null | undefined): TRow | null => {
     if (Array.isArray(value)) return value[0] ?? null;
@@ -553,21 +653,29 @@ export async function getPffStatsForPlayer(
   const supabase = createSupabaseDataClient();
 
   // Primary: match by player_id FK (accurate, works after import resolves names)
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("player_pff_grades")
     .select("*")
     .eq("player_id", player.id)
     .order("season", { ascending: false });
+  if (error) {
+    logDataAccessIssue("pff-by-player-id", error.message);
+    return null;
+  }
   const preferredById = choosePreferredPffRow((data ?? []) as Array<Record<string, unknown>>);
   if (preferredById) return preferredById;
 
   // Fallback: name match (player_id may be null for recently imported records)
   const fullName = `${player.first_name} ${player.last_name}`;
-  const { data: data2 } = await supabase
+  const { data: data2, error: error2 } = await supabase
     .from("player_pff_grades")
     .select("*")
     .ilike("player_name", fullName)
     .order("season", { ascending: false });
+  if (error2) {
+    logDataAccessIssue("pff-by-player-name", error2.message);
+    return null;
+  }
   return choosePreferredPffRow((data2 ?? []) as Array<Record<string, unknown>>);
 }
 
@@ -580,11 +688,15 @@ export async function getBatchPffStatsForPlayers(
 
   // Batch 1: by player_id FK — covers all players whose PFF records were linked
   const ids = players.map((p) => p.id);
-  const { data: byId } = await supabase
+  const { data: byId, error: byIdError } = await supabase
     .from("player_pff_grades")
     .select("*")
     .in("player_id", ids)
     .order("season", { ascending: false });
+  if (byIdError) {
+    logDataAccessIssue("batch-pff-by-id", byIdError.message);
+    return {};
+  }
 
   const rowsByPlayerId = new Map<string, Array<Record<string, unknown>>>();
   for (const row of (byId ?? []) as Array<Record<string, unknown>>) {
@@ -603,11 +715,15 @@ export async function getBatchPffStatsForPlayers(
   const unmatched = players.filter((p) => !result[p.id]);
   if (unmatched.length) {
     const names = unmatched.map((p) => `${p.first_name} ${p.last_name}`);
-    const { data: byName } = await supabase
+    const { data: byName, error: byNameError } = await supabase
       .from("player_pff_grades")
       .select("*")
       .in("player_name", names)
       .order("season", { ascending: false });
+    if (byNameError) {
+      logDataAccessIssue("batch-pff-by-name", byNameError.message);
+      return result;
+    }
 
     const rowsByName = new Map<string, Array<Record<string, unknown>>>();
     for (const row of (byName ?? []) as Array<Record<string, unknown>>) {
@@ -716,11 +832,18 @@ export async function getReviewsByNeed(needId: string) {
   }
 
   const supabase = createSupabaseDataClient();
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("player_reviews")
     .select("*")
     .eq("need_id", needId)
     .order("created_at", { ascending: false });
+
+  if (error) {
+    logDataAccessIssue("reviews-by-need", error.message);
+    return await isAnonymousWorkspaceRequest()
+      ? getDemoState().reviews.filter((review) => review.need_id === needId)
+      : [];
+  }
 
   return data ?? [];
 }
@@ -732,7 +855,11 @@ export async function getShortlists() {
   }
 
   const supabase = createSupabaseDataClient();
-  const { data } = await supabase.from("shortlists").select("*");
+  const { data, error } = await supabase.from("shortlists").select("*");
+  if (error) {
+    logDataAccessIssue("shortlists", error.message);
+    return await isAnonymousWorkspaceRequest() ? getDemoState().shortlists : [];
+  }
   return (data as ShortlistItem[] | null) ?? [];
 }
 
@@ -778,7 +905,11 @@ async function getAllReviews() {
   }
 
   const supabase = createSupabaseDataClient();
-  const { data } = await supabase.from("player_reviews").select("*");
+  const { data, error } = await supabase.from("player_reviews").select("*");
+  if (error) {
+    logDataAccessIssue("all-reviews", error.message);
+    return await isAnonymousWorkspaceRequest() ? getDemoState().reviews : [];
+  }
   return data ?? [];
 }
 
