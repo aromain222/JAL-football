@@ -207,7 +207,7 @@ RULES:
 - For words like big, heavy, long, twitchy, explosive, use body_type_hint and/or traits instead of hard measurable gates.
 - Explicit years remaining should be treated as a hard minimum.
 - production_priorities are optional but should be included when the coach clearly asks for production, proven output, sacks, tackles, yards, etc.
-- For "nose tackle" or "nose guard", use positions ["DL"], role "interior_dl", and strongly consider traits "big_body" and "run_support".
+- For "nose tackle" or "nose guard", use positions ["DL"], role "interior_dl", strongly consider traits "big_body" and "run_support", and set a meaningful min_weight_lbs floor unless the coach explicitly says otherwise.
 - For "slot corner", use positions ["CB"], role "slot_cb"; if the coach mentions run support, add traits "run_support" and "tackling".
 - For "off-ball linebacker" or "box linebacker", use positions ["LB"] and lean on traits like "run_support", "tackling", and "big_body" when the wording implies it.
 - When the query asks for physicality, box play, run defense, or tackle volume, include both trait evidence and production priorities that reflect that ask.
@@ -541,14 +541,37 @@ function inferImplicitHeightFloor(query: string, positions: PositionGroup[]): nu
   }
 }
 
+function inferImplicitWeightFloor(
+  query: string,
+  positions: PositionGroup[],
+  roles: AiRoleCriterion[]
+): number | undefined {
+  const lower = query.toLowerCase();
+
+  if (/(nose tackle|nose guard|0-tech|0 tech)/.test(lower)) {
+    if (/(big|massive|heavy|true nose)/.test(lower)) return 300;
+    return 285;
+  }
+
+  const hasInteriorDlRole = roles.some((role) => role.key === "interior_dl");
+  if (hasInteriorDlRole || (positions.includes("DL") && /(interior defensive tackle|interior dl|defensive tackle)/.test(lower))) {
+    if (/(big|massive|heavy)/.test(lower)) return 290;
+    return 275;
+  }
+
+  return undefined;
+}
+
 function applyImplicitSizeHints(query: string, criteria: AiSearchCriteria): AiSearchCriteria {
   const implicitHeightFloor = inferImplicitHeightFloor(query, criteria.positions);
+  const implicitWeightFloor = inferImplicitWeightFloor(query, criteria.positions, criteria.roles);
   const bodyTypeHint =
     criteria.body_type_hint ??
     (/(tall|length|lengthy|long|rangy|big-framed|big framed)/i.test(query) ? "tall-bodied" : undefined);
 
   return {
     ...criteria,
+    min_weight_lbs: criteria.min_weight_lbs ?? implicitWeightFloor,
     min_height_in: criteria.min_height_in ?? implicitHeightFloor,
     body_type_hint: bodyTypeHint,
   };
