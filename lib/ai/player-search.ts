@@ -405,6 +405,319 @@ function stripCodeFences(text: string): string {
   return text.replace(/^```(?:json)?\s*/m, "").replace(/```\s*$/m, "").trim();
 }
 
+function uniquePush<T>(items: T[], value: T) {
+  if (!items.includes(value)) items.push(value);
+}
+
+function addRoleCriterion(
+  roles: AiRoleCriterion[],
+  role: AiRoleKey,
+  strength: "required" | "preferred",
+  label: string
+) {
+  if (roles.some((item) => item.key === role)) return;
+  roles.push({ key: role, strength, label });
+}
+
+function addTraitCriterion(
+  traits: AiTraitCriterion[],
+  trait: AiTraitKey,
+  strength: "required" | "preferred",
+  label: string
+) {
+  if (traits.some((item) => item.key === trait)) return;
+  traits.push({ key: trait, strength, label });
+}
+
+function addProductionPriority(
+  priorities: AiProductionPriority[],
+  stat: string,
+  minValue: number | null | undefined,
+  weight: number,
+  label: string
+) {
+  if (priorities.some((item) => item.stat === stat)) return;
+  priorities.push({
+    stat,
+    min_value: minValue ?? undefined,
+    weight,
+    label,
+  });
+}
+
+function addPffCriterion(
+  criteria: PffCriterion[],
+  column: string,
+  minValue: number,
+  weight: number,
+  label: string
+) {
+  if (criteria.some((item) => item.column === column)) return;
+  criteria.push({
+    column,
+    min_value: minValue,
+    weight,
+    label,
+  });
+}
+
+function parseYearsRemaining(query: string): number | undefined {
+  const match = query.match(/(?:at least\s*)?(\d+)\s*(?:year|yr)s?(?:\s*(?:of)?\s*(?:eligibility|remaining|left))?/i);
+  if (!match) return undefined;
+  const value = Number(match[1]);
+  return Number.isFinite(value) ? value : undefined;
+}
+
+function parseWeightBounds(query: string): { min?: number; max?: number } {
+  const minMatch = query.match(/(?:at least|min(?:imum)?)\s*(\d{3})\s*(?:lb|lbs|pounds)/i);
+  const maxMatch = query.match(/(?:under|below|max(?:imum)?|no more than)\s*(\d{3})\s*(?:lb|lbs|pounds)/i);
+  const exactMatch = query.match(/(\d{3})\s*(?:lb|lbs|pounds)/i);
+
+  const min = minMatch ? Number(minMatch[1]) : undefined;
+  const max = maxMatch ? Number(maxMatch[1]) : undefined;
+
+  if (!min && !max && exactMatch) {
+    const exact = Number(exactMatch[1]);
+    return { min: exact, max: exact };
+  }
+
+  return { min, max };
+}
+
+function parseHeightBounds(query: string): { min?: number; max?: number } {
+  const feetInchesMatch = query.match(/(\d)\s*['-]\s*(\d{1,2})/);
+  const inchesMatch = query.match(/(\d{2})\s*(?:in|inch|inches)/i);
+  const toInches = (feet: number, inches: number) => feet * 12 + inches;
+
+  let exact: number | undefined;
+  if (feetInchesMatch) {
+    exact = toInches(Number(feetInchesMatch[1]), Number(feetInchesMatch[2]));
+  } else if (inchesMatch) {
+    exact = Number(inchesMatch[1]);
+  }
+
+  if (!exact) return {};
+
+  if (/(?:under|below|max(?:imum)?|no more than)/i.test(query)) {
+    return { max: exact };
+  }
+  if (/(?:at least|min(?:imum)?|over|above)/i.test(query)) {
+    return { min: exact };
+  }
+
+  return { min: exact, max: exact };
+}
+
+function buildHeuristicCriteria(query: string): AiSearchCriteria {
+  const text = query.trim();
+  const lower = text.toLowerCase();
+
+  const positions: PositionGroup[] = [];
+  const roles: AiRoleCriterion[] = [];
+  const traits: AiTraitCriterion[] = [];
+  const pffCriteria: PffCriterion[] = [];
+  const productionPriorities: AiProductionPriority[] = [];
+  const reasoningBits: string[] = [];
+
+  const yearsRemaining = parseYearsRemaining(lower);
+  const weightBounds = parseWeightBounds(lower);
+  const heightBounds = parseHeightBounds(lower);
+
+  if (/(nose tackle|nose guard|interior defensive tackle|defensive tackle|interior dl)/.test(lower)) {
+    uniquePush(positions, "DL");
+    addRoleCriterion(roles, "interior_dl", "required", "Interior DL role");
+    addTraitCriterion(traits, "big_body", "preferred", "Big body");
+    addTraitCriterion(traits, "run_support", "preferred", "Run support");
+    addPffCriterion(pffCriteria, "snaps_interior_dl", 60, 1.1, "Interior DL usage");
+    addPffCriterion(pffCriteria, "grades_run_defense_dl", 62, 0.9, "Run defense");
+    addProductionPriority(productionPriorities, "tackles_for_loss", 2, 0.5, "TFL");
+    reasoningBits.push("interior DL usage");
+  }
+
+  if (/(edge|edge rusher|pass rusher|pass rushing|defensive end|speed rusher)/.test(lower)) {
+    uniquePush(positions, "EDGE");
+    addRoleCriterion(roles, "edge", "required", "Edge role");
+    addTraitCriterion(traits, "pass_rush", "preferred", "Pass rush");
+    addPffCriterion(pffCriteria, "grades_pass_rush", 65, 0.95, "Pass rush");
+    addProductionPriority(productionPriorities, "sacks", 3, 0.7, "Sacks");
+    addProductionPriority(productionPriorities, "tackles_for_loss", 4, 0.55, "TFL");
+    reasoningBits.push("edge pass-rush profile");
+  }
+
+  if (/(slot corner|nickel|slot cb)/.test(lower)) {
+    uniquePush(positions, "CB");
+    addRoleCriterion(roles, "slot_cb", "required", "Slot CB role");
+    addPffCriterion(pffCriteria, "snaps_slot_cb", 40, 1.1, "Slot usage");
+    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.85, "Coverage");
+    reasoningBits.push("slot coverage reps");
+  }
+
+  if (/(boundary corner|outside corner|outside cb|boundary cb)/.test(lower)) {
+    uniquePush(positions, "CB");
+    addRoleCriterion(roles, "outside_cb", "required", "Outside CB role");
+    addPffCriterion(pffCriteria, "snaps_outside_cb", 60, 1.05, "Outside CB usage");
+    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.85, "Coverage");
+    reasoningBits.push("outside corner usage");
+  }
+
+  if (/(box safety)/.test(lower)) {
+    uniquePush(positions, "S");
+    addRoleCriterion(roles, "box_safety", "required", "Box safety role");
+    addTraitCriterion(traits, "run_support", "preferred", "Run support");
+    addTraitCriterion(traits, "tackling", "preferred", "Tackling");
+    addPffCriterion(pffCriteria, "snaps_in_box_db", 35, 1.0, "Box usage");
+    reasoningBits.push("box safety deployment");
+  }
+
+  if (/(free safety|deep safety)/.test(lower)) {
+    uniquePush(positions, "S");
+    addRoleCriterion(roles, "free_safety", "required", "Free safety role");
+    addTraitCriterion(traits, "coverage", "preferred", "Coverage");
+    addPffCriterion(pffCriteria, "snaps_free_safety", 35, 1.0, "Free safety usage");
+    reasoningBits.push("free safety deployment");
+  }
+
+  if (/(strong safety)/.test(lower)) {
+    uniquePush(positions, "S");
+    addRoleCriterion(roles, "strong_safety", "required", "Strong safety role");
+    addTraitCriterion(traits, "run_support", "preferred", "Run support");
+    addPffCriterion(pffCriteria, "snaps_strong_safety", 35, 1.0, "Strong safety usage");
+    reasoningBits.push("strong safety deployment");
+  }
+
+  if (/(slot receiver|slot wr|slot wide receiver)/.test(lower)) {
+    uniquePush(positions, "WR");
+    addRoleCriterion(roles, "slot_receiver", "required", "Slot WR role");
+    addPffCriterion(pffCriteria, "snaps_slot", 40, 1.0, "Slot usage");
+    reasoningBits.push("slot receiving usage");
+  }
+
+  if (/(boundary receiver|outside receiver|x receiver|x wr|tall x wr)/.test(lower)) {
+    uniquePush(positions, "WR");
+    addRoleCriterion(roles, "boundary_receiver", "required", "Boundary WR role");
+    addPffCriterion(pffCriteria, "snaps_wide_left", 35, 0.8, "Boundary reps");
+    addPffCriterion(pffCriteria, "snaps_wide_right", 35, 0.8, "Boundary reps");
+    reasoningBits.push("boundary receiving usage");
+  }
+
+  if (/(inline tight end|inline te|y tight end)/.test(lower)) {
+    uniquePush(positions, "TE");
+    addRoleCriterion(roles, "inline_te", "required", "Inline TE role");
+    addPffCriterion(pffCriteria, "snaps_inline_te", 35, 1.0, "Inline TE usage");
+    reasoningBits.push("inline TE usage");
+  }
+
+  if (/(move tight end|flex tight end|move te)/.test(lower)) {
+    uniquePush(positions, "TE");
+    addRoleCriterion(roles, "move_te", "required", "Move TE role");
+    reasoningBits.push("move TE alignment");
+  }
+
+  if (/(receiving back|backfield back|backfield rb)/.test(lower)) {
+    uniquePush(positions, "RB");
+    addRoleCriterion(roles, "backfield_rb", "required", "Backfield RB role");
+    addTraitCriterion(traits, "receiving", "preferred", "Receiving");
+    reasoningBits.push("backfield receiving profile");
+  }
+
+  if (/(off-ball linebacker|off ball linebacker|linebacker|box linebacker)/.test(lower)) {
+    uniquePush(positions, "LB");
+    reasoningBits.push("linebacker profile");
+  }
+
+  if (/(corner|cb)/.test(lower) && positions.length === 0) uniquePush(positions, "CB");
+  if (/(safety)/.test(lower) && positions.length === 0) uniquePush(positions, "S");
+  if (/(wide receiver|receiver| wr\b)/.test(lower) && positions.length === 0) uniquePush(positions, "WR");
+  if (/(running back| rb\b)/.test(lower) && positions.length === 0) uniquePush(positions, "RB");
+  if (/(tight end| te\b)/.test(lower) && positions.length === 0) uniquePush(positions, "TE");
+  if (/(quarterback| qb\b)/.test(lower) && positions.length === 0) uniquePush(positions, "QB");
+  if (/(offensive line|ol|tackle|guard|center)/.test(lower) && positions.length === 0) uniquePush(positions, "OL");
+
+  if (/(run support|good in the run|good against the run|run defense|stops the run)/.test(lower)) {
+    addTraitCriterion(traits, "run_support", "preferred", "Run support");
+    addPffCriterion(pffCriteria, "grades_run_defense_lb", 62, 0.75, "Run defense");
+    addPffCriterion(pffCriteria, "grades_run_defense_dl", 62, 0.75, "Run defense");
+    reasoningBits.push("run-defense evidence");
+  }
+
+  if (/(coverage|cover|man cover|zone cover)/.test(lower)) {
+    addTraitCriterion(traits, "coverage", "preferred", "Coverage");
+    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.75, "Coverage");
+    addPffCriterion(pffCriteria, "grades_coverage_lb", 62, 0.75, "Coverage");
+    reasoningBits.push("coverage evidence");
+  }
+
+  if (/(physical|big|heavy|long|big-bodied|big bodied)/.test(lower)) {
+    addTraitCriterion(traits, "big_body", "preferred", "Physical build");
+  }
+
+  if (/(explosive|burst|speed|fast|juice)/.test(lower)) {
+    addTraitCriterion(traits, "explosive", "preferred", "Explosive traits");
+  }
+
+  if (/(tackle|tackles|tackling)/.test(lower)) {
+    addTraitCriterion(traits, "tackling", "preferred", "Tackling");
+    addProductionPriority(productionPriorities, "tackles", 35, 0.6, "Tackles");
+  }
+
+  if (/(pass rush|pass-rush|rush the passer|sacks?)/.test(lower)) {
+    addTraitCriterion(traits, "pass_rush", "preferred", "Pass rush");
+    addProductionPriority(productionPriorities, "sacks", 3, 0.65, "Sacks");
+  }
+
+  if (/(route|route running|separator)/.test(lower)) {
+    addTraitCriterion(traits, "route_running", "preferred", "Route running");
+  }
+
+  if (/(ball skills|interceptions|pbu|pass breakups)/.test(lower)) {
+    addTraitCriterion(traits, "ball_skills", "preferred", "Ball skills");
+    addProductionPriority(productionPriorities, "interceptions", 1, 0.45, "Interceptions");
+    addProductionPriority(productionPriorities, "passes_defended", 4, 0.45, "Pass breakups");
+  }
+
+  if (/(receiving|hands|catch radius|yards)/.test(lower) && positions.includes("WR")) {
+    addTraitCriterion(traits, "receiving", "preferred", "Receiving");
+    addProductionPriority(productionPriorities, "receiving_yards", 450, 0.65, "Receiving yards");
+    addProductionPriority(productionPriorities, "receptions", 25, 0.45, "Receptions");
+  }
+
+  if (/(receiving|hands|catch radius)/.test(lower) && positions.includes("TE")) {
+    addTraitCriterion(traits, "receiving", "preferred", "Receiving");
+    addProductionPriority(productionPriorities, "receiving_yards", 250, 0.6, "Receiving yards");
+  }
+
+  if (/(rushing|runner|yards after contact)/.test(lower) && positions.includes("RB")) {
+    addProductionPriority(productionPriorities, "rushing_yards", 500, 0.65, "Rushing yards");
+    addProductionPriority(productionPriorities, "rushing_tds", 5, 0.45, "Rush TDs");
+  }
+
+  const defaultPositionPriorities = positions.flatMap((position) => DEFAULT_PRODUCTION_PRIORITIES[position] ?? []);
+  for (const priority of defaultPositionPriorities) {
+    if (productionPriorities.length >= 2) break;
+    addProductionPriority(productionPriorities, priority.stat, priority.min_value, priority.weight, priority.label);
+  }
+
+  const reasoning =
+    reasoningBits.length > 0
+      ? `Parsed from the query using built-in football heuristics: ${reasoningBits.join(", ")}.`
+      : "Parsed from the query using built-in football heuristics.";
+
+  return {
+    positions,
+    min_years_remaining: yearsRemaining,
+    min_weight_lbs: weightBounds.min,
+    max_weight_lbs: weightBounds.max,
+    min_height_in: heightBounds.min,
+    max_height_in: heightBounds.max,
+    roles,
+    traits,
+    pff_criteria: pffCriteria,
+    production_priorities: productionPriorities,
+    body_type_hint: /(physical|big|heavy|long|big-bodied|big bodied)/.test(lower) ? "big-bodied" : undefined,
+    reasoning,
+  };
+}
+
 function gradeToScore(value: number | null): number {
   if (value == null) return 40;
   if (value >= 90) return 100;
@@ -469,18 +782,29 @@ function normalizeCriteria(parsed: z.infer<typeof criteriaSchema>): AiSearchCrit
 }
 
 export async function extractSearchCriteria(query: string): Promise<AiSearchCriteria> {
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+  if (!process.env.ANTHROPIC_API_KEY) {
+    return buildHeuristicCriteria(query);
+  }
 
-  const message = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
-    max_tokens: 1400,
-    system: SYSTEM_PROMPT,
-    messages: [{ role: "user", content: query }],
-  });
+  try {
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-  const rawText = message.content[0]?.type === "text" ? message.content[0].text : "";
-  const parsedJson = JSON.parse(stripCodeFences(rawText));
-  return normalizeCriteria(criteriaSchema.parse(parsedJson));
+    const message = await client.messages.create({
+      model: "claude-haiku-4-5-20251001",
+      max_tokens: 1400,
+      system: SYSTEM_PROMPT,
+      messages: [{ role: "user", content: query }],
+    });
+
+    const rawText = message.content[0]?.type === "text" ? message.content[0].text : "";
+    const parsedJson = JSON.parse(stripCodeFences(rawText));
+    return normalizeCriteria(criteriaSchema.parse(parsedJson));
+  } catch (error) {
+    console.error(
+      `[ai-search] Falling back to heuristic parser: ${error instanceof Error ? error.message : "unknown error"}`
+    );
+    return buildHeuristicCriteria(query);
+  }
 }
 
 function roleAlignmentValue(role: AiRoleKey, pffStats: Record<string, unknown> | null): number | null {
