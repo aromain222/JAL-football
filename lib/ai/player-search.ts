@@ -1591,7 +1591,7 @@ function buildReasonBadges(
   const productionBadge = compactProductionBadge(criteria, player);
   if (productionBadge) badges.push(productionBadge);
 
-  if (!pffStats) badges.push("Profile only");
+  if (!pffStats) badges.push("No PFF data available");
   if (!player.latest_stats && badges.length < 4) badges.push("Projection fit");
   if (criteria.body_type_hint && badges.length < 4) badges.push(criteria.body_type_hint);
 
