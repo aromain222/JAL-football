@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { LogOut, ShieldCheck, Sparkles, UsersRound } from "lucide-react";
-import { getViewerContext } from "@/lib/data/queries";
+import { ShieldCheck, Sparkles, UsersRound } from "lucide-react";
+import { getViewerContext, getWorkspaceMembers } from "@/lib/data/queries";
 import { AppSidebarNav } from "@/components/app-sidebar-nav";
 import { WorkspaceRoleSwitcher } from "@/components/workspace-role-switcher";
+import { LogoutButton } from "@/components/auth/logout-button";
 import { Button } from "@/components/ui/button";
 import { normalizeWorkspaceRole, WORKSPACE_ROLE_OPTIONS } from "@/lib/workspace-role";
 
@@ -19,7 +20,7 @@ export default async function AppLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { profile, team } = await getViewerContext();
+  const [{ profile, team }, members] = await Promise.all([getViewerContext(), getWorkspaceMembers()]);
   const currentRole = normalizeWorkspaceRole(profile.role) ?? WORKSPACE_ROLE_OPTIONS[0];
 
   return (
@@ -54,6 +55,37 @@ export default async function AppLayout({
                 </div>
               </div>
             </div>
+            <div className="rounded-[24px] border border-white/10 bg-black/10 p-4">
+              <div className="flex items-center justify-between gap-3">
+                <div className="text-[10px] uppercase tracking-[0.28em] text-[#f3dfaf]/72">Staff board</div>
+                <div className="rounded-full border border-white/10 bg-white/8 px-2.5 py-1 text-[10px] uppercase tracking-[0.24em] text-[#d7e0d3]/72">
+                  {members.length} coaches
+                </div>
+              </div>
+              <div className="mt-3 grid gap-2">
+                {members.slice(0, 4).map((member) => {
+                  const displayRole = normalizeWorkspaceRole(member.role) ?? member.role;
+                  const initials = member.full_name
+                    .split(" ")
+                    .map((part) => part[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase();
+
+                  return (
+                    <div key={member.id} className="flex items-center gap-3 rounded-2xl border border-white/8 bg-white/6 px-3 py-2.5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-[#11261a] text-xs font-semibold text-[#f6e6bc]">
+                        {initials}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium text-white">{member.full_name}</p>
+                        <p className="truncate text-[10px] uppercase tracking-[0.24em] text-[#d7e0d3]/58">{displayRole}</p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           <div className="grid gap-3">
@@ -75,12 +107,9 @@ export default async function AppLayout({
               </div>
               <p className="mt-2">Use the board for search, triage, and shortlist movement without leaving the workspace.</p>
             </div>
-            <Button asChild className="scouting-cta mt-4 w-full justify-between">
-              <Link href="/login">
-                Log out
-                <LogOut className="h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="mt-4">
+              <LogoutButton />
+            </div>
           </div>
         </aside>
 

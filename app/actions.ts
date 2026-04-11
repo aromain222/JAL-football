@@ -27,6 +27,23 @@ function normalizeNumber(value?: string) {
   return Number.isFinite(parsed) ? parsed : undefined;
 }
 
+async function requireWorkspaceWriteContext() {
+  if (!hasSupabaseEnv()) {
+    return getViewerContext();
+  }
+
+  const supabase = createSupabaseServerClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Sign in to make changes.");
+  }
+
+  return getViewerContext();
+}
+
 export async function setWorkspaceRoleAction(role: string) {
   const normalizedRole = normalizeWorkspaceRole(role);
   if (!normalizedRole) {
@@ -44,7 +61,7 @@ export async function setWorkspaceRoleAction(role: string) {
 
 export async function createNeedAction(input: z.infer<typeof needSchema>) {
   const parsed = needSchema.parse(input);
-  const { profile: viewerProfile, team: viewerTeam } = await getViewerContext();
+  const { profile: viewerProfile, team: viewerTeam } = await requireWorkspaceWriteContext();
 
   if (!viewerProfile || !viewerTeam) {
     throw new Error("Workspace context is not configured.");
@@ -88,7 +105,7 @@ export async function createNeedAction(input: z.infer<typeof needSchema>) {
 }
 
 export async function submitReviewAction(formData: FormData) {
-  const { profile } = await getViewerContext();
+  const { profile } = await requireWorkspaceWriteContext();
 
   const parsed = reviewSchema.parse({
     needId: formData.get("needId"),
@@ -180,6 +197,7 @@ export async function updateShortlistStageAction(formData: FormData) {
   });
 
   if (hasSupabaseEnv()) {
+    await requireWorkspaceWriteContext();
     const supabase = createSupabaseDataClient();
     await supabase
       .from("shortlists" as never)
@@ -197,7 +215,7 @@ export async function addPlayerToShortlistAction(input: {
   playerId: string;
   needId: string;
 }) {
-  const { profile } = await getViewerContext();
+  const { profile } = await requireWorkspaceWriteContext();
 
   if (hasSupabaseEnv()) {
     const supabase = createSupabaseDataClient();
@@ -260,7 +278,7 @@ export async function markPlayerNeedsFilmAction(input: {
   playerId: string;
   needId: string;
 }) {
-  const { profile } = await getViewerContext();
+  const { profile } = await requireWorkspaceWriteContext();
 
   if (hasSupabaseEnv()) {
     const supabase = createSupabaseDataClient();
@@ -324,13 +342,8 @@ export async function saveMeasurablesFrom247WriteUpAction(input: {
     return { ok: true, message: "Demo mode: measurables not persisted." };
   }
 
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return { ok: false, message: "Sign in to save measurables." };
-  }
+  await requireWorkspaceWriteContext();
+  const supabase = createSupabaseDataClient();
 
   const { data: existingRaw } = await supabase
     .from("player_measurements")
@@ -372,11 +385,8 @@ export async function upsertPlayerIdentityLinkAction(input: {
     return { ok: false, message: "Demo mode: identity links not persisted." };
   }
 
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, message: "Sign in to save." };
+  await requireWorkspaceWriteContext();
+  const supabase = createSupabaseDataClient();
 
   const row = {
     player_id: input.playerId,
@@ -407,7 +417,7 @@ export async function deleteNeedAction(needId: string) {
     return;
   }
 
-  const { team } = await getViewerContext();
+  const { team } = await requireWorkspaceWriteContext();
   const teamId = team?.id;
   if (!teamId) throw new Error("Team not found.");
 

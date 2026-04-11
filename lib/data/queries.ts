@@ -60,6 +60,41 @@ function matchesSearch(player: Player, search?: string) {
   return haystack.includes(search.toLowerCase());
 }
 
+function deriveFullNameFromEmail(email?: string | null) {
+  const local = email?.split("@")[0]?.trim();
+  if (!local) return "Coach";
+
+  return local
+    .replace(/[._-]+/g, " ")
+    .split(" ")
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
+async function resolveWorkspaceTeam(admin: ReturnType<typeof createSupabaseAdminClient>) {
+  const defaultTeamId = process.env.DEFAULT_TEAM_ID;
+
+  if (defaultTeamId) {
+    const { data: explicitTeamRaw } = await admin
+      .from("teams")
+      .select("*")
+      .eq("id", defaultTeamId)
+      .maybeSingle();
+    const explicitTeam = (explicitTeamRaw as Team | null) ?? null;
+    if (explicitTeam) return explicitTeam;
+  }
+
+  const { data: firstTeamRaw } = await admin
+    .from("teams")
+    .select("*")
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  return (firstTeamRaw as Team | null) ?? null;
+}
+
 function getDemoMetrics(): DashboardMetrics {
   const state = getDemoState();
   return {
@@ -113,7 +148,6 @@ export async function getViewerContext() {
 
     const admin = createSupabaseAdminClient();
     const defaultProfileId = process.env.DEFAULT_PROFILE_ID;
-    const defaultTeamId = process.env.DEFAULT_TEAM_ID;
 
     let profile = null as Profile | null;
     if (defaultProfileId) {
@@ -125,26 +159,11 @@ export async function getViewerContext() {
       profile = (defaultProfileRaw as Profile | null) ?? null;
     }
 
-    let team = null as Team | null;
-    const workspaceTeamId = defaultTeamId ?? profile?.team_id ?? null;
-    if (workspaceTeamId) {
-      const { data: teamRaw } = await admin
-        .from("teams")
-        .select("*")
-        .eq("id", workspaceTeamId)
-        .maybeSingle();
-      team = (teamRaw as Team | null) ?? null;
-    }
-
-    if (!team) {
-      const { data: firstTeamRaw } = await admin
-        .from("teams")
-        .select("*")
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
-      team = (firstTeamRaw as Team | null) ?? null;
-    }
+    const team =
+      profile
+        ? ((await admin.from("teams").select("*").eq("id", profile.team_id).maybeSingle()).data as Team | null) ??
+          null
+        : await resolveWorkspaceTeam(admin);
 
     const resolvedProfile = profile
       ? profile
@@ -166,15 +185,42 @@ export async function getViewerContext() {
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
-  const profile = profileRaw as Profile | null;
+    .maybeSingle();
+  let profile = profileRaw as Profile | null;
 
-  const { data: teamRaw } = await supabase
-    .from("teams")
-    .select("*")
-    .eq("id", profile?.team_id ?? demoTeam.id)
-    .single();
-  const team = teamRaw as Team | null;
+  let team = null as Team | null;
+  if (!profile && hasSupabaseServiceRoleEnv()) {
+    const admin = createSupabaseAdminClient();
+    const fallbackTeam = await resolveWorkspaceTeam(admin);
+
+    if (fallbackTeam) {
+      const provisionalProfile = {
+        id: user.id,
+        team_id: fallbackTeam.id,
+        full_name: deriveFullNameFromEmail(user.email),
+        role: "Coach"
+      };
+
+      const { data: insertedProfileRaw } = await supabase
+        .from("profiles" as never)
+        .insert(provisionalProfile as never)
+        .select("*")
+        .maybeSingle();
+
+      profile = (insertedProfileRaw as Profile | null) ?? provisionalProfile;
+      team = fallbackTeam;
+    }
+  }
+
+  if (!team) {
+    const teamId = profile?.team_id ?? demoTeam.id;
+    const { data: teamRaw } = await supabase
+      .from("teams")
+      .select("*")
+      .eq("id", teamId)
+      .maybeSingle();
+    team = (teamRaw as Team | null) ?? null;
+  }
 
   return {
     profile:
@@ -183,6 +229,34 @@ export async function getViewerContext() {
         : profile ?? demoProfile,
     team: team ?? demoTeam
   };
+}
+
+export async function getWorkspaceMembers() {
+  noStore();
+
+  if (!hasSupabaseEnv()) {
+    return [demoProfile];
+  }
+
+  try {
+    const { team } = await getViewerContext();
+    const supabase = createSupabaseDataClient();
+    const { data, error } = await supabase
+      .from("profiles")
+      .select("*")
+      .eq("team_id", team.id)
+      .order("created_at", { ascending: true });
+
+    if (error) {
+      logDataAccessIssue("workspace-members", error.message);
+      return [demoProfile];
+    }
+
+    return (data as Profile[] | null) ?? [demoProfile];
+  } catch (error) {
+    logDataAccessIssue("workspace-members", error instanceof Error ? error.message : "unknown error");
+    return [demoProfile];
+  }
 }
 
 export async function getDashboardMetrics(): Promise<DashboardMetrics> {
