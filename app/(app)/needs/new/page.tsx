@@ -1,5 +1,17 @@
-import { NeedForm } from "@/components/needs/need-form";
+import dynamic from "next/dynamic";
 import { SectionHeader } from "@/components/section-header";
+
+const NeedForm = dynamic(
+  () => import("@/components/needs/need-form").then((m) => ({ default: m.NeedForm })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-10 text-center text-sm text-slate-400">
+        Loading form…
+      </div>
+    ),
+  }
+);
 
 export default function NewNeedPage() {
   return (
