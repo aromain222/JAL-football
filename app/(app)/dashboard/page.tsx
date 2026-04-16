@@ -1,80 +1,18 @@
 import Link from "next/link";
-import { ArrowRight, Clock3, Film, Layers3 } from "lucide-react";
-import { StatCard } from "@/components/stat-card";
+import { ArrowRight, ListFilter, Layers3, ClipboardList } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getPlayerPrimaryProduction } from "@/lib/football";
-import { scoutingDisplay } from "@/lib/football-ui";
-import { cn, formatDate, formatNumber } from "@/lib/utils";
-import {
-  getDashboardMetrics,
-  getNeeds,
-  getPlayers,
-  getReviewsByNeed,
-  getShortlistBoard
-} from "@/lib/data/queries";
+import { Card, CardContent } from "@/components/ui/card";
+import { scoutingDisplay, scoutingBody } from "@/lib/football-ui";
+import { getDashboardMetrics, getNeeds } from "@/lib/data/queries";
+import { cn } from "@/lib/utils";
 
 export default async function DashboardPage() {
-  const [metrics, needs, shortlistBoard, allPlayers] = await Promise.all([
-    getDashboardMetrics(),
-    getNeeds(),
-    getShortlistBoard(),
-    getPlayers()
-  ]);
-
-  const recentReviewGroups = await Promise.all(needs.map((need) => getReviewsByNeed(need.id)));
-  const recentReviews = recentReviewGroups
-    .flat()
-    .sort((a, b) => b.created_at.localeCompare(a.created_at))
-    .slice(0, 6);
-
-  const playersNeedingFilm = (allPlayers as typeof allPlayers).filter((player) =>
-    (player as { tags?: string[] }).tags?.includes("needs-film")
-  ).length;
-
-  const recentShortlisted = shortlistBoard
-    .slice()
-    .sort((a, b) => (b.updated_at ?? b.created_at).localeCompare(a.updated_at ?? a.created_at))
-    .slice(0, 4);
-
-  function buildShortlistActivity(item: (typeof recentShortlisted)[number]) {
-    const activityAt = item.updated_at ?? item.created_at;
-    const movedLater = activityAt !== item.created_at;
-    const detail = item.player
-      ? movedLater
-        ? `${item.player.first_name} ${item.player.last_name} moved to ${item.stage.replace("_", " ")}.`
-        : `${item.player.first_name} ${item.player.last_name} moved into shortlist.`
-      : movedLater
-        ? `Player moved to ${item.stage.replace("_", " ")}.`
-        : "Player moved into shortlist.";
-
-    return {
-      id: item.id,
-      type: "shortlist" as const,
-      created_at: activityAt,
-      label: item.stage,
-      detail,
-      meta: item.need?.title ?? "Shortlist update"
-    };
-  }
-
-  const activityFeed = [
-    ...recentReviews.map((review) => ({
-      id: review.id,
-      type: "review" as const,
-      created_at: review.created_at,
-      label: review.decision,
-      detail: review.note ?? "Review logged without note.",
-      meta: `Fit ${review.fit_score}`
-    })),
-    ...recentShortlisted.map(buildShortlistActivity)
-  ]
-    .sort((a, b) => b.created_at.localeCompare(a.created_at))
-    .slice(0, 6);
+  const [metrics, needs] = await Promise.all([getDashboardMetrics(), getNeeds()]);
 
   return (
-    <div className="grid gap-6">
+    <div className={`${scoutingBody.className} grid gap-6`}>
+      {/* Hero */}
       <section className="scouting-panel relative isolate">
         <div className="field-grid-lines absolute inset-0 opacity-40" />
         <div className="absolute inset-y-0 left-[12%] w-px bg-white/10" />
@@ -84,83 +22,133 @@ export default async function DashboardPage() {
           <div>
             <p className="field-label scouting-kicker">Control Room</p>
             <h1 className={`${scoutingDisplay.className} mt-3 text-[3.2rem] uppercase leading-[0.88] tracking-[0.04em] text-[#f5efe0] sm:text-[4.4rem]`}>
-              Transfer Board Status
+              Transfer Board
             </h1>
             <p className="scouting-support mt-4 max-w-2xl text-sm leading-6 sm:text-[15px]">
-              Track roster needs, move quickly through first-pass eval, and keep the internal board moving toward coordinator and head coach review.
+              Create a need, launch review mode, shortlist the fits. Keep the board moving from first-pass eval to coordinator and head coach sign-off.
             </p>
-            <div className="mt-6">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild className="scouting-cta">
                 <Link href="/needs/new">
-                  Create new need
+                  New need
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
+              <Button asChild variant="outline" className="border-white/20 bg-white/10 text-white hover:bg-white/18 hover:text-white">
+                <Link href="/players">Browse board</Link>
+              </Button>
             </div>
           </div>
-          <div className="grid gap-3 self-end sm:grid-cols-2">
+          <div className="grid gap-3 self-end sm:grid-cols-3 lg:grid-cols-1">
             <div className="scouting-hero-stat">
-              <p className="field-label text-[var(--scout-teal)]">Portal Pipeline</p>
-              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
-                {formatNumber(metrics.totalPlayers)}
-              </div>
-              <p className="mt-2 text-sm text-white/70">Imported players live in the internal eval board.</p>
+              <p className="field-label text-[var(--scout-teal)]">Active Needs</p>
+              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>{metrics.activeNeeds}</div>
+              <p className="mt-2 text-sm text-white/70">Open recruiting lanes in the workspace.</p>
             </div>
             <div className="scouting-hero-stat">
-              <p className="field-label text-[var(--scout-teal)]">Shortlisted Now</p>
-              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
-                {metrics.shortlistedPlayers}
-              </div>
-              <p className="mt-2 text-sm text-white/70">Players currently held in staff review stages.</p>
+              <p className="field-label text-[var(--scout-teal)]">Portal Pool</p>
+              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>{metrics.totalPlayers}</div>
+              <p className="mt-2 text-sm text-white/70">Players in the searchable transfer board.</p>
+            </div>
+            <div className="scouting-hero-stat">
+              <p className="field-label text-[var(--scout-teal)]">Shortlisted</p>
+              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>{metrics.shortlistedPlayers}</div>
+              <p className="mt-2 text-sm text-white/70">Players advancing through internal stages.</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Stat cards row */}
-      <div className="grid gap-4 lg:grid-cols-5">
-        <StatCard label="Active needs" value={String(metrics.activeNeeds)} hint="Open recruiting priorities" />
-        <StatCard label="Total players" value={String(metrics.totalPlayers)} hint="Searchable transfer board" />
-        <StatCard label="Shortlisted" value={String(metrics.shortlistedPlayers)} hint="Advancing to internal stages" />
-        <StatCard label="Recent reviews" value={String(metrics.recentReviews)} hint="Last 14 days of eval activity" />
-        <StatCard label="Needs film" value={String(playersNeedingFilm)} hint="Profiles flagged for deeper tape work" />
+      {/* Workflow quick-links */}
+      <div className="grid gap-4 lg:grid-cols-3">
+        {[
+          {
+            href: "/needs",
+            icon: ClipboardList,
+            label: "Step 1",
+            title: "Define Needs",
+            desc: "Set the measurable and production bars for each open roster spot."
+          },
+          {
+            href: needs[0] ? `/review/${needs[0].id}` : "/needs",
+            icon: ListFilter,
+            label: "Step 2",
+            title: "Review Players",
+            desc: "Swipe through the board fit-ranked against your need. Flag, advance, or pass."
+          },
+          {
+            href: "/shortlist",
+            icon: Layers3,
+            label: "Step 3",
+            title: "Manage Shortlist",
+            desc: "Move candidates through assistant → coordinator → head coach stages."
+          }
+        ].map(({ href, icon: Icon, label, title, desc }) => (
+          <Link key={title} href={href} className="group block">
+            <Card className="h-full border-[#d9e0db] bg-white/[0.88] transition hover:-translate-y-0.5 hover:border-[#24483a]/25 hover:shadow-[0_18px_40px_rgba(15,23,42,0.10)]">
+              <CardContent className="flex flex-col gap-3 p-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-[#d3e8db] bg-[#eef5f0]">
+                    <Icon className="h-5 w-5 text-[#1e4a33]" />
+                  </div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#52695d]">{label}</p>
+                </div>
+                <h3 className={`${scoutingDisplay.className} text-[1.7rem] uppercase leading-none tracking-[0.04em] text-[#14241c]`}>{title}</h3>
+                <p className="text-sm leading-6 text-slate-500">{desc}</p>
+                <div className="mt-auto flex items-center gap-1.5 pt-2 text-sm font-medium text-[#1e4a33] opacity-0 transition group-hover:opacity-100">
+                  Go <ArrowRight className="h-3.5 w-3.5" />
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        {/* Active needs */}
-        <Card className="scouting-surface overflow-hidden">
-          <CardHeader className="flex-row items-center justify-between">
+      {/* Active needs */}
+      {needs.length > 0 ? (
+        <section className="grid gap-4">
+          <div className="flex items-end justify-between">
             <div>
-              <CardTitle>Active needs</CardTitle>
-              <p className="text-sm text-slate-600">Launch review mode directly from any live roster gap.</p>
+              <p className="field-label text-[#2c5947]">Active Needs</p>
+              <h2 className={`${scoutingDisplay.className} mt-2 text-[2.4rem] uppercase leading-none tracking-[0.04em] text-[#13251d]`}>
+                Open Recruiting Lanes
+              </h2>
             </div>
-            <Button asChild variant="outline">
+            <Button asChild variant="outline" className="border-[#cdd6d1] bg-white/80">
               <Link href="/needs">All needs</Link>
             </Button>
-          </CardHeader>
-          <CardContent className="grid gap-3">
+          </div>
+          <div className="grid gap-3">
             {needs.map((need) => (
               <div
                 key={need.id}
                 className={cn(
-                  "flex flex-col gap-3 rounded-[24px] border bg-white/[0.86] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(15,23,42,0.09)] lg:flex-row lg:items-center lg:justify-between",
+                  "flex flex-col gap-4 rounded-[26px] border bg-white/[0.86] p-5 shadow-[0_12px_28px_rgba(15,23,42,0.05)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(15,23,42,0.08)] lg:flex-row lg:items-center lg:justify-between",
                   need.priority === "critical"
                     ? "border-l-4 border-l-rose-400"
                     : "border-l-4 border-l-cyan-400"
                 )}
               >
-                <div>
-                  <p className="field-label text-[#52695d]">
-                    {need.priority === "critical" ? "Critical need" : "Live need"} • {need.position}
-                  </p>
-                  <h3 className="mt-2 text-lg font-semibold text-slate-950">{need.title}</h3>
-                  <p className="mt-1 text-sm text-slate-500">{need.notes}</p>
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant={need.priority === "critical" ? "destructive" : "accent"}>
+                      {need.priority === "critical" ? "Critical" : "Active"}
+                    </Badge>
+                    <Badge variant="default">{need.position}</Badge>
+                    {need.target_count > 1 && (
+                      <Badge variant="default">{need.target_count} spots</Badge>
+                    )}
+                  </div>
+                  <h3 className={`${scoutingDisplay.className} mt-3 text-[1.9rem] uppercase leading-none tracking-[0.04em] text-[#14241c]`}>
+                    {need.title}
+                  </h3>
+                  {need.notes && <p className="mt-2 max-w-xl text-sm text-slate-500">{need.notes}</p>}
                 </div>
-                <div className="flex shrink-0 gap-3">
-                  <Button asChild variant="outline">
-                    <Link href={`/needs/${need.id}`}>View</Link>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <Button asChild variant="outline" className="border-[#cdd6d1] bg-white/80">
+                    <Link href={`/players?needId=${need.id}`}>Browse fits</Link>
                   </Button>
-                  <Button asChild>
+                  <Button asChild className="bg-[#163627] text-[#ebf4ee] hover:bg-[#1b4330]">
                     <Link href={`/review/${need.id}`}>
                       Review
                       <ArrowRight className="h-4 w-4" />
@@ -169,132 +157,25 @@ export default async function DashboardPage() {
                 </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
-
-        {/* Activity feed — timeline style */}
-        <Card className="scouting-surface overflow-hidden">
-          <CardHeader>
-            <CardTitle>Recent activity</CardTitle>
-            <p className="text-sm text-slate-600">Latest reviews and shortlist movements.</p>
-          </CardHeader>
-          <CardContent>
-            {activityFeed.length ? (
-              <div className="relative grid gap-0">
-                {/* Vertical connector line */}
-                <div className="absolute bottom-5 left-[19px] top-5 w-px bg-slate-200" />
-                {activityFeed.map((item) => {
-                  const isShortlist = item.type === "shortlist";
-                  const isPositive = item.label === "right";
-                  return (
-                    <div key={item.id} className="relative flex gap-4 pb-4 last:pb-0">
-                      {/* Dot */}
-                      <div
-                        className={cn(
-                          "relative z-10 mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-white shadow-sm",
-                          isShortlist ? "bg-cyan-100" : isPositive ? "bg-emerald-100" : "bg-slate-100"
-                        )}
-                      >
-                        <div
-                          className={cn(
-                            "h-2.5 w-2.5 rounded-full",
-                            isShortlist ? "bg-cyan-500" : isPositive ? "bg-emerald-500" : "bg-slate-400"
-                          )}
-                        />
-                      </div>
-                      {/* Card */}
-                      <div className="flex-1 rounded-[24px] border border-[#d8ddd7] bg-white/[0.88] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
-                        <div className="flex items-center justify-between">
-                          <Badge
-                            variant={
-                              isShortlist ? "accent" : isPositive ? "success" : item.label === "needs_film" ? "warning" : "default"
-                            }
-                          >
-                            {item.label}
-                          </Badge>
-                          <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-slate-400">
-                            <Clock3 className="h-3 w-3" />
-                            {formatDate(item.created_at)}
-                          </div>
-                        </div>
-                        <p className="mt-2.5 text-sm font-medium text-slate-900">{item.detail}</p>
-                        <p className="mt-1 text-sm text-slate-500">{item.meta}</p>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
-                No recent reviews yet.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recently shortlisted + Film queue */}
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <Card className="scouting-surface overflow-hidden">
-          <CardHeader className="flex-row items-center justify-between">
-            <div>
-              <CardTitle>Recently shortlisted</CardTitle>
-              <p className="text-sm text-slate-600">Fresh movement into internal recruiting stages.</p>
-            </div>
-            <Button asChild variant="outline">
-              <Link href="/shortlist">
-                Shortlist board
-                <Layers3 className="h-4 w-4" />
+          </div>
+        </section>
+      ) : (
+        <div className="rounded-[28px] border border-dashed border-[#9eb2a5] bg-[#f3f6f2] p-10 text-center">
+          <p className="field-label text-[#4e6d5d]">No needs yet</p>
+          <h3 className={`${scoutingDisplay.className} mt-3 text-[2rem] uppercase leading-none tracking-[0.04em] text-[#16261f]`}>
+            Create your first need
+          </h3>
+          <p className="mt-3 text-sm text-slate-600">Define the position, measurables, and production bar to unlock the review queue.</p>
+          <div className="mt-6">
+            <Button asChild className="bg-[#163627] text-[#ebf4ee] hover:bg-[#1b4330]">
+              <Link href="/needs/new">
+                Create need
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-          </CardHeader>
-          <CardContent className="grid gap-3">
-            {recentShortlisted.length ? (
-              recentShortlisted.map((item) => (
-                <div key={item.id} className="rounded-[24px] border border-l-4 border-l-cyan-400 bg-white/[0.88] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
-                  <div className="flex items-center justify-between gap-3">
-                    <div>
-                      <p className="field-label text-[#52695d]">
-                        {item.need?.title ?? "Shortlist update"} • {formatDate(item.updated_at ?? item.created_at)}
-                      </p>
-                      <p className="font-semibold text-slate-950">
-                        {item.player?.first_name} {item.player?.last_name}
-                      </p>
-                      <p className="text-sm text-slate-500">
-                        {item.player?.current_school}
-                      </p>
-                    </div>
-                    <Badge variant="accent">{item.stage}</Badge>
-                  </div>
-                  <p className="mt-2.5 text-sm text-slate-600">{item.latestNote ?? "No shortlist note attached."}</p>
-                  <p className="mt-3 text-xs uppercase tracking-[0.2em] text-slate-500">
-                    {item.fitScore !== null ? `Fit ${item.fitScore}` : "Staff eval pending"}
-                    {item.player ? ` • ${getPlayerPrimaryProduction(item.player)}` : ""}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
-                No shortlisted players yet.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Film queue */}
-        <Card className="overflow-hidden border-[#e7d8b3] bg-[linear-gradient(180deg,rgba(255,252,245,0.98),rgba(250,246,236,0.95))]">
-          <CardHeader className="flex-row items-center justify-between">
-            <div>
-              <CardTitle>Needs Film Queue</CardTitle>
-              <p className="text-sm text-slate-600">Players flagged for deeper tape work before board promotion.</p>
-            </div>
-            <Badge variant="warning">
-              <Film className="mr-1 h-3 w-3" />
-              {playersNeedingFilm}
-            </Badge>
-          </CardHeader>
-        </Card>
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
