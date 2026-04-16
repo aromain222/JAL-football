@@ -253,7 +253,8 @@ function calculateProductionScore(
     template.production.secondaryStat &&
     secondaryValue !== null &&
     template.production.secondaryGood !== undefined &&
-    template.production.secondaryElite !== undefined
+    template.production.secondaryElite !== undefined &&
+    secondaryValue !== null
   ) {
     score += weightedStatScore(
       secondaryValue,
