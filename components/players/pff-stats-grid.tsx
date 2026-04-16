@@ -124,9 +124,7 @@ export function PffStatsGrid({ pffStats, position }: Props) {
   if (!pffStats) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-5 text-sm text-slate-400">
-        No PFF data linked yet. Run{" "}
-        <span className="font-mono font-medium text-slate-600">npm run pff:import</span>{" "}
-        to load grades, or the player&apos;s name in the PFF export may differ from their name in the players table.
+        No PFF data available for this player.
       </div>
     );
   }
