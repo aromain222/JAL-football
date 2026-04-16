@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Damani",
+    "height": 601,
+    "id": 183810,
+    "jersey_number": "D18",
+    "last_name": "Maxson",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "KANJAY",
+      "city": "Kansas",
+      "id": 198,
+      "nickname": "Jayhawks",
+      "primary_color": "#0051ba",
+      "secondary_color": "#e8000d",
+      "slug": "kansas-jayhawks"
+    },
+    "weight": 195
+  }
+}

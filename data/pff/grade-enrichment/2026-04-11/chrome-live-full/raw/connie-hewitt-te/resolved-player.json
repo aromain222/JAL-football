@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Connie",
+    "height": 603,
+    "id": 184689,
+    "jersey_number": "85",
+    "last_name": "Hewitt II",
+    "position": "TE",
+    "speed": null,
+    "team": {
+      "abbreviation": "UTMART",
+      "city": "Tennessee-Martin",
+      "id": 310,
+      "nickname": "Skyhawks",
+      "primary_color": "#002649",
+      "secondary_color": "#ff8200",
+      "slug": "tennessee-martin-skyhawks"
+    },
+    "weight": 260
+  }
+}

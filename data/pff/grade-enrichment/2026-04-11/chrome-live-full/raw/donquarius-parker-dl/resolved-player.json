@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Donquarius",
+    "height": 601,
+    "id": 159732,
+    "jersey_number": "D15",
+    "last_name": "Parker",
+    "position": "ED",
+    "speed": null,
+    "team": {
+      "abbreviation": "ARKSTA",
+      "city": "Arkansas State",
+      "id": 113,
+      "nickname": "Red Wolves",
+      "primary_color": "#ed1b2e",
+      "secondary_color": "#000000",
+      "slug": "arkansas-state-red-wolves"
+    },
+    "weight": 220
+  }
+}

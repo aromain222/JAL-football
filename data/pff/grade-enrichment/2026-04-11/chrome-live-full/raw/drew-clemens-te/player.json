@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": null,
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Drew",
+      "height": 604,
+      "id": 199449,
+      "jersey_number": "84",
+      "last_name": "Clemens",
+      "position": "TE",
+      "speed": null,
+      "team": {
+        "abbreviation": "NORTHT",
+        "city": "North Texas",
+        "id": 251,
+        "nickname": "Mean Green",
+        "primary_color": "#00853d",
+        "secondary_color": "#ffffff",
+        "slug": "north-texas-mean-green"
+      },
+      "weight": 225
+    }
+  ]
+}

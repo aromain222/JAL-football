@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": null,
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jared",
+      "height": 600,
+      "id": 189837,
+      "jersey_number": "D26",
+      "last_name": "Douglas",
+      "position": "S",
+      "speed": null,
+      "team": {
+        "abbreviation": "CALPOL",
+        "city": "Cal Poly",
+        "id": 129,
+        "nickname": "Mustangs",
+        "primary_color": "#035642",
+        "secondary_color": "#b4a76c",
+        "slug": "cal-poly-mustangs"
+      },
+      "weight": 191
+    }
+  ]
+}

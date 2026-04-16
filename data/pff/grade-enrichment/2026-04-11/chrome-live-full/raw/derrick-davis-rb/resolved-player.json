@@ -1,0 +1,28 @@
+{
+  "candidate_count": 5,
+  "match_reason": "partial-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RSN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Derrick",
+    "height": 600,
+    "id": 146794,
+    "jersey_number": "34",
+    "last_name": "Davis Jr.",
+    "position": "HB",
+    "speed": null,
+    "team": {
+      "abbreviation": "PITTPA",
+      "city": "Pittsburgh",
+      "id": 268,
+      "nickname": "Panthers",
+      "primary_color": "#003594",
+      "secondary_color": "#ffb81c",
+      "slug": "pittsburgh-panthers"
+    },
+    "weight": 210
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RS",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Christian",
+      "height": 0,
+      "id": 172194,
+      "jersey_number": "19",
+      "last_name": "Hunt",
+      "position": "QB",
+      "speed": null,
+      "team": {
+        "abbreviation": "ASUSUN",
+        "city": "Arizona State",
+        "id": 110,
+        "nickname": "Sun Devils",
+        "primary_color": "#990033",
+        "secondary_color": "#ffb310",
+        "slug": "arizona-state-sun-devils"
+      },
+      "weight": 220
+    }
+  ]
+}

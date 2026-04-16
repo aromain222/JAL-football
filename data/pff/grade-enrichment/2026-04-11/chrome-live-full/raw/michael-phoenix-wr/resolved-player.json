@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position+team-loose",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RSN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Michael",
+    "height": 600,
+    "id": 183990,
+    "jersey_number": "4",
+    "last_name": "Phoenix II",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "SHOUST",
+      "city": "Sam Houston State",
+      "id": 281,
+      "nickname": "Bearkats",
+      "primary_color": "#f78e1e",
+      "secondary_color": "#004990",
+      "slug": "sam-houston-state-bearkats"
+    },
+    "weight": 215
+  }
+}

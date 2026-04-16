@@ -1,0 +1,107 @@
+:root {
+    --fc-today-bg-color: #f5f5f5;
+    --fc-border-color: #6868681c;
+    --today-date-bg-color: #1a73e8; /* used mini calendars and skin for red circle */
+
+    --fc-button-border-color: transparent !important;
+    --fc-button-bg-color: transparent !important;
+    --fc-button-text-color: gray !important;
+
+    --fc-button-hover-bg-color: transparent !important;
+    --fc-button-hover-border-color: transparent !important;
+
+    --fc-button-active-bg-color: transparent !important;
+
+    --fc-button-active-border-color: transparent !important;
+}
+
+.mini-calendar {
+    --fc-highlight-color: transparent;
+}
+
+.mini-calendar.fc .fc-toolbar-title {
+    font-weight: normal;
+    font-size: large;
+    margin-inline-start: 14px;
+}
+
+html[lang='fa'] .mini-calendar.fc .fc-toolbar-title {
+    font-size: 12px;
+}
+
+.mini-calendar.fc .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 5px;
+}
+
+.mini-calendar.fc th {
+    font-weight: normal;
+}
+
+.mini-calendar.fc-theme-standard td, .mini-calendar.fc-theme-standard th {
+    border: none;
+}
+
+.mini-calendar.fc .fc-scrollgrid {
+    border: none;
+}
+
+.mini-calendar.fc .fc-daygrid-day-number {
+    padding: 7px;
+}
+
+.fc-daygrid-day-number,
+.mini-calendar .fc-daygrid-day {
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.fc-daygrid-day:not(.fc-day-today) .fc-daygrid-day-number:hover,
+.mini-calendar .fc-daygrid-day:hover {
+    transition: background-color 0.1s ease-in;
+}
+
+.fc-daygrid-day:not(.fc-day-today) .fc-daygrid-day-number:hover,
+.mini-calendar .fc-daygrid-day:hover,
+.mini-calendar .fc-daygrid-day.selected:not(.fc-day-today) {
+    xxbackground-color:#e0e0e0;
+    background-color: var(--bg-light-color-hover);
+    color: var(--text-color);
+}
+
+#betaCalendar .fc-day-today .fc-col-header-cell-cushion {
+    border-radius: 5px;
+}
+
+.mini-calendar .fc-day-today,
+#betaCalendar .fc-day-today .fc-col-header-cell-cushion {
+    --fc-today-bg-color: transparent;
+    color: white;
+    background-color: var(--today-date-bg-color) !important;
+    a {
+        color: white !important;
+    }
+}
+
+.mini-calendar .fc-day-today.fc-day-other .fc-daygrid-day-top {
+    opacity: 1;
+}
+
+.mini-calendar .fc-daygrid-day-top {
+    justify-content: center;
+}
+
+.mini-calendar.fc .fc-daygrid-body-unbalanced .fc-daygrid-day-events {
+    display: none;
+}
+
+.mini-calendar.fc .fc-button-primary {
+    border-radius: 50%;
+}
+
+.mini-calendar.fc .fc-button-primary:hover {
+    opacity: 0.6;
+}
+
+.mini-calendar.fc .fc-button-primary:focus {
+    box-shadow: none !important;
+}

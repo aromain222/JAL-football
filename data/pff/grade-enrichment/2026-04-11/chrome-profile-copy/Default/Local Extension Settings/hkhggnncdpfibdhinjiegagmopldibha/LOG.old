@@ -1,0 +1,12 @@
+2026/03/21-09:39:08.193 1838 Reusing MANIFEST /Users/averyromain/Library/Application Support/Google/Chrome/Default/Local Extension Settings/hkhggnncdpfibdhinjiegagmopldibha/MANIFEST-000001
+2026/03/21-09:39:08.196 1838 Recovering log #15
+2026/03/21-09:39:08.223 1838 Reusing old log /Users/averyromain/Library/Application Support/Google/Chrome/Default/Local Extension Settings/hkhggnncdpfibdhinjiegagmopldibha/000015.log 
+2026/03/24-11:53:00.251 17ec Level-0 table #20: started
+2026/03/24-11:53:00.270 17ec Level-0 table #20: 711230 bytes OK
+2026/03/24-11:53:00.276 17ec Delete type=0 #15
+2026/03/24-12:00:00.272 17e9 Compacting 1@1 + 1@2 files
+2026/03/24-12:00:00.279 17e9 Generated table #21@1: 19 keys, 981 bytes
+2026/03/24-12:00:00.279 17e9 Compacted 1@1 + 1@2 files => 981 bytes
+2026/03/24-12:00:00.282 17e9 compacted to: files[ 0 0 1 0 0 0 0 ]
+2026/03/24-12:00:00.283 17e9 Delete type=2 #17
+2026/03/24-12:00:00.283 17e9 Delete type=2 #20

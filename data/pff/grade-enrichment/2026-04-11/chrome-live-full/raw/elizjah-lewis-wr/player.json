@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "G",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Elizjah",
+      "height": 602,
+      "id": 150764,
+      "jersey_number": "1",
+      "last_name": "Lewis",
+      "position": "WR",
+      "speed": null,
+      "team": {
+        "abbreviation": "PCU",
+        "city": "Pace",
+        "id": 1536,
+        "nickname": "Setters",
+        "primary_color": "#011a7e",
+        "secondary_color": "#f9f001",
+        "slug": "pace-setters"
+      },
+      "weight": 195
+    }
+  ]
+}

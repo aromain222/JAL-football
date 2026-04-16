@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": null,
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Gideon",
+      "height": 603,
+      "id": 188338,
+      "jersey_number": "D52",
+      "last_name": "Herbert",
+      "position": "ED",
+      "speed": null,
+      "team": {
+        "abbreviation": "ETENNB",
+        "city": "East Tennessee State",
+        "id": 157,
+        "nickname": "Buccaneers",
+        "primary_color": "#041e42",
+        "secondary_color": "#ffc72c",
+        "slug": "east-tennessee-state-buccaneers"
+      },
+      "weight": 242
+    }
+  ]
+}

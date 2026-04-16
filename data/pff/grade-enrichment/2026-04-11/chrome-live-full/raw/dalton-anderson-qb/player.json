@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "F",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Dalton",
+      "height": 602,
+      "id": 205534,
+      "jersey_number": "16",
+      "last_name": "Anderson",
+      "position": "QB",
+      "speed": null,
+      "team": {
+        "abbreviation": "WSTATE",
+        "city": "Washington State",
+        "id": 341,
+        "nickname": "Cougars",
+        "primary_color": "#97002f",
+        "secondary_color": "#5e6a71",
+        "slug": "washington-state-cougars"
+      },
+      "weight": 205
+    }
+  ]
+}

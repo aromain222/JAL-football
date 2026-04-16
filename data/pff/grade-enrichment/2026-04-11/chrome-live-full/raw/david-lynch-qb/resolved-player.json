@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "David",
+    "height": 603,
+    "id": 170120,
+    "jersey_number": "16",
+    "last_name": "Lynch",
+    "position": "QB",
+    "speed": null,
+    "team": {
+      "abbreviation": "HCCRUS",
+      "city": "Holy Cross",
+      "id": 181,
+      "nickname": "Crusaders",
+      "primary_color": "#602d89",
+      "secondary_color": "#ffffff",
+      "slug": "holy-cross-crusaders"
+    },
+    "weight": 220
+  }
+}

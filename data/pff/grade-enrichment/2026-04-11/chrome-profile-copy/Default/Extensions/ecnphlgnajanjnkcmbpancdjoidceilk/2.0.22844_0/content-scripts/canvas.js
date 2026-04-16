@@ -1,0 +1,58 @@
+var canvas=(function(){"use strict";function Y(t){return t}const u="https://web.kamihq.com",m="https://tools.kamihq.com",h="https://api.kamihq.com",g="https://www.kamiapp.com/library";function T(){let t={webHost:u,apiWebHost:h,toolsHost:m,libraryHost:g};return{get webHost(){return t.webHost},get toolsHost(){return t.toolsHost},get apiWebHost(){return t.apiWebHost},get libraryHost(){return t.libraryHost},broadcastChannel:void 0}}function H(){let t={webHost:u,apiWebHost:h,toolsHost:m,libraryHost:g};return{get webHost(){return t.webHost},get toolsHost(){return t.toolsHost},get apiWebHost(){return t.apiWebHost},get libraryHost(){return t.libraryHost}}}function W(){let t={webHost:u,apiWebHost:h,toolsHost:m,libraryHost:g},e=Promise.resolve(t);return{get webHost(){return t.webHost},get toolsHost(){return t.toolsHost},get apiWebHost(){return t.apiWebHost},get libraryHost(){return t.libraryHost},get initialConfig(){return e}}}const _="offscreen.html";function I(){return typeof ServiceWorkerGlobalScope<"u"&&typeof self=="object"&&self instanceof ServiceWorkerGlobalScope?"service_worker":typeof window=="object"&&window.opener===null&&typeof chrome=="object"&&window.location.href===chrome?.runtime?.getURL?.(_)?"offscreen_document":typeof window=="object"&&(typeof chrome!="object"||!chrome?.storage)?"page_script":typeof window=="object"&&typeof window.location=="object"&&typeof chrome=="object"&&window.location.href===chrome?.runtime?.getURL("popup.html")?"popup":typeof window=="object"&&typeof self=="object"&&self===window?"content_script":(console.warn("Unable to determine extension context"),"other")}function x(){switch(I()){case"service_worker":return W();case"offscreen_document":case"page_script":return H();case"content_script":case"popup":case"other":return T()}}const A=x(),f={get webHost(){return A.webHost}};let s,y;async function P(){const t=await U(["hasSeenCanvasOpenWithKamiButtons","user"]);s=!!t.hasSeenCanvasOpenWithKamiButtons,y=t.user?.id,B()&&(R()||(M(),L()))}async function v(t){const e=await q();if(!e)return;const n=new URLSearchParams(new FormData(e));t==="classView"?n.set("view_type","class_view"):t==="updateWork"&&n.set("view_type","template"),await chrome.storage.local.set({canvasOpenFormData:{data:n.toString(),action:e.action}}),chrome.runtime.sendMessage({action:"canvasOpenWithKami"})}function M(){const t=document.querySelector('#right-side[role="complementary"]');if(!t)return;const e=$();if(e){const n=O(e);n&&t.appendChild(n),t.appendChild(e)}}function L(){const t=document.querySelector(".assignment-title");if(!t)return;const e=t.querySelector(".title-content");if(!e)return;const n=r(`
+    <div class="kami-new-tab">
+      <a href="#" style="width: 50px; display:flex; align-items: center;width:65px">
+        <img src="${f.webHost}/web/images/openwith.svg" style="height:10px; width:10px;"/>
+        <img src="${f.webHost}/web/images/kami_widekerning.svg" style="margin-left:5px;width:50px" />
+      </a>
+    </div>
+  `);w(n,"OpenKamiInNewTab",!0),n.addEventListener("click",function(){b("Canvas Open In New Tab Button Click"),v()}),t.children[1]?t.insertBefore(n,t.children[1]):t.appendChild(n),e.style.flex="unset",t.style.display="flex",t.style.alignItems="center"}function O(t){const e=document.createElement("div"),n=r(`
+    <div class="kami-side-button-button-wrapper kami-assignment-dropdown-button">
+      <div class="kami-button-wrapper">
+        <a class="btn btn-sidebar-wide kami-sidebar-button">
+          <span class="kami-icon"></span>
+          ${chrome.i18n.getMessage("OpenClassView")}
+        </a>
+      </div>
+    </div>
+  `);if(!s){const c=r(`
+      <div class="kami-side-button-popup-wrapper kami-class-view-popup-wrapper">
+        <div class="kami-popup-triangle"></div>
+        <div class="kami-side-button-popup">
+          <h1 class='kami-popup-header'>${chrome.i18n.getMessage("ClassViewInKami")}</h1>
+          <p class='kami-popup-message'>${chrome.i18n.getMessage("ClassViewDescriptionText")}</p>
+          <div class="kami-popup-footer">
+            <a href="https://help.kamiapp.com/en/articles/8216007-how-to-use-kami-class-view-with-canvas" target="_blank" class="kami-learn-more-button">${chrome.i18n.getMessage("LearnMore")}</a>
+            <div class="kami-got-it-button">${chrome.i18n.getMessage("Next")}</div>
+          </div>
+        </div>
+      </div>
+    `);n.appendChild(c)}e.appendChild(n),w(n,"TrackAndGradeAllStudentsWork");const i=e.querySelector(".btn"),o=e.querySelector(".kami-side-button-popup-wrapper"),a=e.querySelector(".kami-got-it-button");if(o&&a&&(a.onclick=()=>{o.style.visibility="hidden",o.style.opacity="0";const c=t.querySelector(".kami-side-button-popup-wrapper");c&&(c.style.visibility="visible",c.style.opacity="1")}),!!i)return i.addEventListener("click",function(){b("Canvas Class View Button Click"),v("classView")}),e.removeChild(n),n}function $(){const t=document.createElement("div"),e=r(`
+    <div class="kami-side-button-button-wrapper kami-assignment-dropdown-button">
+      <div class="kami-button-wrapper" >
+        <a class="btn btn-sidebar-wide kami-sidebar-button">
+          <i class="kami-icon"></i>
+          ${chrome.i18n.getMessage("EditAssignment")}
+        </a>
+      </div>
+    </div>
+  `),n=r(`
+    <div class="kami-side-button-popup-wrapper kami-update-work-popup-wrapper" style="visibility:hidden; opacity: 0;">
+      <div class="kami-popup-triangle"></div>
+      <div class="kami-side-button-popup">
+        <h1 class='kami-popup-header'>${chrome.i18n.getMessage("EditWithKami")}</h1>
+        <p class='kami-popup-message'>${chrome.i18n.getMessage("MakeEditsToAssignmentAndUpdateAllStudentCopies")}</p>
+        <div class="kami-popup-footer">
+          <a href="https://help.kamiapp.com/en/articles/8346502-how-to-use-kami-s-publish-changes-feature-in-canvas" target="_blank" class="kami-learn-more-button">${chrome.i18n.getMessage("LearnMore")}</a>
+          <div class="kami-got-it-button">${chrome.i18n.getMessage("GotIt")}</div>
+        </div>
+      </div>
+    </div>
+  `);s||e.appendChild(n),t.appendChild(e);const i=t.querySelector(".btn"),o=t.querySelector(".kami-side-button-popup-wrapper"),a=t.querySelector(".kami-got-it-button");if(w(e,"EditAndUpdateAllStudentsCopies"),o&&a&&(a.onclick=()=>{o.style.visibility="hidden",o.style.opacity="0",s=!0,chrome.storage.local.set({hasSeenCanvasOpenWithKamiButtons:!0})}),!!i)return i.addEventListener("click",function(){b("Canvas Update Work Button Click"),v("updateWork")}),e}function w(t,e,n){const i=r(`
+    <div class="kami-side-button-tooltip-wrapper" style="bottom:-35px">
+      <div class="kami-tooltip-triangle"></div>
+      <div class="kami-side-button-tooltip">
+        <p>${chrome.i18n.getMessage(e)}</p>
+      </div>
+    </div>
+  `);t.appendChild(i),t.addEventListener("mouseover",function(){(s||n)&&(i.style.visibility="visible",i.style.opacity="1")}),t.addEventListener("mouseleave",function(){i.style.visibility="hidden",i.style.opacity="0"})}async function q(){let t;try{t=await(await fetch(window.location.href,{credentials:"include",headers:{Accept:"text/html"}})).text()}catch(n){console.error(n);return}const e=new DOMParser().parseFromString(t,"text/html");return N(e)}function N(t){const e=t.querySelector(".tool_content_wrapper form");if(!e||!e.action.includes("kami"))return;e.removeAttribute("target");const i=e.querySelector("div");if(i)return e.removeChild(i),e}function B(){return!!document.querySelector(".tool_content_wrapper form")?.action.includes("kami")}function r(t){const e=document.createElement("div");if(e.innerHTML=t,e.children.length!==1)throw new Error("htmlStringToElement must have exactly 1 root element");const n=e.children[0];if(!n)throw new Error("htmlStringToElement must have exactly 1 root element");return e.removeChild(n),n}function R(){return document.querySelector(".tool_content_wrapper form")?.querySelector('input[name="roles"]')?.value==="Learner"}async function b(t){const n={uuid:crypto.randomUUID(),name:t,user_id:y,value:{app_name:"Canvas"}};await fetch(f.webHost+"/api/events",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(n)})}async function U(t){return new Promise(e=>{chrome.storage.local.get(t,n=>{e(n)})})}const V={matches:["https://*.instructure.com/*/assignments/*"],runAt:"document_end",main(t){P()}};function d(t,...e){}const F={debug:(...t)=>d(console.debug,...t),log:(...t)=>d(console.log,...t),warn:(...t)=>d(console.warn,...t),error:(...t)=>d(console.error,...t)},k=globalThis.browser?.runtime?.id?globalThis.browser:globalThis.chrome;var C=class E extends Event{static EVENT_NAME=S("wxt:locationchange");constructor(e,n){super(E.EVENT_NAME,{}),this.newUrl=e,this.oldUrl=n}};function S(t){return`${k?.runtime?.id}:canvas:${t}`}const D=typeof globalThis.navigation?.addEventListener=="function";function j(t){let e,n=!1;return{run(){n||(n=!0,e=new URL(location.href),D?globalThis.navigation.addEventListener("navigate",i=>{const o=new URL(i.destination.url);o.href!==e.href&&(window.dispatchEvent(new C(o,e)),e=o)},{signal:t.signal}):t.setInterval(()=>{const i=new URL(location.href);i.href!==e.href&&(window.dispatchEvent(new C(i,e)),e=i)},1e3))}}}var K=class l{static SCRIPT_STARTED_MESSAGE_TYPE=S("wxt:content-script-started");id;abortController;locationWatcher=j(this);constructor(e,n){this.contentScriptName=e,this.options=n,this.id=Math.random().toString(36).slice(2),this.abortController=new AbortController,this.stopOldScripts(),this.listenForNewerScripts()}get signal(){return this.abortController.signal}abort(e){return this.abortController.abort(e)}get isInvalid(){return k.runtime?.id==null&&this.notifyInvalidated(),this.signal.aborted}get isValid(){return!this.isInvalid}onInvalidated(e){return this.signal.addEventListener("abort",e),()=>this.signal.removeEventListener("abort",e)}block(){return new Promise(()=>{})}setInterval(e,n){const i=setInterval(()=>{this.isValid&&e()},n);return this.onInvalidated(()=>clearInterval(i)),i}setTimeout(e,n){const i=setTimeout(()=>{this.isValid&&e()},n);return this.onInvalidated(()=>clearTimeout(i)),i}requestAnimationFrame(e){const n=requestAnimationFrame((...i)=>{this.isValid&&e(...i)});return this.onInvalidated(()=>cancelAnimationFrame(n)),n}requestIdleCallback(e,n){const i=requestIdleCallback((...o)=>{this.signal.aborted||e(...o)},n);return this.onInvalidated(()=>cancelIdleCallback(i)),i}addEventListener(e,n,i,o){n==="wxt:locationchange"&&this.isValid&&this.locationWatcher.run(),e.addEventListener?.(n.startsWith("wxt:")?S(n):n,i,{...o,signal:this.signal})}notifyInvalidated(){this.abort("Content script context invalidated"),F.debug(`Content script "${this.contentScriptName}" context invalidated`)}stopOldScripts(){document.dispatchEvent(new CustomEvent(l.SCRIPT_STARTED_MESSAGE_TYPE,{detail:{contentScriptName:this.contentScriptName,messageId:this.id}})),window.postMessage({type:l.SCRIPT_STARTED_MESSAGE_TYPE,contentScriptName:this.contentScriptName,messageId:this.id},"*")}verifyScriptStartedEvent(e){const n=e.detail?.contentScriptName===this.contentScriptName,i=e.detail?.messageId===this.id;return n&&!i}listenForNewerScripts(){const e=n=>{!(n instanceof CustomEvent)||!this.verifyScriptStartedEvent(n)||this.notifyInvalidated()};document.addEventListener(l.SCRIPT_STARTED_MESSAGE_TYPE,e),this.onInvalidated(()=>document.removeEventListener(l.SCRIPT_STARTED_MESSAGE_TYPE,e))}};function z(){}function p(t,...e){}const G={debug:(...t)=>p(console.debug,...t),log:(...t)=>p(console.log,...t),warn:(...t)=>p(console.warn,...t),error:(...t)=>p(console.error,...t)};return(async()=>{try{const{main:t,...e}=V;return await t(new K("canvas",e))}catch(t){throw G.error('The content script "canvas" crashed on startup!',t),t}})()})();
+canvas;

@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2025,
+    "dob": null,
+    "draft": null,
+    "first_name": "Kaleb",
+    "height": 510,
+    "id": 147393,
+    "jersey_number": "D5",
+    "last_name": "Anthony",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "UCONNH",
+      "city": "Connecticut",
+      "id": 146,
+      "nickname": "Huskies",
+      "primary_color": "#0a1d5a",
+      "secondary_color": "#b2b2ae",
+      "slug": "connecticut-huskies"
+    },
+    "weight": 176
+  }
+}

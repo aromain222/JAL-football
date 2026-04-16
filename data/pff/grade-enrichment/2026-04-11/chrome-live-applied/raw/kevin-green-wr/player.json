@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "J",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Kevin",
+      "height": 511,
+      "id": 70721,
+      "jersey_number": "0",
+      "last_name": "Green Jr.",
+      "position": "WR",
+      "speed": null,
+      "team": {
+        "abbreviation": "UWHUSK",
+        "city": "Washington",
+        "id": 340,
+        "nickname": "Huskies",
+        "primary_color": "#2b2f64",
+        "secondary_color": "#e8d4a3",
+        "slug": "washington-huskies"
+      },
+      "weight": 165
+    }
+  ]
+}

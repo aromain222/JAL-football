@@ -1,0 +1,29 @@
+{
+  "snaps": {
+    "season": 2025,
+    "snap_counts": {
+      "coverage": 2,
+      "defense": 268,
+      "field_goal": 0,
+      "field_goal_blocking": 11,
+      "field_goal_kicking": 0,
+      "kickoff_coverage": 0,
+      "kickoff_kicking": 0,
+      "kickoff_return_blocking": 0,
+      "kickoff_returning": 0,
+      "offense": 0,
+      "pass": 0,
+      "pass_block": 0,
+      "pass_route": 0,
+      "pass_rush": 140,
+      "punt_coverage": 0,
+      "punt_punting": 0,
+      "punt_return_blocking": 5,
+      "punt_returning": 0,
+      "run": 0,
+      "run_block": 0,
+      "run_defense": 126,
+      "special_teams": 16
+    }
+  }
+}

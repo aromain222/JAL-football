@@ -1,0 +1,25 @@
+{
+   "action": {
+      "default_popup": "popup.html"
+   },
+   "background": {
+      "service_worker": "js/background.js"
+   },
+   "content_scripts": [ {
+      "js": [ "js/content.js" ],
+      "matches": [ "https://chatgpt.com/*" ]
+   } ],
+   "description": "Easily bulk select, delete, and archive ChatGPT conversations. Declutter your ChatGPT history in just a few clicks!",
+   "host_permissions": [ "https://chatgpt.com/*" ],
+   "icons": {
+      "128": "public/icon.png",
+      "16": "public/icon.png",
+      "48": "public/icon.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0GvYvAkiRKkdEi5zTyxHmni7tpV1Hsa+jW4QmyRQ46wpyESf79XcQzTQhhcxKotMIzc9poA6cWrVXPB05exrkttlrDPlKcoMEvKDtdpXkWAlXZ6p71SLRshZQC3WbtUlsa+KpKTq7BvZpG2L0M+cMBqnx8HSDVSBuCLPIiGtx4LZxGsqN1Me4yLplkn9X/PapJdF09nPxZ/CITi+i7dxWnZ/VBNTVfl/FE6Al0bXRIvLDkpEJErTFba0l9dQMCdm5Q5gMqH4loUvyKXdVx/apUBeSAYFeYi+mpr99faZvXzPaRIuHJ3w7CxHerT2GjQHt2uylkY8M/AFGkTtYvzOdQIDAQAB",
+   "manifest_version": 3,
+   "name": "DeclutterGPT - Bulk Delete & Archive Chats",
+   "permissions": [ "activeTab", "webRequest", "storage" ],
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.4.0"
+}

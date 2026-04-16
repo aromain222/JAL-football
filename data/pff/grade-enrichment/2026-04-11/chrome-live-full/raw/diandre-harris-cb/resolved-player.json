@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "SN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Diandre",
+    "height": 511,
+    "id": 149358,
+    "jersey_number": "D31",
+    "last_name": "Harris",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "UCONNH",
+      "city": "Connecticut",
+      "id": 146,
+      "nickname": "Huskies",
+      "primary_color": "#0a1d5a",
+      "secondary_color": "#b2b2ae",
+      "slug": "connecticut-huskies"
+    },
+    "weight": 170
+  }
+}

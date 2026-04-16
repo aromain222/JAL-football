@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Cal",
+    "height": 603,
+    "id": 174932,
+    "jersey_number": "54",
+    "last_name": "Grubbs",
+    "position": "C",
+    "speed": null,
+    "team": {
+      "abbreviation": "ETENNB",
+      "city": "East Tennessee State",
+      "id": 157,
+      "nickname": "Buccaneers",
+      "primary_color": "#041e42",
+      "secondary_color": "#ffc72c",
+      "slug": "east-tennessee-state-buccaneers"
+    },
+    "weight": 290
+  }
+}

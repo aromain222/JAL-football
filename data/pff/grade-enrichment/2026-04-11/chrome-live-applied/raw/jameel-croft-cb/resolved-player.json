@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jameel",
+    "height": 600,
+    "id": 173071,
+    "jersey_number": "D29",
+    "last_name": "Croft Jr.",
+    "position": "CB",
+    "speed": null,
+    "team": {
+      "abbreviation": "CHARLO",
+      "city": "Charlotte",
+      "id": 136,
+      "nickname": "49ers",
+      "primary_color": "#005f31",
+      "secondary_color": "#949431",
+      "slug": "charlotte-49ers"
+    },
+    "weight": 195
+  }
+}

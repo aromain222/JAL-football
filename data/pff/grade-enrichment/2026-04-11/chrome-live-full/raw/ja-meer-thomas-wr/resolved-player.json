@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Ja'Meer",
+    "height": 510,
+    "id": 197632,
+    "jersey_number": "23",
+    "last_name": "Thomas",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "SYRACU",
+      "city": "Syracuse",
+      "id": 304,
+      "nickname": "Orange",
+      "primary_color": "#d44500",
+      "secondary_color": "#002e62",
+      "slug": "syracuse-orange"
+    },
+    "weight": 180
+  }
+}

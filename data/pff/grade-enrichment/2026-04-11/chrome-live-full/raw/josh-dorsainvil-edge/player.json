@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RSN",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Josh",
+      "height": 605,
+      "id": 181336,
+      "jersey_number": "D44",
+      "last_name": "Dorsainvil",
+      "position": "ED",
+      "speed": null,
+      "team": {
+        "abbreviation": "UCFKNI",
+        "city": "UCF",
+        "id": 323,
+        "nickname": "Knights",
+        "primary_color": "#b4985a",
+        "secondary_color": "#231f20",
+        "slug": "ucf-knights"
+      },
+      "weight": 230
+    }
+  ]
+}

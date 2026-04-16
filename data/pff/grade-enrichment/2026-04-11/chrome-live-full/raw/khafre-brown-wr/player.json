@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RSN",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Khafre",
+      "height": 600,
+      "id": 97398,
+      "jersey_number": "89",
+      "last_name": "Brown",
+      "position": "WR",
+      "speed": null,
+      "team": {
+        "abbreviation": "ARKANS",
+        "city": "Arkansas",
+        "id": 111,
+        "nickname": "Razorbacks",
+        "primary_color": "#cd1041",
+        "secondary_color": "#231f20",
+        "slug": "arkansas-razorbacks"
+      },
+      "weight": 203
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "candidate_count": 2,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Isaac",
+    "height": 606,
+    "id": 170489,
+    "jersey_number": "70",
+    "last_name": "Rue",
+    "position": "G",
+    "speed": null,
+    "team": {
+      "abbreviation": "NALABA",
+      "city": "North Alabama",
+      "id": 389,
+      "nickname": "Lions",
+      "primary_color": "#46166b",
+      "secondary_color": "#db9f11",
+      "slug": "north-alabama-lions"
+    },
+    "weight": 308
+  }
+}

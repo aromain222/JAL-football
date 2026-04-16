@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Greg",
+    "height": 605,
+    "id": 159226,
+    "jersey_number": "79",
+    "last_name": "Klingensmith",
+    "position": "T",
+    "speed": null,
+    "team": {
+      "abbreviation": "UMASSM",
+      "city": "Massachusetts",
+      "id": 216,
+      "nickname": "Minutemen",
+      "primary_color": "#971b2f",
+      "secondary_color": "#000000",
+      "slug": "massachusetts-minutemen"
+    },
+    "weight": 300
+  }
+}

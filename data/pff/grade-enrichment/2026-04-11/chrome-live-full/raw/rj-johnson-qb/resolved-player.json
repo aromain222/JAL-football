@@ -1,0 +1,28 @@
+{
+  "candidate_count": 3,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "J",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "RJ",
+    "height": 602,
+    "id": 172410,
+    "jersey_number": "D5",
+    "last_name": "Johnson",
+    "position": "CB",
+    "speed": null,
+    "team": {
+      "abbreviation": "COLORA",
+      "city": "Colorado",
+      "id": 143,
+      "nickname": "Buffaloes",
+      "primary_color": "#000000",
+      "secondary_color": "#cfb87c",
+      "slug": "colorado-buffaloes"
+    },
+    "weight": 185
+  }
+}

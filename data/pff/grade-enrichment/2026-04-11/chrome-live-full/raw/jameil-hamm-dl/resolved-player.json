@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "F",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jameil",
+    "height": 602,
+    "id": 198772,
+    "jersey_number": "D63",
+    "last_name": "Hamm",
+    "position": "ED",
+    "speed": null,
+    "team": {
+      "abbreviation": "MIAMIO",
+      "city": "Miami (OH)",
+      "id": 221,
+      "nickname": "RedHawks",
+      "primary_color": "#c8102e",
+      "secondary_color": "#000000",
+      "slug": "miami-oh-redhawks"
+    },
+    "weight": 227
+  }
+}

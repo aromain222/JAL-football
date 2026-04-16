@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RS",
+      "current_eligible_year": 2028,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jabrae",
+      "height": 510,
+      "id": 172425,
+      "jersey_number": "D34",
+      "last_name": "Shaw",
+      "position": "CB",
+      "speed": null,
+      "team": {
+        "abbreviation": "ARKANS",
+        "city": "Arkansas",
+        "id": 111,
+        "nickname": "Razorbacks",
+        "primary_color": "#cd1041",
+        "secondary_color": "#231f20",
+        "slug": "arkansas-razorbacks"
+      },
+      "weight": 189
+    }
+  ]
+}

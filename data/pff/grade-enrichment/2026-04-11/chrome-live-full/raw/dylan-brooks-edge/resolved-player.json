@@ -1,0 +1,28 @@
+{
+  "candidate_count": 3,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Dylan",
+    "height": 604,
+    "id": 146663,
+    "jersey_number": "D13",
+    "last_name": "Brooks",
+    "position": "ED",
+    "speed": null,
+    "team": {
+      "abbreviation": "MIZZST",
+      "city": "Missouri State",
+      "id": 230,
+      "nickname": "Bears",
+      "primary_color": "#5e0009",
+      "secondary_color": "#ffffff",
+      "slug": "missouri-state-bears"
+    },
+    "weight": 245
+  }
+}

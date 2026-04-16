@@ -1,0 +1,78 @@
+[
+  {
+    "player_name": "Amare Ary",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=181211\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Ashton Schumann",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=173313\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Austin Bolt",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=128118\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Camron Heard",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=174292\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Damari Jefferson",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=184001\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "David Washington",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=190453\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Daylin Caamano",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=204421\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Dyson Sims",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=190328\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Gekyle Baker",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=183817\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Ja'Meer Thomas",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=197632\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Jaden Perez",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=204195\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Jamauri Brice",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=199698\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Jenoa Alford",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=205043\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Jimmy Valsin",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=146336\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Kaleb Mitchell",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=200226\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "KD Dorsey",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=174166\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Kevin Holmes",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=25058\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Khafre Brown",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=97398\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  },
+  {
+    "player_name": "Kian Johnson",
+    "error": "Command failed: /usr/bin/osascript /var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript \n    (() => {\n      try {\n        const xhr = new XMLHttpRequest();\n        xhr.open(\"GET\", \"https://premium.pff.com/api/v1/player/offense/summary?league=ncaa&season=2024&week=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20&player_id=176044\", false);\n        xhr.send(null);\n        return JSON.stringify({ status: xhr.status, text: xhr.responseText });\n      } catch (error) {\n        return JSON.stringify({ error: String(error) });\n      }\n    })();\n  \n/var/folders/7q/7dqg6r956jj1nrtwmb1wlnmr0000gn/T/jal-pff-live-tab.applescript:486:533: execution error: No premium.pff.com tab found in Google Chrome (-2700)\n"
+  }
+]

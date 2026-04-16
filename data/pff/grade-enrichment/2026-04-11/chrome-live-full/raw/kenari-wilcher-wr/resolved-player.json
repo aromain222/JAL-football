@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Kenari",
+    "height": 600,
+    "id": 174035,
+    "jersey_number": "7",
+    "last_name": "Wilcher",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "FLORAM",
+      "city": "Florida A&M",
+      "id": 164,
+      "nickname": "Rattlers",
+      "primary_color": "#f58220",
+      "secondary_color": "#008345",
+      "slug": "florida-am-rattlers"
+    },
+    "weight": 185
+  }
+}

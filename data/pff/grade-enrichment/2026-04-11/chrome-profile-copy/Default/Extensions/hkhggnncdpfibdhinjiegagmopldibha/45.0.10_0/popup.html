@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Checker Plus for Google Calendar</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+	<link rel="icon" href="images/icons/icon-32_default.png" sizes="32x32"/>
+	<link rel="icon" href="images/icons/icon-64-no-number.png" sizes="64x64"/> <!-- Used when usig Chrome menu > Tools > Creating application shortcut > Pin to taskbar -->
+
+    <link rel="stylesheet" href="css/jdom.css">
+	<link rel="stylesheet" href="css/popup.css">
+	<link rel="stylesheet" href="css/datepicker.css">
+
+    <script src="js/common.js"></script>
+    <script src="js/jdom.js"></script>
+    <script src="js/icons.js"></script>
+
+	<script defer src="js/lib/Autolinker.js"></script>
+    <script defer src="js/checkerPlusForCalendar.js"></script>
+    <script defer src='fullcalendar/index.global.js'></script>
+	<script defer src="js/popup.js"></script>
+	
+</head>
+
+<body id="calendarExtensionPopup" class="popup" calendar-version="jdom"> <!-- v1 calendar-version="3" -->
+    <header class="site-header" no-bg-color>
+        <div class="header-content">
+            <div class="header-start">
+                <div id="quickAddWrapper" class="layout horizontal center">
+                    <j-button id="quickAddGoBack" class="back" icon="arrow-back"></j-button>
+                    <input type="text" id="quickAdd" autocomplete="off">
+                    <label class="quick-add-options">
+                        <span class="label-text" msg="addToCalendar">addToCalendar</span>
+                        <select id="quickAddCalendarsMenu" j-resize>
+                            <!-- Options will be populated here -->
+                        </select>
+                    </label>
+                    <j-button id="save-quick-add" class="raised colored quick-add-options" msg="save"></j-button>
+                </div>
+                <div id="searchInputWrapper" class="layout horizontal center">
+                    <j-button id="search-input-back" class="back" icon="arrow-back"></j-button>
+                    <input id="searchInput" type="text" autocomplete="off" />
+                    <select id="searchCalendarsMenu">
+                        <option value="active-calendars" msg="activeCalendars">Active calendars</option>
+                        <option value="all-calendars" msg="allCalendars">All calendars</option>
+                    </select>
+                    <j-button id="search" class="raised colored" icon="search" button-look></j-button>
+                </div>                     
+            </div>
+
+            <nav class="primary-nav" aria-label="Main Navigation">
+                <j-button class="side-rail-button" icon="menu" aria-label="Open menu" popovertarget-id="side-rail-menu"></j-button>
+                <div class="logo-and-title">
+                    <img class="logo" src="images/icons/icon-64-no-number.png"/>
+                    <a main-title href="#">Checker Plus</a>
+                </div>
+                <div id="next-prev-buttons">
+                    <j-button id="prev" msgTitle="previous" icon="chevron-left"></j-button>
+                    <j-button id="next" msgTitle="next" icon="chevron-right"></j-button>
+                </div>
+                <div id="calendarTitle"></div><j-icon id="calendarTitleDropdown" icon="arrow-drop-down"></j-icon>
+                <j-tooltip id="calendarTitleToolTip" class="delay" for="calendarTitle" msg="goToToday"></j-tooltip>
+
+                <div id="searchInputWrapper">
+                    <j-button id="back" icon="arrow-back" role="button" aria-label="search"></j-button> <j-input id="searchInput" type="text"></j-input>
+                </div>
+            </nav>
+            
+            <div class="utility-items">
+                <j-button id="newsNotification" icon="new-releases" hidden></j-button>
+                <j-tooltip for="newsNotification" animation-delay="100">
+                    <div id="newsNotificationReducedDonationMessage" hidden style="text-align:center; white-space: nowrap; line-height: 1.2">Good news</div>
+                    <div id="newsNotificationBigUpdateMessage" hidden style="text-align:center"><span msg="extensionUpdated">big update</span></div>
+                </j-tooltip>
+
+                <j-button id="pendingNotifications" class="swing" icon="notifications"></j-button>
+                <j-tooltip for="pendingNotifications" msg="pendingNotifications"></j-tooltip>
+
+                <j-button id="goToToday" icon="today" msgTitle="goToToday"></j-button>
+                <j-button id="showSearch" icon="search" msgTitle="search"></j-button>
+
+                <j-button id="share-icon-button" class="share-button" icon="share" popovertarget-id="share-menu"></j-button>
+                <j-listbox id="share-menu" popover position="center">
+                    <j-icon-item id="facebook">
+                        <j-icon icon="facebook"></j-icon>
+                        <span>Facebook</span>
+                    </j-icon-item>
+                    <j-icon-item id="twitter">
+                        <j-icon icon="twitter"></j-icon>
+                        <span>Twitter</span>
+                    </j-icon-item>
+                    <j-icon-item id="linkedin">
+                        <j-icon icon="linkedin"></j-icon>
+                        <span>LinkedIn</span>
+                    </j-icon-item>
+                    <j-icon-item id="share-by-email">
+                        <j-icon icon="mail" style="color:#666"></j-icon>
+                        <span msg="email">Email</span>
+                    </j-icon-item>
+                    <j-icon-item id="email-subscription">
+                        <j-icon icon="markunread-mailbox" style="color:#666"></j-icon>
+                        <span>Subscribe</span>
+                    </j-icon-item>
+                    <j-icon-item id="copy-link">
+                        <j-icon icon="link" style="color:#666"></j-icon>
+                        <span>Copy Link</span>
+                    </j-icon-item>
+                </j-listbox>
+                <j-tooltip for="share-icon-button" animation-delay="0"><span msg="share">share</span></j-tooltip>
+
+                <j-button id="refresh" icon="refresh" msgTitle="refresh"></j-button>
+                <j-button id="maximize" icon="open-in-browser" msgTitle="openGmailTab"></j-button>
+                <j-button id="mainOptions" icon="more-vert" msgTitle="options" popovertarget-id="options-menu"></j-button>
+                <j-listbox id="options-menu" popover>
+                    <j-icon-item class="options">
+                        <j-icon icon="settings"></j-icon>
+                        <span msg="options"></span>
+                    </j-icon-item>
+
+                    <j-item class="separator" disabled></j-item>
+
+                    <j-icon-item id="viewAgenda">
+                        <j-icon icon="view-agenda"></j-icon>
+                        <span msg="agenda"></span>
+                    </j-icon-item>
+                    <j-icon-item id="viewListWeek">
+                        <j-icon icon="list"></j-icon>
+                        <span msg="list"></span>
+                    </j-icon-item>
+                    <j-icon-item id="viewDay">
+                        <j-icon icon="view-day"></j-icon>
+                        <span msg="day"></span>
+                    </j-icon-item>
+                    <j-icon-item id="viewWeek">
+                        <j-icon icon="view-week"></j-icon>
+                        <span msg="week"></span>
+                    </j-icon-item>
+                    <j-icon-item id="viewMonth">
+                        <j-icon icon="view-module"></j-icon>
+                        <span msg="month"></span>
+                    </j-icon-item>
+                    <j-icon-item id="viewYear" mustDonate>
+                        <j-icon icon="view-module"></j-icon>
+                        <span msg="year"></span>
+                    </j-icon-item>
+                    <j-icon-item id="viewCustom">
+                        <j-icon icon="view-module"></j-icon>
+                        <span id="viewXWeeksLabel"></span>
+                        <j-button id="viewCustomSettings" icon="settings" style="position:absolute;inset-inline-end:2px"></j-button>
+                    </j-icon-item>
+
+                    <j-item class="separator" disabled></j-item>
+
+                    <j-icon-item class="openSnoozedEvents">
+                        <j-icon icon="snooze"></j-icon>
+                        <span msg="snoozedEvents"></span>
+                    </j-icon-item>
+
+                    <j-icon-item id="quick-adds">
+                        <j-icon icon="format-quote"></j-icon>
+                        <span msg="quickAdd"></span>
+                    </j-icon-item>
+
+                    <j-icon-item class="skins">
+                        <j-icon icon="format-paint"></j-icon>
+                        <span msg="addSkinsOrThemes"></span>
+                    </j-icon-item>
+                    <j-icon-item class="popout">
+                        <j-icon icon="open-in-new"></j-icon>
+                        <span msg="popout"></span>
+                    </j-icon-item>
+
+                    <j-item class="separator" disabled></j-item>
+                    
+                    <j-item class="contribute"><span msg="contribute">contribute</span></j-item>
+                    <j-item class="discoverMyApps"><span msg="discoverMyApps">discoverMyApps</span></j-item>
+                    <j-item class="help"><span msg="help">help</span></j-item>
+                </j-listbox>
+            </div>
+            <j-button class="close" icon="close"></j-button>
+        </div>
+
+        <div id="datepickerWrapper">
+            <div id="datepicker" class="mini-calendar"></div>
+        </div>
+    </header>
+
+    <div id="click-shield" class="click-shield"></div>
+
+    <div id="side-rail-menu" popover>
+        <div id="miniCalendar" class="mini-calendar"></div>
+        <div id="visibleCalendars" class="layout vertical"></div>
+        <j-listbox>
+            <j-icon-item class="options">
+                <j-icon icon="settings"></j-icon>
+                <span msg="options"></span>
+            </j-icon-item>
+            <j-icon-item class="contribute">
+                <j-icon icon="accessibility"></j-icon>
+                <span msg="contribute"></span>
+            </j-icon-item>
+            <j-icon-item class="help">
+                <j-icon icon="help"></j-icon>
+                <span msg="help"></span>
+            </j-icon-item>
+        </j-listbox>
+    </div>
+
+    <div id="mainContent">
+        <div id="betaCalendarWrapper">
+            <div id='betaCalendar'></div>
+        </div>
+        <div id='agenda'>
+            <div id="agendaEvents"></div>
+        </div>
+        <div id="bigAddEventButtonWrapper">
+            <j-button id="bigAddEventButton" icon="add"></j-button>
+        </div>
+        <a id="skinWatermark" href="https://jasonsavard.com" target="_blank">Craving Greens</a>
+        <j-tooltip for="skinWatermark" position="top" fit-to-visible-bounds='true'>Author of image</j-tooltip>
+    </div>
+    <j-tooltip chromium-only for="bigAddEventButton" position="end" animation-delay="200"><span msg="justStartTyping">abc</span></j-tooltip>
+
+    <template id="fbOverlayTemplate">
+        <span id="fbEventDate">test</span> <j-button id="fbFindDate" class="raised" msg="findDate">Find Date</j-button>
+        <select id="fbAddCalendarsMenu">
+            <!-- Options will be populated here -->
+        </select>
+    </template>
+
+    <template id="createEventDialogTemplate">
+        <div class="layout vertical" style="gap: 7px">
+            <div class="layout horizontal center" style="margin-top: -6px; margin-bottom:8px">
+                <j-icon icon="" class="fieldIcon" style="margin-right:24px"></j-icon>
+                <j-input id="eventTitle" no-label-float msgPlaceholder="quickAddDefaultText"></j-input>
+            </div>
+            <div id="event-task-selection" class="layout horizontal center" hidden>
+                <j-icon icon="" class="fieldIcon" style="margin-right:24px"></j-icon>
+                <j-button id="event-selection"><span msg="event"></span></j-button> <j-button id="task-selection"><span msg="task">task</span></j-button>
+            </div>
+            <div id="event-time-related-wrapper" class="layout horizontal start">
+                <j-icon icon="schedule" class="fieldIcon"></j-icon>
+                <div id="eventStartEndTimeWrapper" class="flex">
+                    <div style="xxwhite-space: nowrap;">
+                        <input id="eventStartDate" type="text" autocomplete="off"/> <input id="eventStartTime" type="text" autocomplete="off"/> <span id="time-separator">–</span> <input id="eventEndTime" type="text" autocomplete="off"/> <input id="eventEndDate" type="text" autocomplete="off"/>
+                    </div>
+                    <div class="layout horizontal" style="gap: 10px">
+                        <label id="eventAllDayWrapper"><input type="checkbox" id="eventAllDay" tabindex="-1"><span msg="allDayText">allday</span></label>
+                        <j-button id="timezone-button" msg="timezone">Time zone</j-button>
+                        <select id="timezone-dropdown-wrapper">
+                            <!-- Timezones will be populated here -->
+                        </select>
+                        <div class="flex"></div>
+                        <div class="repeat-placeholder">
+                            <!-- javascript will move dropdown here -->
+                        </div>
+                    </div>
+                </div>
+                <div id="detectTimeWrapper" class="layout horizontal flex" hidden>
+                    <label><input type="checkbox" id="detectTime" checked tabindex="-1"><span msg="detectTime">detectTime</span></label>
+                    <div class="flex"></div>
+                    <div class="repeat-placeholder">
+                        <select id="repeat-dropdown" no-label-float vertical-align="top">
+                            <option value="" msg="noRepeat"></option>
+                            <option value="daily" msg="daily">Daily</option>
+                            <option value="weekly" msg="weekly"><span>weekly</span></option>
+                            <option value="every-2-weeks" msg="every2Weeks"><span>every2Weeks</span></option>
+                            <option value="monthly" msg="monthly"><span>monthly</span></option>
+                            <option value="yearly" msg="annually"><span>annually</span></option>
+                            <option value="every-weekday" msg="everyWeekday"><span>everyWeekday</span></option>
+                            <option value="custom"><span msg="custom">custom</span>...</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div id="eventConferenceWrapper" class="layout horizontal center" hidden>
+                <j-icon id="event-conference-icon" icon="videocam" class="fieldIcon"></j-icon>
+                <j-button id="eventConference" msg="addVideoConferencing">Add video conferencing</j-button>
+                <j-icon-button class="copy-conference-link" icon="content-copy"></j-icon-button>
+                <j-icon-button class="eventConferenceRemove" icon="close" hidden></j-icon-button>
+            </div>
+            <div id="eventVideoLabelWrapper" class="layout horizontal center" hidden>
+                <j-icon class="fieldIcon"></j-icon>
+                <div id="eventVideoLabel" style="color:gray; margin-left:5px"></div>
+            </div>
+            <div id="eventLocation-wrapper" class="layout horizontal center">
+                <j-icon icon="place" class="fieldIcon"></j-icon>
+                <div class="flex">
+                    <j-input id="eventLocation" msgLabel="where" no-label-float></j-input>
+                    <j-listbox id="event-location-suggestions" class="acSuggestions" popover="auto" tabindex="0"></j-listbox>
+                </div>
+                <j-button id="currentPage" tabIndex=-1></j-button><j-tooltip for="currentPage" style="white-space:nowrap" msg="useDetailsFromCurrentPage">Use details from current page</j-tooltip>
+            </div>
+            <div id="eventDescription-wrapper" class="layout horizontal center">
+                <j-icon icon="short-text" class="fieldIcon self-start"></j-icon>
+                <div id="eventDescription" class="flex" contenteditable="true" msgPlaceholder="eventDescription"></div>
+            </div>
+
+            <div id="createEventCalendar-wrapper" class="layout horizontal center">
+                <j-icon icon="event" class="fieldIcon"></j-icon>
+                <div class="layout horizontal" style="gap: 15px; align-items: center">
+                    <label>
+                        <select id="createEventCalendarsMenu">
+                            <!-- Options will be populated here -->
+                        </select>
+                    </label>
+                    <j-button id="eventColor"></j-button>
+                </div>
+                <j-tooltip for="eventColor" style="white-space:nowrap"><span msg="eventColor">eventcolor</span></j-tooltip>
+            </div>
+
+            <div id="event-task-list-wrapper" class="layout horizontal center">
+                <j-icon icon="list" class="fieldIcon"></j-icon>
+                <label>
+                    <select id="createEventTaskList">
+                        <!-- Options will be populated here -->
+                    </select>
+                </label>
+            </div>
+
+            <div id="event-reminders-wrapper" class="layout horizontal">
+                <j-icon icon="notifications" class="fieldIcon"></j-icon>
+                <div id="event-reminders"></div>
+            </div>
+
+            <div id="event-transparency-and-visibility-wrapper" class="layout horizontal center">
+                <j-icon icon="work" class="fieldIcon"></j-icon>
+                <div class="layout horizontal" style="gap: 15px">
+                    <select id="event-transparency" no-label-float style="max-width: 100px;">
+                        <option value="transparent" msg="transparencyFree">free</option>
+                        <option value="opaque" msg="busy">busy</option>
+                    </select>
+                    <select id="event-visibility" no-label-float style="max-width: 150px;">
+                        <option value="default" msg="defaultVisibility">default visibility</option>
+                        <option value="public" msg="public">public</option>
+                        <option value="private" msg="private">private</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="clickedEventDialogTemplate">
+        <div id="clickedEventDialogInner" class="layout vertical" style="gap: 10px;">
+            <div>
+                <div class="layout horizontal">
+                    <div class="eventIcon"></div>
+                    <div id="clickedEventTitle" class="flex">title</div>
+                </div>
+                <div style="margin-top:4px">
+                    <div id="clickedEventDate">Tue, Nov 17</div>
+                    <div id="clickedEventRecurring" hidden></div>
+                </div>
+            </div>
+            <div>
+                <div id="clickedEventLocationWrapper" class="field" hidden>
+                    <j-icon icon="place" class="fieldIcon"></j-icon>
+                    <div class="clickedEventSubDetails flex"><a id="clickedEventLocationMapLink" target="_blank" href="#">blah</a></div>
+                </div>
+                <div id="clickedEventSourceWrapper" class="field" hidden>
+                    <j-icon class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex"><a id="clickedEventSourceLink" target="_blank" href="#">sourceTitle</a></div>
+                </div>
+                <div id="clickedEventVideoWrapper" class="field" hidden>
+                    <j-icon id="conference-icon" icon="videocam" class="fieldIcon"></j-icon>
+                    <div class="clickedEventSubDetails flex" style="overflow: inherit">
+                        <a id="clickedEventVideoLink" href="#"><j-button id="joinVideoCallButton" class="colored"></j-button></a>
+                    </div>
+                    <j-button class="copy-conference-link" icon="content-copy"></j-button>
+                </div>
+                <div id="clickedEventVideoLinkWrapper" class="field" hidden>
+                    <j-icon class="fieldIcon self-start"></j-icon>
+                    <div id="clickedEventVideoLabel" style="color:gray; margin-left:5px">link</div>
+                </div>
+                <div id="clickedEventVideoNotesWrapper" class="field" hidden>
+                    <j-icon icon="info-outline" class="fieldIcon self-start"></j-icon>
+                    <div id="clickedEventVideoNotes">notes</div>
+                </div>
+                <div id="clickedEventPhoneWrapper" class="field" hidden>
+                    <j-icon icon="local-phone" class="fieldIcon self-start"></j-icon>
+                    <div style="color:gray; margin-left:5px">
+                        <div><a id="clickedEventPhone" href="#" target="_blank" msg="joinByPhone">join by phone</a></div>
+                        <div id="clickedEventPhoneLabel">123</div>
+                    </div>
+                </div>
+                <div id="clickedEventConferenceMoreWrapper" class="field" hidden>
+                    <j-icon icon="open-in-new" class="fieldIcon self-start"></j-icon>
+                    <div><a id="clickedEventConferenceMoreLabel" href="#" target="_blank" msg="joiningInstructions">Joining instructions</a></div>
+                </div>
+                <div id="clickedEventAttendeesWrapper" class="field" hidden>
+                    <j-icon icon="group" class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex"></div>
+                </div>
+                <div id="clickedEventDescriptionWrapper" class="field" hidden>
+                    <j-icon icon="short-text" class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex" readonly></div>
+                </div>
+                <div id="clickedEventTaskLinkWrapper" class="field" hidden>
+                    <j-icon icon="mail" class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex"></div>
+                </div>
+                <div id="clickedEventTaskListWrapper" class="field" hidden>
+                    <j-icon icon="list" class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex"></div>
+                </div>
+                <div id="clickedEventAttachmentsWrapper" class="field" hidden>
+                    <j-icon icon="attach-file" class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex" style="overflow: inherit"></div>
+                </div>
+                <div id="clickedEventNotificationsWrapper" class="field" hidden>
+                    <j-icon icon="notifications" class="fieldIcon self-start"></j-icon>
+                    <div id="clickedEventNotifications" class="clickedEventSubDetails flex">notifs</div>
+                </div>
+                <div id="clickedEventCalendarWrapper" class="field" hidden>
+                    <j-icon icon="event" class="fieldIcon"></j-icon>
+                    <div class="clickedEventSubDetails flex" msgTitle="calendar"><span id="clickedEventCalendar"></span></div>
+                </div>
+                <div id="clickedEventTransparencyWrapper" class="field" hidden>
+                    <j-icon icon="work" class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex" style="overflow: inherit"></div>
+                </div>
+                <div id="clickedEventVisibilityWrapper" class="field" hidden>
+                    <j-icon icon="lock-outline" class="fieldIcon self-start"></j-icon>
+                    <div class="clickedEventSubDetails flex" style="overflow: inherit"></div>
+                </div>
+                <div id="clickedEventCreatedByWrapper" class="field" style="margin-top: 5px; white-space: nowrap;" hidden>
+                    <span class="clickedEventSubDetailsLabel" msg="createdBy">created by</span> <div class="clickedEventSubDetails flex"><span id="clickedEventCreatedBy"></span> <span id="clickedEventCreatedDate"></span></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="inviteGuestsDialogTemplate">
+        <div><j-input id="addGuestInput" autofocus autocomplete="off" type="text"></j-input></div>
+        <j-listbox id="guest-suggestions" class="acSuggestions" popover="auto"></j-listbox>
+        <div style="min-height:60vh">
+            <div id="chips" class="layout vertical start"></div>
+        </div>
+    </template>
+
+    <template id="skinsDialogTemplate">
+        <j-listbox id="availableSkins"></j-listbox>
+    </template>
+
+    <template id="customSkinDialogTemplate">
+        <div class="layout vertical">
+            <div class="layout horizontal center">
+                <div class="flex" style="color:gray;margin-bottom:2px">Enter <a href="https://en.wikipedia.org/wiki/Cascading_Style_Sheets" target="_blank">CSS</a> below</div>
+            </div>
+            <textarea style="margin-bottom:10px;width:400px;height:200px" autofocus></textarea>
+            <j-input id="customBackgroundImageUrl" label="Background image url (Use imgur.com to host it)"></j-input>
+        </div>
+    </template>
+        
+    <template id="keyboardShortcutDialogTemplate">
+        <style>
+            #keys {
+                display:grid;
+                grid-template-columns:auto auto;
+                grid-column-gap: 10px;
+                grid-row-gap: 10px;
+                align-items: center; /* Align rows vertically in the middle */
+            }
+            #keys div {
+                padding: 1px 5px;
+            }
+            .key-wrapper {
+                justify-self: end;
+            }
+            .key-wrapper div {
+                display: inline-block;
+                border: 1px solid;
+                border-radius:5px;
+            }
+        </style>
+        <div id="keys">
+            <div>Previous period</div>
+            <div class="key-wrapper"><div>Left arrow</div> or <div>Up Arrow</div></div>
+            <div>Next period</div>
+            <div class="key-wrapper"><div>Right Arrow</div> or <div>Down Arrow</div></div>
+            <div msg="goToToday">goToToday</div>
+            <div class="key-wrapper"><div>Home</div></div>
+            <div>Go to date</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + G</div></div>
+            <div msg="save">Save</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + S</div> <span>or</span> <div><span class="ctrlKey">Ctrl</span> + Enter</div></div>
+            <div msg="search">search</div>
+            <div class="key-wrapper"><div>/</div></div>
+            <div msg="close">close</div>
+            <div class="key-wrapper"><div>Esc</div></div>
+            <div msg="view" style="text-decoration: underline;">view</div>
+            <span>&nbsp;</span>
+            <div msg="day">day view</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + 1</div></div>
+            <div msg="week">weeek</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + 2</div></div>
+            <div msg="month">month</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + 3</div></div>
+            <div msg="year">year</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + 4</div></div>
+            <div msg="custom">custom</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + 5</div></div>
+            <div msg="agenda">agenda</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + 6</div></div>
+            <div msg="list">list</div>
+            <div class="key-wrapper"><div><span class="ctrlKey">Ctrl</span> + 7</div></div>
+        </div>
+    </template>
+
+    <template id="quickAddsDialogTemplate">
+        <div class="layout vertical">
+            <textarea id="quick-adds-text" style="margin-bottom:10px;width:400px;height:200px;font-size: large;" placeholder="laundry in 1hour 15min"></textarea>
+        </div>
+    </template>
+
+    <template id="recurrenceDialogTemplate">
+        <div class="layout vertical" style="gap: 20px">
+            <div id="repeatEveryWrapper" class="layout horizontal center" style="gap: 10px">
+                <span msg="repeatEvery">Repeat every</span>
+                <j-input id="repeatEveryValue" tabindex="-1" type="number" min="1" value="1" style="width: 60px"></j-input>
+                <select id="repeatEveryPeriod">
+                    <option value="DAILY" msg="days">days</option>
+                    <option value="WEEKLY" msg="weeks">weeks</option>
+                    <option value="MONTHLY" msg="months">months</option>
+                    <option value="YEARLY" msg="years">years</option>
+                </select>
+            </div>
+
+            <div id="repeatOnWrapper" class="layout horizontal center" style="gap: 10px">
+                <span msg="repeatOn">Repeat on</span>
+                <div id="repeatOnDays" class="layout horizontal center">
+                    <j-button class="raised">S</j-button>
+                    <j-button class="raised">M</j-button>
+                    <j-button class="raised">T</j-button>
+                    <j-button class="raised">W</j-button>
+                    <j-button class="raised">T</j-button>
+                    <j-button class="raised">F</j-button>
+                    <j-button class="raised">S</j-button>
+                </div>
+            </div>
+
+            <div id="repeatMonthlyOnWrapper" class="layout horizontal center">
+                <select id="repeatMonthlyOn">
+                    <option value="dayX" msg="monthly">monthly</option>
+                    <option value="1">monthlyOn</option>
+                    <option value="2">monthlyOn</option>
+                    <option value="3">monthlyOn</option>
+                    <option value="4">monthlyOn</option>
+                    <option value="last">monthlyOn</option>
+                    <option value="-1" msg="lastDayOfMonth">lastDayOfMonth</option>
+                </select>
+            </div>
+
+            <div id="repeatEndsWrapper" class="layout vertical start" style="gap: 10px">
+                <span msg="ends">Ends</span>
+                <div class="layout horizontal start">
+                    <div class="layout vertical" style="gap: 10px">
+                        <label><input type="radio" name="repeat-ends-dropdown" value="never" checked> <span msg="never"></span></label>
+                        <label><input type="radio" name="repeat-ends-dropdown" value="on"> <span msg="on"></span></label>
+                        <label><input type="radio" name="repeat-ends-dropdown" value="after"> <span msg="after"></span></label>
+                    </div>
+                    <div>
+                        <div style="margin: 5px 0">&nbsp;</div>
+                        <input id="repeatEndsOnDate" type="text" autocomplete="off" disabled/>
+                        <div class="layout horizontal center" style="gap: 10px">
+                            <j-input id="repeatEndsAfterOccurrences" disabled type="number" min="1" value="13" no-label-float="true" style="width: 70px"></j-input> <span msg="occurrences">occurrences</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="gotoDateDialogTemplate">
+        <div class="layout horizontal center" style="gap: 10px;">
+            <select id="gotoDate_month">
+                <option value="0">Jan</option>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Jan</option>
+                <option value="4">Jan</option>
+                <option value="5">Jan</option>
+                <option value="6">Jan</option>
+                <option value="7">Jan</option>
+                <option value="8">Jan</option>
+                <option value="9">Jan</option>
+                <option value="10">Jan</option>
+                <option value="11">Jan</option>
+            </select>
+            <select id="gotoDate_day">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+                <option value="31">31</option>
+            </select>
+            <select id="gotoDate_year">
+                <option value="2000">2000</option>
+                <option value="2001">2001</option>
+                <option value="2002">2002</option>
+                <option value="2003">2003</option>
+                <option value="2004">2004</option>
+                <option value="2005">2005</option>
+                <option value="2006">2006</option>
+                <option value="2007">2007</option>
+                <option value="2008">2008</option>
+                <option value="2009">2009</option>
+                <option value="2010">2010</option>
+                <option value="2011">2011</option>
+                <option value="2012">2012</option>
+                <option value="2013">2013</option>
+                <option value="2014">2014</option>
+                <option value="2015">2015</option>
+                <option value="2016">2016</option>
+                <option value="2017">2017</option>
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+            </select>
+        </div>
+    </template>
+</body>
+</html>

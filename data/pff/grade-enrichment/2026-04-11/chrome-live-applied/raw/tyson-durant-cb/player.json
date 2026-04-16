@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RSN",
+      "current_eligible_year": 2025,
+      "dob": null,
+      "draft": null,
+      "first_name": "Tyson",
+      "height": 510,
+      "id": 130287,
+      "jersey_number": "D5",
+      "last_name": "Durant",
+      "position": "S",
+      "speed": null,
+      "team": {
+        "abbreviation": "WSTATE",
+        "city": "Washington State",
+        "id": 341,
+        "nickname": "Cougars",
+        "primary_color": "#97002f",
+        "secondary_color": "#5e6a71",
+        "slug": "washington-state-cougars"
+      },
+      "weight": 178
+    }
+  ]
+}

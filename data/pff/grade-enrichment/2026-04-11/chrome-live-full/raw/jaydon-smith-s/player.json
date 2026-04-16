@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RF",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jaydon",
+      "height": 600,
+      "id": 190624,
+      "jersey_number": "8",
+      "last_name": "Smith",
+      "position": "S",
+      "speed": null,
+      "team": {
+        "abbreviation": "UTRGV",
+        "city": "UT Rio Grand Valley",
+        "id": 1445,
+        "nickname": "Vaqueros",
+        "primary_color": "#ffa101",
+        "secondary_color": "#fafafa",
+        "slug": "ut-rio-grand-valley-vaqueros"
+      },
+      "weight": 190
+    }
+  ]
+}

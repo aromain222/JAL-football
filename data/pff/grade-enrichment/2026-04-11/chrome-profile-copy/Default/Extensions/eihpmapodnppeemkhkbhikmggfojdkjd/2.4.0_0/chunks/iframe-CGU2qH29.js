@@ -1,0 +1,1 @@
+import"./modulepreload-polyfill-B5Qt9EMX.js";import{a as r}from"./web-BFWLvT3m.js";navigator.serviceWorker.ready.then(({active:a})=>{a&&(navigator.serviceWorker.addEventListener("message",e=>{window.parent.postMessage(e.data,"*")}),self.addEventListener("message",e=>{a.postMessage(e.data)}),r(window.parent,self).createClient().iFrameIsReady())});

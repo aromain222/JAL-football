@@ -1,0 +1,163 @@
+[
+  {
+    "player_name": "Aidan Johnson",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 176114,
+    "grades_offense": 80.3,
+    "grades_run_block": 79.1
+  },
+  {
+    "player_name": "Bo Blanchard",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 156550,
+    "grades_offense": 60,
+    "grades_run_block": 60
+  },
+  {
+    "player_name": "Cal Grubbs",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 174932,
+    "grades_offense": 76.6,
+    "grades_pass_block": 60.6,
+    "grades_run_block": 74
+  },
+  {
+    "player_name": "Cooper Lovelace",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 158460,
+    "grades_offense": 61.4,
+    "grades_pass_block": 55.2,
+    "grades_run_block": 67.3
+  },
+  {
+    "player_name": "George Silva",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 174129,
+    "grades_offense": 51.7,
+    "grades_pass_block": 25,
+    "grades_run_block": 55.1
+  },
+  {
+    "player_name": "Isaac Rue",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 170489,
+    "grades_offense": 49.2,
+    "grades_pass_block": 58.1,
+    "grades_run_block": 44
+  },
+  {
+    "player_name": "Jack Hasz",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 145666,
+    "grades_offense": 62.7,
+    "grades_pass_block": 78.2,
+    "grades_run_block": 59.6
+  },
+  {
+    "player_name": "Jakiah Leftwich",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 143921,
+    "grades_offense": 61.6,
+    "grades_pass_block": 58.5,
+    "grades_run_block": 60.9
+  },
+  {
+    "player_name": "Kyndall McKenzie",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 162527,
+    "grades_offense": 68.3,
+    "grades_run_block": 67.8
+  },
+  {
+    "player_name": "Mathyus Su'a",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 134899,
+    "grades_offense": 67.2,
+    "grades_pass_block": 69.8,
+    "grades_run_block": 67.5
+  },
+  {
+    "player_name": "Ni Mansell",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 129559,
+    "grades_offense": 54.7,
+    "grades_pass_block": 67,
+    "grades_run_block": 54.5
+  },
+  {
+    "player_name": "Paul Tchio",
+    "position": "OL",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 122160,
+    "grades_offense": 59.7,
+    "grades_pass_block": 33.5,
+    "grades_run_block": 60
+  },
+  {
+    "player_name": "David Lynch",
+    "position": "QB",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 170120,
+    "grades_offense": 39.6,
+    "grades_run_block": 60,
+    "grades_pass": 40,
+    "grades_run_rb": 56.3
+  },
+  {
+    "player_name": "Emmett Brown",
+    "position": "QB",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 157344,
+    "grades_offense": 71.5,
+    "grades_run_block": 60,
+    "grades_pass": 69.9,
+    "grades_run_rb": 66.1,
+    "grades_pass_route": 54.6
+  },
+  {
+    "player_name": "Grady Brosterhous",
+    "position": "QB",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 156379,
+    "grades_offense": 76.4,
+    "grades_run_block": 60,
+    "grades_run_rb": 70.1
+  },
+  {
+    "player_name": "Kasen Weisman",
+    "position": "QB",
+    "source_season": 2025,
+    "check_season": 2024,
+    "source_pff_player_id": 171910,
+    "grades_offense": 57.7,
+    "grades_run_block": 60,
+    "grades_pass": 59.2,
+    "grades_run_rb": 55.8
+  }
+]

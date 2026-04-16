@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jace",
+    "height": 511,
+    "id": 172419,
+    "jersey_number": "85",
+    "last_name": "Petty",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "ARKANS",
+      "city": "Arkansas",
+      "id": 111,
+      "nickname": "Razorbacks",
+      "primary_color": "#cd1041",
+      "secondary_color": "#231f20",
+      "slug": "arkansas-razorbacks"
+    },
+    "weight": 175
+  }
+}

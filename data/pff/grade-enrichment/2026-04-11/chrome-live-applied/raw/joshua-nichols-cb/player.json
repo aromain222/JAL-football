@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "SN",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Joshua",
+      "height": 510,
+      "id": 162823,
+      "jersey_number": "D36",
+      "last_name": "Nichols",
+      "position": "CB",
+      "speed": null,
+      "team": {
+        "abbreviation": "MICHIG",
+        "city": "Michigan",
+        "id": 222,
+        "nickname": "Wolverines",
+        "primary_color": "#00274c",
+        "secondary_color": "#ffcb05",
+        "slug": "michigan-wolverines"
+      },
+      "weight": 205
+    }
+  ]
+}

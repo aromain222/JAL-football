@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": null,
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jack",
+      "height": 604,
+      "id": 178229,
+      "jersey_number": "D92",
+      "last_name": "Dunkley",
+      "position": "ED",
+      "speed": null,
+      "team": {
+        "abbreviation": "WYOMIN",
+        "city": "Wyoming",
+        "id": 351,
+        "nickname": "Cowboys",
+        "primary_color": "#533b22",
+        "secondary_color": "#ffc72c",
+        "slug": "wyoming-cowboys"
+      },
+      "weight": 250
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RF",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Kam",
+      "height": 603,
+      "id": 190709,
+      "jersey_number": "D43",
+      "last_name": "Weaver",
+      "position": "LB",
+      "speed": null,
+      "team": {
+        "abbreviation": "TROYTR",
+        "city": "Troy",
+        "id": 318,
+        "nickname": "Trojans",
+        "primary_color": "#9e0531",
+        "secondary_color": "#919191",
+        "slug": "troy-trojans"
+      },
+      "weight": 210
+    }
+  ]
+}

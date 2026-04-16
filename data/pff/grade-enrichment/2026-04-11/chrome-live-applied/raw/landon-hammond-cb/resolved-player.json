@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Landon",
+    "height": 601,
+    "id": 199373,
+    "jersey_number": "D49",
+    "last_name": "Hammond",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "IDAHOV",
+      "city": "Idaho",
+      "id": 185,
+      "nickname": "Vandals",
+      "primary_color": "#dea332",
+      "secondary_color": "#191919",
+      "slug": "idaho-vandals"
+    },
+    "weight": 161
+  }
+}

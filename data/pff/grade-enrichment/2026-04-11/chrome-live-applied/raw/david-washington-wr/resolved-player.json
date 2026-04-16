@@ -1,0 +1,28 @@
+{
+  "candidate_count": 4,
+  "match_reason": "partial-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "S",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "David",
+    "height": 511,
+    "id": 190453,
+    "jersey_number": "82",
+    "last_name": "Washington Jr.",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "KENTUC",
+      "city": "Kentucky",
+      "id": 202,
+      "nickname": "Wildcats",
+      "primary_color": "#003399",
+      "secondary_color": "#ebebe4",
+      "slug": "kentucky-wildcats"
+    },
+    "weight": 204
+  }
+}

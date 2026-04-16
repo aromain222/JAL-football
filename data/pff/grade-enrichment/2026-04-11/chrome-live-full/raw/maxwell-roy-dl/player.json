@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": null,
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Maxwell",
+      "height": 603,
+      "id": 205321,
+      "jersey_number": "D93",
+      "last_name": "Roy",
+      "position": "DI",
+      "speed": null,
+      "team": {
+        "abbreviation": "UCLABR",
+        "city": "UCLA",
+        "id": 324,
+        "nickname": "Bruins",
+        "primary_color": "#2774ae",
+        "secondary_color": "#ffd100",
+        "slug": "ucla-bruins"
+      },
+      "weight": 301
+    }
+  ]
+}

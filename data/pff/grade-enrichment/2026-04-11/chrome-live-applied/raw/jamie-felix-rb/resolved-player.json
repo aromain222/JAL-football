@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RS",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jamie",
+    "height": 510,
+    "id": 156296,
+    "jersey_number": "23",
+    "last_name": "Felix",
+    "position": "HB",
+    "speed": null,
+    "team": {
+      "abbreviation": "GEOTEC",
+      "city": "Georgia Tech",
+      "id": 176,
+      "nickname": "Yellow Jackets",
+      "primary_color": "#b3a369",
+      "secondary_color": "#000000",
+      "slug": "georgia-tech-yellow-jackets"
+    },
+    "weight": 198
+  }
+}

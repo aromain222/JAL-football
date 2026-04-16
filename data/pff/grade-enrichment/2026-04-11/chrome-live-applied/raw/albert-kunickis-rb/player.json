@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Albert",
+      "height": 603,
+      "id": 162844,
+      "jersey_number": "26",
+      "last_name": "Kunickis III",
+      "position": "HB",
+      "speed": null,
+      "team": {
+        "abbreviation": "NORTHW",
+        "city": "Northwestern",
+        "id": 256,
+        "nickname": "Wildcats",
+        "primary_color": "#4e2a84",
+        "secondary_color": "#ffffff",
+        "slug": "northwestern-wildcats"
+      },
+      "weight": 225
+    }
+  ]
+}

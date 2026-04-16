@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "SN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Richard",
+    "height": 600,
+    "id": 146097,
+    "jersey_number": "D43",
+    "last_name": "Toney Jr.",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "PURBOI",
+      "city": "Purdue",
+      "id": 273,
+      "nickname": "Boilermakers",
+      "primary_color": "#d9c89e",
+      "secondary_color": "#000000",
+      "slug": "purdue-boilermakers"
+    },
+    "weight": 195
+  }
+}

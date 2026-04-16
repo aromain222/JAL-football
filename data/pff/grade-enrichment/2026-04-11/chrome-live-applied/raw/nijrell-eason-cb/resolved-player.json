@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Nijrell",
+    "height": 511,
+    "id": 188486,
+    "jersey_number": "D22",
+    "last_name": "Eason II",
+    "position": "CB",
+    "speed": null,
+    "team": {
+      "abbreviation": "UNALUM",
+      "city": "Northern Arizona",
+      "id": 252,
+      "nickname": "Lumberjacks",
+      "primary_color": "#003366",
+      "secondary_color": "#ffd200",
+      "slug": "northern-arizona-lumberjacks"
+    },
+    "weight": 185
+  }
+}

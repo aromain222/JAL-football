@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Nic",
+    "height": 604,
+    "id": 191158,
+    "jersey_number": "69",
+    "last_name": "Reeves",
+    "position": "G",
+    "speed": null,
+    "team": {
+      "abbreviation": "TEMPLE",
+      "city": "Temple",
+      "id": 306,
+      "nickname": "Owls",
+      "primary_color": "#9d2235",
+      "secondary_color": "#8a8d8f",
+      "slug": "temple-owls"
+    },
+    "weight": 300
+  }
+}

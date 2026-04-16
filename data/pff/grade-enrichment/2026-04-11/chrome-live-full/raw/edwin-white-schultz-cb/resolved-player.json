@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Edwin",
+    "height": 601,
+    "id": 144583,
+    "jersey_number": "D1",
+    "last_name": "White-Schultz",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "NALABA",
+      "city": "North Alabama",
+      "id": 389,
+      "nickname": "Lions",
+      "primary_color": "#46166b",
+      "secondary_color": "#db9f11",
+      "slug": "north-alabama-lions"
+    },
+    "weight": 205
+  }
+}

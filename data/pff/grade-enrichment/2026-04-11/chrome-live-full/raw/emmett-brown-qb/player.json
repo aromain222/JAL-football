@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Emmett",
+      "height": 600,
+      "id": 157344,
+      "jersey_number": "9",
+      "last_name": "Brown",
+      "position": "QB",
+      "speed": null,
+      "team": {
+        "abbreviation": "COASTA",
+        "city": "Coastal Carolina",
+        "id": 141,
+        "nickname": "Chanticleers",
+        "primary_color": "#009297",
+        "secondary_color": "#ffffff",
+        "slug": "coastal-carolina-chanticleers"
+      },
+      "weight": 188
+    }
+  ]
+}

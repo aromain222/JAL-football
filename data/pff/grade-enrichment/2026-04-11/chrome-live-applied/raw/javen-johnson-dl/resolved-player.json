@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Javen",
+    "height": 602,
+    "id": 165429,
+    "jersey_number": "D99",
+    "last_name": "Johnson",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "HAMPTO",
+      "city": "Hampton",
+      "id": 178,
+      "nickname": "Pirates",
+      "primary_color": "#224db0",
+      "secondary_color": "#ffffff",
+      "slug": "hampton-pirates"
+    },
+    "weight": 310
+  }
+}

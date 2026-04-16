@@ -1,0 +1,45 @@
+{
+  "defense_summary": {
+    "subject": {
+      "eligible": "defense",
+      "grade_keys": [
+        "defense",
+        "defense_penalty",
+        "run_defense",
+        "pass_rush_defense",
+        "coverage_defense",
+        "tackle"
+      ],
+      "league_id": 2,
+      "player_id": 190328,
+      "roster": "defense",
+      "season": 2025,
+      "secondary": false,
+      "week": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    "week_totals": [],
+    "weeks": []
+  }
+}

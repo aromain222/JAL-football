@@ -1,0 +1,91 @@
+{
+   "checksum": "e9e3a2a162e79b78f36b9aa491b40c7b",
+   "roots": {
+      "bookmark_bar": {
+         "children": [  ],
+         "date_added": "13387575202931933",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "0bc5d13f-2cba-5d74-951f-3f233fe6c908",
+         "id": "1",
+         "name": "Bookmarks Bar",
+         "type": "folder"
+      },
+      "other": {
+         "children": [ {
+            "date_added": "13389130319655539",
+            "date_last_used": "0",
+            "guid": "09ae105c-16b0-4eeb-8c30-918a3d01e341",
+            "id": "5",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "👑BIGGEST ACBUY BUDGET SHEET 👑 - Google Sheets",
+            "type": "url",
+            "url": "https://docs.google.com/spreadsheets/d/1ENGZ-YVl7016ogB4RWA70sX97UlgICkc-9w4AiC31to/edit?gid=1884613276#gid=1884613276"
+         }, {
+            "date_added": "13389144068921898",
+            "date_last_used": "0",
+            "guid": "fef230ab-7f91-469f-bddf-a47adbcc9650",
+            "id": "6",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Best ACBuy SpreadSheet - Google Sheets",
+            "type": "url",
+            "url": "https://docs.google.com/spreadsheets/d/11sDC-i0wHzKKArCidG_pFxIzlJxPbfgszjDZ9jTv6Ao/edit?gid=1769281056#gid=1769281056"
+         }, {
+            "date_added": "13389741801105944",
+            "date_last_used": "0",
+            "guid": "2dbdc328-8f8f-4727-b3e0-35086f9cb864",
+            "id": "7",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Astranis Space Technologies - Google Docs",
+            "type": "url",
+            "url": "https://docs.google.com/document/d/12UPhu34lWfVtWFKpl9zTMLhTdrgSR-TUyh0uHNzZ3bI/edit?tab=t.0"
+         }, {
+            "date_added": "13405020344593108",
+            "date_last_used": "0",
+            "guid": "bbe15f2e-6dfa-41dc-a3fc-ec4a1eb8b911",
+            "id": "9",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "Untitled document - Google Docs",
+            "type": "url",
+            "url": "https://docs.google.com/document/d/1UGVeWb5wly9W9rPMIAbJItjpijgICO7omu4qL6e4jPk/edit?tab=t.0"
+         }, {
+            "date_added": "13405909720059047",
+            "date_last_used": "0",
+            "guid": "4d17ed89-121c-4604-aec4-2520c1e9f812",
+            "id": "11",
+            "meta_info": {
+               "power_bookmark_meta": ""
+            },
+            "name": "(1) Benjamin Phillips III , MBA | LinkedIn",
+            "type": "url",
+            "url": "https://www.linkedin.com/in/benjaminphillipsiii/"
+         } ],
+         "date_added": "13387575202931940",
+         "date_last_used": "0",
+         "date_modified": "13405909720059047",
+         "guid": "82b081ec-3dd3-529c-8475-ab6c344590dd",
+         "id": "2",
+         "name": "Other Bookmarks",
+         "type": "folder"
+      },
+      "synced": {
+         "children": [  ],
+         "date_added": "13387575202931944",
+         "date_last_used": "0",
+         "date_modified": "0",
+         "guid": "4cf2e351-0e85-532b-bb37-df045d8f8d0f",
+         "id": "3",
+         "name": "Mobile Bookmarks",
+         "type": "folder"
+      }
+   },
+   "version": 1
+}

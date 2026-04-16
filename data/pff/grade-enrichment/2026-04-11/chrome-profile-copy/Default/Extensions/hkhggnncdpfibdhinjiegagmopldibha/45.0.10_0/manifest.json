@@ -1,0 +1,56 @@
+{
+   "action": {
+      "default_icon": {
+         "19": "/images/icons/icon-19_default.png",
+         "38": "/images/icons/icon-38_default.png"
+      },
+      "default_popup": "popup.html?source=toolbar",
+      "default_title": "Checker Plus for Google Calendar™"
+   },
+   "background": {
+      "service_worker": "js/background.js"
+   },
+   "commands": {
+      "dismissEvent": {
+         "description": "__MSG_dismissAllInNotificationWindow__"
+      },
+      "quickAddSelection": {
+         "description": "__MSG_quickAdd__"
+      }
+   },
+   "default_locale": "en",
+   "description": "__MSG_description__",
+   "homepage_url": "https://jasonsavard.com?ref=homepage_url&ext=calendar",
+   "icons": {
+      "128": "/images/icons/icon-128.png",
+      "16": "/images/icons/icon-16.png",
+      "32": "/images/icons/icon-32_default.png",
+      "48": "/images/icons/icon-48.png"
+   },
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC2G3FhLiIdfGJnNdt4KLc53t7R8rMAe5Fl4ffg2lebQVBbz1i561A/LtARLMTSB8FYKTDUS5D+iXB8XEhy8qOE+PCqe6YuuyYrarMZZg2c/F7hdYnw9vpVbdSkOqkinfRg2uf+gRKuY5Vj26E/d6rS+b/uION6DytChgRpHHQkJQIDAQAB",
+   "manifest_version": 3,
+   "name": "Checker Plus for Google Calendar™",
+   "oauth2": {
+      "client_id": "74919836968-ube40emj4vdiujk6q2h12l0n5sgblkvu.apps.googleusercontent.com",
+      "scopes": [ "https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/calendar.readonly", "https://www.googleapis.com/auth/calendar.events", "https://www.googleapis.com/auth/tasks" ]
+   },
+   "omnibox": {
+      "keyword": "cal"
+   },
+   "optional_host_permissions": [ "https://calendar.google.com/" ],
+   "optional_permissions": [ "background" ],
+   "options_page": "options.html",
+   "permissions": [ "alarms", "storage", "tts", "idle", "contextMenus", "notifications", "activeTab", "gcm", "identity", "unlimitedStorage", "system.display", "offscreen", "scripting", "sidePanel" ],
+   "side_panel": {
+      "default_path": "popup.html"
+   },
+   "storage": {
+      "managed_schema": "schema.json"
+   },
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "45.0.10",
+   "web_accessible_resources": [ {
+      "matches": [ "https://jasonsavard.com/*", "https://checkout.stripe.com/*", "https://www.paypal.com/*", "https://commerce.coinbase.com/*" ],
+      "resources": [ "options.html", "contribute.html" ]
+   } ]
+}

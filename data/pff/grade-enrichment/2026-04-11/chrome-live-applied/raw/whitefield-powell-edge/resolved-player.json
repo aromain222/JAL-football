@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RS",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Whitefield",
+    "height": 604,
+    "id": 176327,
+    "jersey_number": "D53",
+    "last_name": "Powell",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "COLOST",
+      "city": "Colorado State",
+      "id": 144,
+      "nickname": "Rams",
+      "primary_color": "#1e4d2b",
+      "secondary_color": "#c8c372",
+      "slug": "colorado-state-rams"
+    },
+    "weight": 230
+  }
+}

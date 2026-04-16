@@ -1,0 +1,15 @@
+[
+  {
+    "id": 1,
+    "action": {
+      "type": "modifyHeaders",
+      "responseHeaders": [
+        { "header": "cross-origin-opener-policy", "operation": "remove" }
+      ]
+    },
+    "condition": {
+      "urlFilter": "https://classroom.google.com/*c/*a/*attachFileId*",
+      "resourceTypes": ["main_frame"]
+    }
+  }
+]

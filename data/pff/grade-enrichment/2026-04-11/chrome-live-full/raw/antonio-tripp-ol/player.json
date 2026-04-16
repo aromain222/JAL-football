@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RS",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Antonio",
+      "height": 604,
+      "id": 170095,
+      "jersey_number": "71",
+      "last_name": "Tripp Jr.",
+      "position": "G",
+      "speed": null,
+      "team": {
+        "abbreviation": "FIUGOP",
+        "city": "Florida International",
+        "id": 166,
+        "nickname": "Golden Panthers",
+        "primary_color": "#c5960b",
+        "secondary_color": "#002d62",
+        "slug": "florida-international-golden-panthers"
+      },
+      "weight": 310
+    }
+  ]
+}

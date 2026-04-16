@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RF",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Damari",
+      "height": 509,
+      "id": 184001,
+      "jersey_number": "O12",
+      "last_name": "Jefferson",
+      "position": "WR",
+      "speed": null,
+      "team": {
+        "abbreviation": "WKUHIL",
+        "city": "Western Kentucky",
+        "id": 346,
+        "nickname": "Hilltoppers",
+        "primary_color": "#c60c30",
+        "secondary_color": "#000000",
+        "slug": "western-kentucky-hilltoppers"
+      },
+      "weight": 175
+    }
+  ]
+}

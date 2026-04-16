@@ -1,0 +1,542 @@
+{
+   "24hourMode": {
+      "message": "Formato do horário: 24 horas"
+   },
+   "24hourModeTitle": {
+      "message": "Exibe o horário no padrão: 24horas, ex: 18:00"
+   },
+   "LAST_ITEM_DO_NOT_REMOVE": {
+      "message": "DO NOT REMOVE"
+   },
+   "Xminute": {
+      "message": "$1 minuto"
+   },
+   "Xminutes": {
+      "message": "$1 minutos"
+   },
+   "Xseconds": {
+      "message": "$1 segundos"
+   },
+   "Xweeks": {
+      "message": "$1 semanas"
+   },
+   "aboutMe": {
+      "message": "Sobre mim"
+   },
+   "account": {
+      "message": "Conta"
+   },
+   "addSpeechEngines": {
+      "message": "Adicionar mecanismos de Fala"
+   },
+   "addToGoogleCalendar": {
+      "message": "Adicionar ao Google Agenda"
+   },
+   "addedForSomeday": {
+      "message": "Adicionado $1 para $2"
+   },
+   "addedForToday": {
+      "message": "Adicionado $1 para hoje"
+   },
+   "addedForTodayAt": {
+      "message": "Adicionado $1 para $2"
+   },
+   "addedForTomorrow": {
+      "message": "Adicionado $1 para amanhã"
+   },
+   "addedForTomorrowAt": {
+      "message": "Adicionado $1 para amanhã às $2"
+   },
+   "addedTimedEventInThePast": {
+      "message": "A hora deste evento já passou! Gostaria de remarcar este evento para a mesma hora na data de amanhã?"
+   },
+   "agenda": {
+      "message": "Compromissos"
+   },
+   "all": {
+      "message": "Todos"
+   },
+   "allDayText": {
+      "message": "durante todo o dia"
+   },
+   "allowThisExtensionToReadYourFacebookEvent": {
+      "message": "Permitir que esta extensão aprontar seu evento Facebook?"
+   },
+   "alreadyDonated": {
+      "message": "Já doou?"
+   },
+   "amount": {
+      "message": "Quantidade"
+   },
+   "button": {
+      "message": "Botão"
+   },
+   "calendar": {
+      "message": "Agenda"
+   },
+   "changeThisDomain": {
+      "message": "Para alterar este e-mail de domínio agora $1"
+   },
+   "changeThisDomain2": {
+      "message": "Sair e entrar com um usuário diferente"
+   },
+   "changingIcon": {
+      "message": "Alterar ícone"
+   },
+   "clearCache": {
+      "message": "Limpar o cache da extensão"
+   },
+   "closeEsc": {
+      "message": "Fechar (Esc)"
+   },
+   "continue": {
+      "message": "Continuar"
+   },
+   "createDeleteEvents": {
+      "message": "Criar ou excluir eventos dentro do mês visualizado"
+   },
+   "createEvent": {
+      "message": "Criar evento"
+   },
+   "custom": {
+      "message": "Personalizar"
+   },
+   "d": {
+      "message": "d"
+   },
+   "day": {
+      "message": "Dia"
+   },
+   "daysRemaining": {
+      "message": "Mostrar os dias restantes em vez da hora do evento"
+   },
+   "daysRemainingToolTip": {
+      "message": "Se o evento é daqui alguns dias, mostra os dias restantes, ex. 2d"
+   },
+   "debug": {
+      "message": "Depurar"
+   },
+   "delete": {
+      "message": "Excluir"
+   },
+   "developingMore": {
+      "message": "Estou trabalhando duro para atender suas solicitações... Colabore!"
+   },
+   "dimPastEvents": {
+      "message": "Tom cinza para dias passados"
+   },
+   "ding": {
+      "message": "Soar"
+   },
+   "dismiss": {
+      "message": "Descartar"
+   },
+   "dismissAll": {
+      "message": "Descartar todos"
+   },
+   "doNotShowNotificationsForAlldayEvents": {
+      "message": "Não mostrar notificações para eventos que ocupam o dia todo"
+   },
+   "doNotShowPastNotifications": {
+      "message": "Não mostrar notificações de eventos passados"
+   },
+   "doNotShowPastNotificationsTitle": {
+      "message": "Não mostre todas as notificações que ocorreram antes de você abrir seu navegador. Útil quando você muda constantemente de computadores."
+   },
+   "donationRequired": {
+      "message": "Exige Doação!"
+   },
+   "editEventDetails": {
+      "message": "Editar evento"
+   },
+   "email": {
+      "message": "E-mail:"
+   },
+   "enterAnAmount": {
+      "message": "Você deve inserir um valor!"
+   },
+   "eventAdded": {
+      "message": "Evento Adicionado"
+   },
+   "eventDeleted": {
+      "message": "Evento excluído"
+   },
+   "eventDescription": {
+      "message": "Descrição"
+   },
+   "eventUpdated": {
+      "message": "O evento foi atualizado"
+   },
+   "ex": {
+      "message": "exemplo:"
+   },
+   "example": {
+      "message": "exemplo"
+   },
+   "excludeHiddenCalendarsFromButton": {
+      "message": "Excluir calendários ocultos do ícone de botão"
+   },
+   "excludeHiddenCalendarsFromButtonToolTip": {
+      "message": "NÃO Mostrar eventos de calendários, que não são selecionados/mostrados na sua página da Web do Google Calendar, em outras palavras, sincronizar os calendários visíveis/eventos com o que você vê em sua página do Google Agenda"
+   },
+   "excludeRecurringEventsButtonIcon": {
+      "message": "Excluir eventos repetidos"
+   },
+   "excludeRecurringEventsButtonIconTooltip": {
+      "message": "Exclui toda a série de eventos repetidos, mas você ainda receberá suas notificações"
+   },
+   "excluded": {
+      "message": "Excluída"
+   },
+   "extraFeatures": {
+      "message": "Recursos Extras"
+   },
+   "failureWithPayPalPurchase": {
+      "message": "Cancelada ou Falha na transação! Tentar novamente pelo $1?"
+   },
+   "followMe": {
+      "message": "Siga-me"
+   },
+   "forever": {
+      "message": "Para sempre"
+   },
+   "general": {
+      "message": "Geral"
+   },
+   "googleAccount": {
+      "message": "Conta do Google"
+   },
+   "h": {
+      "message": "h"
+   },
+   "highlightWeekends": {
+      "message": "Finais de semana em destaque"
+   },
+   "hours": {
+      "message": "horas"
+   },
+   "hoursRemaining": {
+      "message": "Mostrar os minutos restantes que faltam para o evento"
+   },
+   "hoursRemainingTitle": {
+      "message": "Se o evento do próximo dia vier num tempo menor a 24 horas, tempo restante será exibido em horas. ex: 4h"
+   },
+   "iconClassic": {
+      "message": "Ícone clássico"
+   },
+   "iconDefault": {
+      "message": "Ícone padrão"
+   },
+   "iconDefault2WithDate": {
+      "message": "Ícone padrão com data atual"
+   },
+   "iconMonochrome": {
+      "message": "Ícone monocromático"
+   },
+   "iconNew": {
+      "message": "Novo Ícone"
+   },
+   "iconNew2": {
+      "message": "Ícone escuro"
+   },
+   "iconNew2WithDate": {
+      "message": "Ícone escuro para data atual"
+   },
+   "iconNewWithDate": {
+      "message": "Novo ícone padrão para data atual"
+   },
+   "iconTooltip": {
+      "message": "Este ícone pode ser usado para o botão pop-up"
+   },
+   "language": {
+      "message": "Linguagem"
+   },
+   "languageToolTip": {
+      "message": "Altera o idioma de notificação de display e voz. Nota: Você pode ver muitas línguas disponíveis porque estas são as regras dos Apps, porém algumas línguas não possuem tradução, então o sistema automaticamente tentará verificar se existe tradução para a linguagem padrão do seu navegador, caso contrário mostrará o inglês como padrão. Atenção: Para alterar a linguagem da Agenda na pop-up use as próprias configurações do Google Agenda."
+   },
+   "licenseOnlyValidFor": {
+      "message": "A licença só será válida para usuários do Google Agenda"
+   },
+   "loading": {
+      "message": "Carregando..."
+   },
+   "longerSnoozeTimes": {
+      "message": "Tempos mais longos de soneca"
+   },
+   "m": {
+      "message": "m"
+   },
+   "maxDaysAhead": {
+      "message": "Número de dias que antecedem"
+   },
+   "maxDaysAheadTitle": {
+      "message": "Número máximo de dias para mostrar o ícone de contagem regressiva"
+   },
+   "minimumAmount": {
+      "message": "Você deve doar pelo menos $1"
+   },
+   "month": {
+      "message": "Mês"
+   },
+   "more": {
+      "message": "mais"
+   },
+   "moreInfo": {
+      "message": "Mais Informações"
+   },
+   "morning": {
+      "message": "manhã"
+   },
+   "multipleUserLicense": {
+      "message": "Obter licença de multi-usuário para uma Organização ou Empresa"
+   },
+   "night": {
+      "message": "noite"
+   },
+   "notLoggedIn": {
+      "message": "Não logado"
+   },
+   "notificationSound": {
+      "message": "Notificação Sonora"
+   },
+   "notificationTextToSpeech": {
+      "message": "Notificação de Voz"
+   },
+   "notificationTextToSpeechTitle": {
+      "message": "O título do seu evento será falado em voz alta usando a conversão de texto em fala, quando o computador estiver em outro ambiente!"
+   },
+   "notifications": {
+      "message": "Notificações"
+   },
+   "omniboxDefault": {
+      "message": "jantar às 19h"
+   },
+   "omniboxDefaultTom": {
+      "message": "despertar às 8h"
+   },
+   "openCalendar": {
+      "message": "Abrir Agenda"
+   },
+   "option": {
+      "message": "opções"
+   },
+   "options": {
+      "message": "Opções"
+   },
+   "or": {
+      "message": "ou"
+   },
+   "pitch": {
+      "message": "Determinar tom"
+   },
+   "processing": {
+      "message": "Processando"
+   },
+   "quickAdd": {
+      "message": "Adição Rápida"
+   },
+   "quickAddDefaultText": {
+      "message": "Exemplo: 19h Jantar no Bob's"
+   },
+   "quickAddDefaultTextMultipleDays": {
+      "message": "por exemplo, visitar em Nova York"
+   },
+   "quickAddDefaultTextMultipleHours": {
+      "message": "por exemplo, Café da manhã na Tiffany"
+   },
+   "quickAddTitle": {
+      "message": "Exemplo: Futebol em 20 minutos."
+   },
+   "rate": {
+      "message": "Taxa"
+   },
+   "rateTitle": {
+      "message": "Velocidade da Fala: Quantidade de palavras por minuto"
+   },
+   "reducedDonationAd_popup": {
+      "message": "Boas notícias para usuários antigos! Você pode obter os recursos de $1 por apenas $2"
+   },
+   "refresh": {
+      "message": "Atualizar"
+   },
+   "removeShareLinks": {
+      "message": "Remover links compartilhados"
+   },
+   "removeShareLinksTooltip": {
+      "message": "Remove links do Facebook, Twitter entre outros. Abaixo segue pop-up da Agenda"
+   },
+   "reschedule": {
+      "message": "Reagendar"
+   },
+   "runInBackground": {
+      "message": "Executar em segundo plano mesmo quando o Google Chrome estiver encerrado"
+   },
+   "runInBackgroundToolTip": {
+      "message": "Continuar recebendo novos e-mails e notificações mesmo quando seu navegador estiver encerrado! Recomendo este recurso apenas para usuários avançados."
+   },
+   "runInBackgroundWarning1": {
+      "message": "Por favor, leia cuidadosamente as informações sobre: $1"
+   },
+   "runInBackgroundWarning1b": {
+      "message": "Apps em Segundo Plano"
+   },
+   "runInBackgroundWarning2": {
+      "message": "Se no Apps estiver desativada a função de segundo plano do Chrome você pode reativá-la lendo: $1"
+   },
+   "runInBackgroundWarning2b": {
+      "message": "Ajuda & Suporte"
+   },
+   "runInBackgroundWarning3": {
+      "message": "Talvez você precise usar a caixa $1 na página de login do Gmail"
+   },
+   "runInBackgroundWarning3b": {
+      "message": "Permanecer conectado"
+   },
+   "save": {
+      "message": "Salvar"
+   },
+   "saving": {
+      "message": "Salvando..."
+   },
+   "setDateTime": {
+      "message": "Definir data/hora"
+   },
+   "share": {
+      "message": "Compartilhar"
+   },
+   "showButtonTooltip": {
+      "message": "Mostrar a ferramenta de dicas quando passar o mouse sobre o ícone"
+   },
+   "showButtonTooltipTooltip": {
+      "message": "Mostrar os próximos eventos em uma caixa flutuante quando passar o mouse sobre o ícone"
+   },
+   "showConsoleMessages": {
+      "message": "Registro de Mensagens na Console do Javascript"
+   },
+   "showConsoleMessagesTitle": {
+      "message": "Significante apenas para a depuração e um tempo mais retardado da extensão!"
+   },
+   "showContextMenuItem": {
+      "message": "Mostrar contexto de menu ao clicar com o botão direito"
+   },
+   "showContextMenuItemTooltip": {
+      "message": "Mostrar opções de contexto ao clicar com o botão direito na página web ou na página do webmail para adicionar rapidamente as opções a sua agenda"
+   },
+   "showDayOnBadge": {
+      "message": "Ver dia atual da semana"
+   },
+   "showDayOnBadgeExceptWhenDaysLeft": {
+      "message": "Exceto quando o próximo evento ocorrerá em poucos dias"
+   },
+   "showDayOnBadgeExceptWhenHoursLeft": {
+      "message": "Exceto quando o próximo evento ocorrerá em poucas horas"
+   },
+   "showDayOnBadgeExceptWhenMinutesLeft": {
+      "message": "Exceto quando o próximo evento ocorrerá em poucos minutos"
+   },
+   "showDayOnBadgeTooltip": {
+      "message": "Em vez de contagem regressiva para a exibição do próximo do mesmo dia da semana como 'Terça', etc. Nota: Você também pode criar exceções!"
+   },
+   "showDesktopNotifications": {
+      "message": "Mostrar notificações via Desktop"
+   },
+   "showEventTimeOnBadge": {
+      "message": "Visualizar a hora do evento no ícone do botão"
+   },
+   "showEventTimeOnBadgeTooltip": {
+      "message": "Exibir o tempo até o próximo evento no topo do ícone"
+   },
+   "showMinutesLeftInBadge": {
+      "message": "Mostrar os minutos restantes em vez da hora do evento"
+   },
+   "showMinutesLeftInBadgeTitle": {
+      "message": "Se o evento está chegando ao fim, mostrar tempo restante em minutos"
+   },
+   "showTimeSpecificEventsBeforeAllDay": {
+      "message": "Mostrar o tempo específico dos eventos antes de mostrar todos eventos do dia"
+   },
+   "showTimeSpecificEventsBeforeAllDayTooltip": {
+      "message": "Se amanhã você tem um evento que ocupe todo o dia e um evento que inicia às 10 da manhã, ele mostrará o tempo restante para as 10 da manhã em minutos e não em dias."
+   },
+   "signIn": {
+      "message": "Entrar"
+   },
+   "signInAsUserOfOrg": {
+      "message": "Você deve $1 com o e-mail de sua Organização"
+   },
+   "signInAsUserOfOrg2": {
+      "message": "Sair e entrar no seu Google Agenda"
+   },
+   "snooze": {
+      "message": "Soneca"
+   },
+   "snoozeAll": {
+      "message": "Soneca para todos"
+   },
+   "somedayAt": {
+      "message": "$1 em"
+   },
+   "sound": {
+      "message": "Som"
+   },
+   "speechEngine": {
+      "message": "Mecanismo de Fala"
+   },
+   "successful": {
+      "message": "Sucesso"
+   },
+   "testDescription": {
+      "message": "Descrição do ensaio"
+   },
+   "testEvent": {
+      "message": "Evento de Teste"
+   },
+   "testIt": {
+      "message": "Testar!"
+   },
+   "thankYouForYourContribution": {
+      "message": "As futuras implementações estão desbloqueadas. Muito obrigado pela sua contribuição!"
+   },
+   "todayAt": {
+      "message": "Hoje às"
+   },
+   "tom": {
+      "message": "Tom"
+   },
+   "tomorrowAt": {
+      "message": "Amanhã às"
+   },
+   "undo": {
+      "message": "Desfazer"
+   },
+   "view": {
+      "message": "Exibir"
+   },
+   "voiceNotificationOnlyIfIdle": {
+      "message": "Utilize somente se você estiver longe do computador"
+   },
+   "voiceNotificationOnlyIfIdleTooltip": {
+      "message": "Utilize esta opção se você deseja apenas ouvir uma notificação de voz quando seu computador não estiver em uso. Este recurso poderá deixar algumas máquinas antigas mais lentas. Se o computador entrar em Standby o recurso não funcionará."
+   },
+   "volume": {
+      "message": "Volume"
+   },
+   "week": {
+      "message": "Semana"
+   },
+   "what": {
+      "message": "O que"
+   },
+   "when": {
+      "message": "Quando"
+   },
+   "wide": {
+      "message": "Amplo"
+   },
+   "widget": {
+      "message": "Widget"
+   },
+   "year": {
+      "message": "Ano"
+   }
+}

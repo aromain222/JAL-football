@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RS",
+      "current_eligible_year": 2020,
+      "dob": null,
+      "draft": null,
+      "first_name": "Anthony",
+      "height": 603,
+      "id": 43630,
+      "jersey_number": "D33",
+      "last_name": "Robinson",
+      "position": "DI",
+      "speed": null,
+      "team": {
+        "abbreviation": "WKUHIL",
+        "city": "Western Kentucky",
+        "id": 346,
+        "nickname": "Hilltoppers",
+        "primary_color": "#c60c30",
+        "secondary_color": "#000000",
+        "slug": "western-kentucky-hilltoppers"
+      },
+      "weight": 235
+    }
+  ]
+}

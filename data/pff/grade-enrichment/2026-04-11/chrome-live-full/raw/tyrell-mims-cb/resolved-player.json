@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": "Villanova Wildcats",
+    "current_class": "G",
+    "current_eligible_year": 2025,
+    "dob": null,
+    "draft": null,
+    "first_name": "Tyrell",
+    "height": 510,
+    "id": 142398,
+    "jersey_number": "D7",
+    "last_name": "Mims",
+    "position": "CB",
+    "speed": null,
+    "team": {
+      "abbreviation": "VILLAN",
+      "city": "Villanova",
+      "id": 334,
+      "nickname": "Wildcats",
+      "primary_color": "#00205b",
+      "secondary_color": "#13b5ea",
+      "slug": "villanova-wildcats"
+    },
+    "weight": 195
+  }
+}

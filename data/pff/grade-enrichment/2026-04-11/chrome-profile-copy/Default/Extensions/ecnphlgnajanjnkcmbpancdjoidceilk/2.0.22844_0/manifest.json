@@ -1,0 +1,172 @@
+{
+   "action": {
+      "default_icon": {
+         "19": "icon/icon19.png",
+         "38": "icon/icon38.png"
+      },
+      "default_title": "Kami - PDF and Document Annotation"
+   },
+   "background": {
+      "service_worker": "background.js"
+   },
+   "commands": {
+      "focus-kami-companion": {
+         "description": "__MSG_FocusKamiCompanion__",
+         "suggested_key": {
+            "chromeos": "Alt+Shift+K",
+            "linux": "Alt+Shift+K",
+            "mac": "Alt+Shift+K",
+            "windows": "Alt+Shift+K"
+         }
+      }
+   },
+   "content_scripts": [ {
+      "js": [ "content-scripts/browser_open_with_kami.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_idle"
+   }, {
+      "all_frames": true,
+      "css": [ "content-scripts/canva.css" ],
+      "js": [ "content-scripts/canva.js" ],
+      "matches": [ "https://www.canva.com/design/*" ]
+   }, {
+      "css": [ "content-scripts/canvas.css" ],
+      "js": [ "content-scripts/canvas.js" ],
+      "matches": [ "https://*.instructure.com/*/assignments/*" ],
+      "run_at": "document_end"
+   }, {
+      "css": [ "content-scripts/canvas_bluebonnet.css" ],
+      "js": [ "content-scripts/canvas_bluebonnet.js" ],
+      "matches": [ "https://tealearn.instructure.com/courses/*/pages/*" ]
+   }, {
+      "js": [ "content-scripts/canvas_new_assignment.js" ],
+      "matches": [ "https://*.instructure.com/*/assignments/*/edit*", "https://*.instructure.com/*/assignments/new*" ]
+   }, {
+      "js": [ "content-scripts/canvas_speed_grader.js" ],
+      "matches": [ "https://*.instructure.com/*/speed_grader*" ]
+   }, {
+      "all_frames": true,
+      "js": [ "content-scripts/companion_mcgraw_hill.js" ],
+      "match_origin_as_fallback": true,
+      "matches": [ "https://my.mheducation.com/*" ],
+      "run_at": "document_end"
+   }, {
+      "js": [ "content-scripts/global.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_end"
+   }, {
+      "all_frames": true,
+      "exclude_matches": [ "https://my.mheducation.com/*" ],
+      "js": [ "content-scripts/global_all_frames.js" ],
+      "match_origin_as_fallback": false,
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_end"
+   }, {
+      "all_frames": true,
+      "css": [ "content-scripts/google_classroom.css" ],
+      "js": [ "content-scripts/google_classroom.js" ],
+      "matches": [ "https://classroom.google.com/*" ]
+   }, {
+      "all_frames": true,
+      "js": [ "content-scripts/google_classroom_grading.js" ],
+      "matches": [ "https://classroom.google.com/*g/tg/*" ]
+   }, {
+      "all_frames": true,
+      "js": [ "content-scripts/google_classroom_picker.js" ],
+      "matches": [ "https://drive.google.com/picker*" ],
+      "run_at": "document_end"
+   }, {
+      "all_frames": true,
+      "js": [ "content-scripts/google_docs.js" ],
+      "matches": [ "https://docs.google.com/document/d/*", "https://docs.google.com/presentation/d/*", "https://docs.google.com/spreadsheets/d/*" ]
+   }, {
+      "all_frames": true,
+      "css": [ "content-scripts/google_docs_styles.css" ],
+      "js": [ "content-scripts/google_docs_styles.js" ],
+      "matches": [ "https://docs.google.com/*" ]
+   }, {
+      "js": [ "content-scripts/google_drive.js" ],
+      "matches": [ "https://drive.google.com/*" ]
+   }, {
+      "js": [ "content-scripts/notablemain_bootstrap.js" ],
+      "matches": [ "https://*.kami.systems/web/*", "https://*.kamihq.com/web/*", "https://*.kamipdf.com/web/*" ],
+      "run_at": "document_idle"
+   }, {
+      "all_frames": true,
+      "css": [ "content-scripts/office365_inner.css" ],
+      "js": [ "content-scripts/office365_inner.js" ],
+      "matches": [ "https://*.officeapps.live.com/*" ],
+      "run_at": "document_idle"
+   }, {
+      "js": [ "content-scripts/office365_outer.js" ],
+      "matches": [ "https://*.onedrive.live.com/*", "https://*.sharepoint.com/*p*/r/*", "https://*.sharepoint.com/*w*/r/*" ],
+      "run_at": "document_idle"
+   }, {
+      "js": [ "content-scripts/peardeck.js" ],
+      "matches": [ "https://app.peardeck.com/*" ],
+      "run_at": "document_end"
+   }, {
+      "css": [ "content-scripts/teachers_pay_teachers.css" ],
+      "js": [ "content-scripts/teachers_pay_teachers.js" ],
+      "matches": [ "https://www.teacherspayteachers.com/**" ]
+   } ],
+   "content_security_policy": {
+      "extension_pages": "script-src 'self'; object-src 'self'; connect-src http: https: data: blob: filesystem: file:;"
+   },
+   "declarative_net_request": {
+      "rule_resources": [ {
+         "enabled": true,
+         "id": "ruleset_global",
+         "path": "rules_global.json"
+      } ]
+   },
+   "default_locale": "en",
+   "description": "Kami is an interactive learning platform empowering students and enhancing the way teachers teach, feedback, and assess.",
+   "externally_connectable": {
+      "matches": [ "https://*.kamihq.com/*", "https://*.kamipdf.com/*", "https://*.kami.systems/*" ]
+   },
+   "homepage_url": "https://www.kamiapp.com",
+   "host_permissions": [ "\u003Call_urls>" ],
+   "icons": {
+      "128": "icon/icon128.png",
+      "16": "icon/icon16.png",
+      "256": "icon/icon256.png",
+      "32": "icon/icon32.png",
+      "48": "icon/icon48.png",
+      "96": "icon/icon96.png"
+   },
+   "incognito": "split",
+   "key": "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCwR9U86SNBHfB5fmt90yCpMIsejJg6Is0ltJcMgyDw74cPGXNuhfbfkJEVOBJsGXTad/i8NIFDDUFi1R92BBVlrXkF/Wz0oqGDhaTVafpAJDdVACImLMTT4N/XBsmq45trG+v4PzrqIyXrX9dOUo5K83d/ZfUw1iZtm7rNlR9CswIDAQAB",
+   "manifest_version": 3,
+   "minimum_chrome_version": "103",
+   "name": "Kami for Google Chrome™",
+   "oauth2": {
+      "client_id": "185741998891-boet3ik0ho58mic9ttbhbtl75bjekic5.apps.googleusercontent.com",
+      "scopes": [ "https://www.googleapis.com/auth/drive", "https://www.googleapis.com/auth/drive.install", "https://www.googleapis.com/auth/userinfo.email", "https://www.googleapis.com/auth/userinfo.profile", "https://www.googleapis.com/auth/drive.readonly", "https://www.googleapis.com/auth/classroom.courses", "https://www.googleapis.com/auth/classroom.coursework.me", "https://www.googleapis.com/auth/classroom.coursework.students" ]
+   },
+   "options_page": "/options.html",
+   "permissions": [ "webRequest", "tabs", "webNavigation", "contextMenus", "storage", "declarativeNetRequest", "scripting", "offscreen", "printerProvider" ],
+   "short_name": "Kami",
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "2.0.22844",
+   "web_accessible_resources": [ {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "images/tick.svg", "assets/google_classroom_styles.css", "assets/browser_open_with_kami_styles.css", "schoology_page_script.js", "assets/schoology_page_script.css", "fonts/*.woff2" ]
+   }, {
+      "matches": [ "https://*.kamihq.com/*", "https://*.kamipdf.com/*", "https://*.kami.systems/*" ],
+      "resources": [ "hello" ]
+   }, {
+      "matches": [ "https://classroom.google.com/*" ],
+      "resources": [ "google_classroom_page_script.js" ]
+   }, {
+      "matches": [ "https://www.teacherspayteachers.com/*" ],
+      "resources": [ "images/kami-logo-full-white.svg" ]
+   }, {
+      "matches": [ "https://*.sharepoint.com/*", "https://*.live.com/*" ],
+      "resources": [ "office365_outer_page.js" ]
+   }, {
+      "matches": [ "\u003Call_urls>" ],
+      "resources": [ "predictive-text/*", "images/companion-menu-screenshot.webp", "images/kami-onboarding.png", "images/orange-arrow.svg" ],
+      "use_dynamic_url": true
+   } ]
+}

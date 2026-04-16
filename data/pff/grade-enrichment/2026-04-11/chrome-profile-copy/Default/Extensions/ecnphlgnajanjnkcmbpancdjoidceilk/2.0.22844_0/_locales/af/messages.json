@@ -1,0 +1,541 @@
+{
+   "AccessHighQualityReadyToUseBayouBridgesInstructionalMaterialsInKami": {
+      "message": "Kry toegang tot Bayou Bridges-instruksiemateriaal van hoë gehalte en wat gereed is vir gebruik in Kami!"
+   },
+   "Alpha": {
+      "message": "ALPHA"
+   },
+   "AnnotateWithKami": {
+      "message": "Annoteer met Kami"
+   },
+   "CanvasNewAssignmentKamiAssignmentAdded": {
+      "message": "lêer bygevoeg"
+   },
+   "CanvasNewAssignmentTooltipBody": {
+      "message": "Klik hier om ’n lêer by te voeg om via Kami aan jou studente toe te wys."
+   },
+   "CanvasNewAssignmentTooltipGotIt": {
+      "message": "Het dit"
+   },
+   "CanvasNewAssignmentTooltipHeader": {
+      "message": "Dis nou maklik om ’n Kami-opdrag te skep!"
+   },
+   "CanvasNewAssignmentTooltipLearnMore": {
+      "message": "Meer inligting"
+   },
+   "CheckingAssignmentType": {
+      "message": "Kontroleer tans opdragtipe …"
+   },
+   "ClassView": {
+      "message": "Klasaansig"
+   },
+   "ClassViewDescription": {
+      "message": "Nou kan jy maklik die hele klas se werk bekyk en intydse terugvoer gee."
+   },
+   "ClassViewDescriptionText": {
+      "message": "Nou kan jy die hele klas se opdragte bekyk, vordering monitor en verskeie studente in een slag gradeer."
+   },
+   "ClassViewInKami": {
+      "message": "Klasuitsig in Kami"
+   },
+   "DisableInSettings": {
+      "message": "Deaktiveer in instellings"
+   },
+   "DownloadYourDocumentsIntoKami": {
+      "message": "Laai jou dokumente af in Kami"
+   },
+   "EditAndUpdateAllStudentsCopies": {
+      "message": "Wysig en werk alle studente se kopieë op"
+   },
+   "EditAssignment": {
+      "message": "Wysig opdrag"
+   },
+   "EditWithKami": {
+      "message": "Redigeer saam met Kami"
+   },
+   "ExploreLouisianaLibrary": {
+      "message": "Verken Louisiana-biblioteek"
+   },
+   "GotIt": {
+      "message": "Het dit"
+   },
+   "GradeWithKami": {
+      "message": "Graad saam met Kami"
+   },
+   "KamiAssignment": {
+      "message": "Kami Opdrag"
+   },
+   "KamiIsAttachingYourFile": {
+      "message": "Kami heg jou lêer aan"
+   },
+   "LearnMore": {
+      "message": "Kom meer te wete"
+   },
+   "LouisianaLibraryForSocialStudiesNowInKami": {
+      "message": "Louisiana-biblioteek vir sosiale studies – nou in Kami!"
+   },
+   "MakeEditsToAssignedWorkAndPublishChangesToAllStudentsCopies": {
+      "message": "Maak wysigings aan toegewysde werk en publiseer veranderinge aan alle studente se kopieë."
+   },
+   "MakeEditsToAssignmentAndUpdateAllStudentCopies": {
+      "message": "Maak wysigings aan die werkopdrag en werk alle studentekopieë op"
+   },
+   "Next": {
+      "message": "Volgende"
+   },
+   "OpenClassView": {
+      "message": "Maak Klasaansig oop"
+   },
+   "OpenInClassView": {
+      "message": "Maak oop in Klasaansig"
+   },
+   "OpenKamiInNewTab": {
+      "message": "Maak Kami oop in 'n nuwe oortjie"
+   },
+   "OpenWithKami": {
+      "message": "Maak oop met Kami"
+   },
+   "PleaseKeepThisWindowOpenAndOnTop": {
+      "message": "Hou asseblief hierdie venster oop en bo-op"
+   },
+   "PrinterContextMenuTitle": {
+      "message": "Maak in Kami oop (PDF)"
+   },
+   "PrinterDescription": {
+      "message": "Maak die blady oop in Kami"
+   },
+   "TrackAndGradeAllStudentsWork": {
+      "message": "Volg en gradeer alle studente se werk"
+   },
+   "UnknownErrorCouldNotGetMessageFromErrorCard": {
+      "message": "Onbekende fout: Kon nie boodskap van foutkaart af kry nie"
+   },
+   "UpdateWithKami": {
+      "message": "Opdateer met Kami"
+   },
+   "UpdateWork": {
+      "message": "Werk werk op"
+   },
+   "popup_Beta": {
+      "message": "BETA"
+   },
+   "popup_HideToolbar": {
+      "message": "Versteek nutsbalk"
+   },
+   "popup_OpenKami": {
+      "message": "Maak Kami oop"
+   },
+   "popup_ShowToolbar": {
+      "message": "Wys nutsbalk"
+   },
+   "toolbar_Beta": {
+      "message": "BETA"
+   },
+   "toolbar_LogIn": {
+      "message": "Meld aan"
+   },
+   "toolbar_NoResults": {
+      "message": "Geen resultate nie"
+   },
+   "toolbar_Speak": {
+      "message": "Praat"
+   },
+   "toolbar_Stop": {
+      "message": "Stop"
+   },
+   "toolbar_UnexpectedErrorColon": {
+      "message": "Onverwagse fout:"
+   },
+   "toolbar_YouNeedToLoginFirstANewTabWillBeOpenedForYouToLogin": {
+      "message": "Jy moet eers aanmeld. ’n Nuwe oortjie sal oopmaak sodat jy kan aanmeld."
+   },
+   "toolbar_coming_soon_google_workspace": {
+      "message": "Binnekort kan jy Companion-nutsgoed in jou Google Workspace gebruik"
+   },
+   "toolbar_coming_soon_microsoft_365": {
+      "message": "Binnekort kan jy Companion-nutsgoed in Microsoft 365 gebruik"
+   },
+   "toolbar_dictionary_and_picture_dictionary": {
+      "message": "Woordeboek & Prentwoordeboek"
+   },
+   "toolbar_dictionary_coming_soon": {
+      "message": "Woordeboek – binnekort hier"
+   },
+   "toolbar_dictionary_google_workspace_support": {
+      "message": "Woordeboek – Google Workspace-steundienste"
+   },
+   "toolbar_dictionary_microsoft_365_support": {
+      "message": "Woordeboek – Microsoft 365-steundienste"
+   },
+   "toolbar_dictionary_tooltip": {
+      "message": "Woordeboek"
+   },
+   "toolbar_explain_ReadAloud": {
+      "message": "Lees verduideliking hardop"
+   },
+   "toolbar_explain_coming_soon": {
+      "message": "Verduidelik – binnekort hier"
+   },
+   "toolbar_explain_google_workspace_support": {
+      "message": "Verduidelik – Google Workspace-steundienste"
+   },
+   "toolbar_explain_microsoft_365_support": {
+      "message": "Verduidelik – Microsoft 365-steundienste"
+   },
+   "toolbar_explain_title": {
+      "message": "Verduidelik"
+   },
+   "toolbar_explain_tooltip": {
+      "message": "Verduidelik"
+   },
+   "toolbar_feedback_CloseFeedback": {
+      "message": "Sluit terugvoer"
+   },
+   "toolbar_feedback_GiveFeedback": {
+      "message": "Gee terugvoer"
+   },
+   "toolbar_feedback_HelpUsImprove": {
+      "message": "Help ons om te verbeter"
+   },
+   "toolbar_feedback_Helpful": {
+      "message": "Nuttig"
+   },
+   "toolbar_feedback_NotHelpful": {
+      "message": "Nie nuttig nie"
+   },
+   "toolbar_icon_tooltip": {
+      "message": "Maak Kami oop"
+   },
+   "toolbar_immersive_reader_available_tooltip": {
+      "message": "Immersive Reader"
+   },
+   "toolbar_immersive_reader_unavailable_tooltip": {
+      "message": "Immersive Reader (nie op hierdie webwerf beskikbaar nie)"
+   },
+   "toolbar_languageSelection_AddToStarred": {
+      "message": "Voeg by gester"
+   },
+   "toolbar_languageSelection_All": {
+      "message": "Almal"
+   },
+   "toolbar_languageSelection_CloseLanguageOptions": {
+      "message": "Maak taalopsies toe"
+   },
+   "toolbar_languageSelection_OpenLanguageOptions": {
+      "message": "Maak taalopsies oop"
+   },
+   "toolbar_languageSelection_RemoveFromStarred": {
+      "message": "Verwyder van gester"
+   },
+   "toolbar_languageSelection_SearchLanguage": {
+      "message": "Soek taal"
+   },
+   "toolbar_languageSelection_Starred": {
+      "message": "Gester"
+   },
+   "toolbar_language_select_placeholder": {
+      "message": "Kies ’n taal"
+   },
+   "toolbar_lookup_Definitions": {
+      "message": "Definisies"
+   },
+   "toolbar_lookup_Pictures": {
+      "message": "Prente"
+   },
+   "toolbar_picture_dictionary_coming_soon": {
+      "message": "Prentwoordeboek – binnekort hier"
+   },
+   "toolbar_picture_dictionary_google_workspace_support": {
+      "message": "Prentwoordeboek – Google Workspace-steundienste"
+   },
+   "toolbar_picture_dictionary_microsoft_365_support": {
+      "message": "Prentwoordeboek – Microsoft 365-steundienste"
+   },
+   "toolbar_picture_dictionary_tooltip": {
+      "message": "Prentwoordeboek"
+   },
+   "toolbar_predictiveText_ComingSoon": {
+      "message": "Voorspellende teks – binnekort hier"
+   },
+   "toolbar_predictiveText_coming_soon_text": {
+      "message": "Kies die regte woorde soos jy tik om makliker vinniger te skryf"
+   },
+   "toolbar_predictiveText_coming_soon_title": {
+      "message": "Voorspellende teks"
+   },
+   "toolbar_predictiveText_tooltip": {
+      "message": "Voorspellende teks – binnekort hier"
+   },
+   "toolbar_read_aloud_ChangeVoice": {
+      "message": "Verander stem: $voiceName$",
+      "placeholders": {
+         "voiceName": {
+            "content": "$1"
+         }
+      }
+   },
+   "toolbar_read_aloud_ChangeVoiceDefault": {
+      "message": "Verander stem: Verstekstem"
+   },
+   "toolbar_read_aloud_CloseReadAloud": {
+      "message": "Maak hardoplees toe"
+   },
+   "toolbar_read_aloud_Start": {
+      "message": "Begin"
+   },
+   "toolbar_read_aloud_Stop": {
+      "message": "Stop"
+   },
+   "toolbar_read_aloud_coming_soon": {
+      "message": "Hardoplees – binnekort hier"
+   },
+   "toolbar_read_aloud_google_workspace_support": {
+      "message": "Hardoplees – Google Workspace-steundienste"
+   },
+   "toolbar_read_aloud_microsoft_365_support": {
+      "message": "Hardoplees – Microsoft 365-steundienste"
+   },
+   "toolbar_read_aloud_tooltip": {
+      "message": "Maak hardoplees oop"
+   },
+   "toolbar_readingFocus_ReadingAssist": {
+      "message": "Leesassistent"
+   },
+   "toolbar_readingFocus_ReadingRuler": {
+      "message": "Leesliniaal"
+   },
+   "toolbar_readingFocus_ScreenMasking": {
+      "message": "Skermmaskering"
+   },
+   "toolbar_readingFocus_Settings": {
+      "message": "Instellings"
+   },
+   "toolbar_settings_Appearances": {
+      "message": "Voorkoms"
+   },
+   "toolbar_settings_ClearSearch": {
+      "message": "Vee soektog uit"
+   },
+   "toolbar_settings_Close": {
+      "message": "Maak toe"
+   },
+   "toolbar_settings_ColorColon": {
+      "message": "Kleur:"
+   },
+   "toolbar_settings_FollowCursor": {
+      "message": "Volg wyser"
+   },
+   "toolbar_settings_FollowCursorColon": {
+      "message": "Volg wyser:"
+   },
+   "toolbar_settings_HeightColon": {
+      "message": "Hoogte:"
+   },
+   "toolbar_settings_OpacityColon": {
+      "message": "Deursigtigheid:"
+   },
+   "toolbar_settings_Pitch": {
+      "message": "Toonhoogte"
+   },
+   "toolbar_settings_PlayColon": {
+      "message": "Speel:"
+   },
+   "toolbar_settings_PressEnterToSelectInThisCategory": {
+      "message": "Druk invoersleutel om in hierdie kategorie te kies"
+   },
+   "toolbar_settings_PreviewColon": {
+      "message": "Voorskou:"
+   },
+   "toolbar_settings_ReadAloud": {
+      "message": "Lees hardop"
+   },
+   "toolbar_settings_ReadingFocus": {
+      "message": "Leesfokus"
+   },
+   "toolbar_settings_ReadingRuler": {
+      "message": "Leesliniaal"
+   },
+   "toolbar_settings_RulerStyleColon": {
+      "message": "Wys kantlyne:"
+   },
+   "toolbar_settings_RulerStyleLeftRight": {
+      "message": "Wys vertikale kantlyne"
+   },
+   "toolbar_settings_RulerStyleLeftRightColon": {
+      "message": "Wys vertikale kantlyne:"
+   },
+   "toolbar_settings_RulerStyleReadingLine": {
+      "message": "Wys leesreël"
+   },
+   "toolbar_settings_RulerStyleReadingLineColon": {
+      "message": "Wys leesreël:"
+   },
+   "toolbar_settings_RulerStyleTopBottom": {
+      "message": "Wys horisontale kantlyne"
+   },
+   "toolbar_settings_RulerStyleTopBottomColon": {
+      "message": "Wys horisontale kantlyne:"
+   },
+   "toolbar_settings_ScreenMasking": {
+      "message": "Skermmaskering"
+   },
+   "toolbar_settings_Search": {
+      "message": "Soek"
+   },
+   "toolbar_settings_SelectASize": {
+      "message": "Kies ’n grootte"
+   },
+   "toolbar_settings_SelectATheme": {
+      "message": "Kies ’n tema"
+   },
+   "toolbar_settings_SelectAVoice": {
+      "message": "Kies ’n stem"
+   },
+   "toolbar_settings_Size": {
+      "message": "Grootte"
+   },
+   "toolbar_settings_Speed": {
+      "message": "Spoed"
+   },
+   "toolbar_settings_Stop": {
+      "message": "Stop"
+   },
+   "toolbar_settings_Theme": {
+      "message": "Tema"
+   },
+   "toolbar_settings_Themes": {
+      "message": "Temas"
+   },
+   "toolbar_settings_ToolbarSettings": {
+      "message": "Nutsbalkinstellings"
+   },
+   "toolbar_settings_WidthColon": {
+      "message": "Breedte:"
+   },
+   "toolbar_settings_YourSystemDoesNotSupportTextToSpeech": {
+      "message": "Jou stelsel steun nie hardoplees nie."
+   },
+   "toolbar_settings_menu_HelpAndSupport": {
+      "message": "Hulp en steundienste"
+   },
+   "toolbar_settings_menu_HideToolbar": {
+      "message": "Versteek nutsbalk"
+   },
+   "toolbar_settings_menu_SubmitFeedback": {
+      "message": "Stuur terugvoer"
+   },
+   "toolbar_settings_menu_title": {
+      "message": "Instellings"
+   },
+   "toolbar_settings_size_1x": {
+      "message": "1x"
+   },
+   "toolbar_settings_size_2x": {
+      "message": "2x"
+   },
+   "toolbar_settings_size_3x": {
+      "message": "3x"
+   },
+   "toolbar_settings_theme_Dark": {
+      "message": "Donker"
+   },
+   "toolbar_settings_theme_Light": {
+      "message": "Lig"
+   },
+   "toolbar_settings_title": {
+      "message": "Instellings"
+   },
+   "toolbar_summarize_ReadAloud": {
+      "message": "Lees opsomming hardop"
+   },
+   "toolbar_summarize_coming_soon": {
+      "message": "Som op – binnekort hier"
+   },
+   "toolbar_summarize_google_workspace_support": {
+      "message": "Som op – Google Workspace-steundienste"
+   },
+   "toolbar_summarize_microsoft_365_support": {
+      "message": "Som op – Microsoft 365-steundienste"
+   },
+   "toolbar_summarize_title": {
+      "message": "Som op"
+   },
+   "toolbar_summarize_tooltip": {
+      "message": "Som op"
+   },
+   "toolbar_switch_Off": {
+      "message": "Af"
+   },
+   "toolbar_switch_On": {
+      "message": "Aan"
+   },
+   "toolbar_translate_ReadAloud": {
+      "message": "Lees vertaling hardop"
+   },
+   "toolbar_translation_AdjustReadAloudSpeed": {
+      "message": "Verstel hardopleesspoed"
+   },
+   "toolbar_translation_CopiedToClipboard": {
+      "message": "✨ Gekopieer na knipbord"
+   },
+   "toolbar_translation_ICouldNotTranslateThat": {
+      "message": "Ek kon dit nie vertaal nie"
+   },
+   "toolbar_translation_NoLanguagesAvailable": {
+      "message": "Geen tale is beskikbaar nie"
+   },
+   "toolbar_translation_ReadTranslationAloud": {
+      "message": "Lees vertaling hardop"
+   },
+   "toolbar_translation_SpeakFaster": {
+      "message": "Praat vinniger"
+   },
+   "toolbar_translation_SpeakSlower": {
+      "message": "Praat stadiger"
+   },
+   "toolbar_translation_StopReadAloud": {
+      "message": "Staak hardoplees"
+   },
+   "toolbar_translation_TranslatedBy": {
+      "message": "Vertaal deur"
+   },
+   "toolbar_translation_UnableToConnectToTheTranslationService": {
+      "message": "Kan nie aan die vertaaldiens koppel nie."
+   },
+   "toolbar_translation_coming_soon": {
+      "message": "Vertaal – binnekort hier"
+   },
+   "toolbar_translation_google_workspace_support": {
+      "message": "Vertaal – Google Workspace-steundienste"
+   },
+   "toolbar_translation_microsoft_365_support": {
+      "message": "Vertaal – Microsoft 365-steundienste"
+   },
+   "toolbar_translation_title": {
+      "message": "Vertaal"
+   },
+   "toolbar_translation_tooltip": {
+      "message": "Vertaal"
+   },
+   "toolbar_voiceTyping_ComingSoon": {
+      "message": "Stemtik – binnekort hier"
+   },
+   "toolbar_voiceTyping_coming_soon_text": {
+      "message": "Gebruik jou stem om op webwerwe en in jou dokumente te tik"
+   },
+   "toolbar_voiceTyping_coming_soon_title": {
+      "message": "Stemtik"
+   },
+   "toolbar_voiceTyping_tooltip": {
+      "message": "Stemtik – binnekort hier"
+   },
+   "toolbar_voices_Default": {
+      "message": "Verstek"
+   },
+   "toolbar_voices_DefaultVoice": {
+      "message": "Verstekstem"
+   },
+   "toolbar_voices_NoResultsFound": {
+      "message": "Geen resultate gevind nie"
+   }
+}

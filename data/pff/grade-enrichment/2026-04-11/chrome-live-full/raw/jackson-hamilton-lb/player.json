@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RSN",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jackson",
+      "height": 600,
+      "id": 144157,
+      "jersey_number": "D17",
+      "last_name": "Hamilton",
+      "position": "LB",
+      "speed": null,
+      "team": {
+        "abbreviation": "GEOTEC",
+        "city": "Georgia Tech",
+        "id": 176,
+        "nickname": "Yellow Jackets",
+        "primary_color": "#b3a369",
+        "secondary_color": "#000000",
+        "slug": "georgia-tech-yellow-jackets"
+      },
+      "weight": 225
+    }
+  ]
+}

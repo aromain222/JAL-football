@@ -1,0 +1,1140 @@
+{
+   "AccessHighQualityReadyToUseBayouBridgesInstructionalMaterialsInKami": {
+      "message": "Access high-quality, ready-to-use Bayou Bridges instructional materials in Kami!"
+   },
+   "Alpha": {
+      "message": "ALPHA"
+   },
+   "AnnotateWithKami": {
+      "message": "Annotate with Kami"
+   },
+   "CanvasNewAssignmentKamiAssignmentAdded": {
+      "message": "file added"
+   },
+   "CanvasNewAssignmentTooltipBody": {
+      "message": "Click here to add a file to assign through Kami to your students."
+   },
+   "CanvasNewAssignmentTooltipGotIt": {
+      "message": "Got it"
+   },
+   "CanvasNewAssignmentTooltipHeader": {
+      "message": "Now, it's easy to create a Kami assignment!"
+   },
+   "CanvasNewAssignmentTooltipLearnMore": {
+      "message": "Learn More"
+   },
+   "CheckingAssignmentType": {
+      "message": "Checking assignment type..."
+   },
+   "ClassView": {
+      "message": "Class View"
+   },
+   "ClassViewDescription": {
+      "message": "Now you can easily view the entire class’ work and give real-time feedback."
+   },
+   "ClassViewDescriptionText": {
+      "message": "Now you can view the entire class's assignments, monitor progress, and grade multiple students in one go."
+   },
+   "ClassViewInKami": {
+      "message": "Class View in Kami"
+   },
+   "DisableInSettings": {
+      "message": "Disable in settings"
+   },
+   "DownloadYourDocumentsIntoKami": {
+      "message": "Download your documents into Kami"
+   },
+   "EditAndUpdateAllStudentsCopies": {
+      "message": "Edit and update all students' copies"
+   },
+   "EditAssignment": {
+      "message": "Edit assignment"
+   },
+   "EditWithKami": {
+      "message": "Edit with Kami"
+   },
+   "ExploreLouisianaLibrary": {
+      "message": "Explore Louisiana Library"
+   },
+   "FocusKamiCompanion": {
+      "message": "Move the focus to Kami Companion"
+   },
+   "GotIt": {
+      "message": "Got it"
+   },
+   "GradeWithKami": {
+      "message": "Grade with Kami"
+   },
+   "KamiAssignment": {
+      "message": "Kami Assignment"
+   },
+   "KamiIsAttachingYourFile": {
+      "message": "Kami is attaching your file"
+   },
+   "KamiSplitAndMerge": {
+      "message": "Kami Split and Merge"
+   },
+   "LearnMore": {
+      "message": "Learn more"
+   },
+   "LouisianaLibraryForSocialStudiesNowInKami": {
+      "message": "Louisiana Library for Social Studies - now in Kami!"
+   },
+   "MakeEditsToAssignedWorkAndPublishChangesToAllStudentsCopies": {
+      "message": "Make edits to assigned work and publish changes to all students' copies."
+   },
+   "MakeEditsToAssignmentAndUpdateAllStudentCopies": {
+      "message": "Make edits to the assignment and update all student copies"
+   },
+   "Next": {
+      "message": "Next"
+   },
+   "OpenClassView": {
+      "message": "Open Class View"
+   },
+   "OpenInClassView": {
+      "message": "Open in Class View"
+   },
+   "OpenKamiInNewTab": {
+      "message": "Open Kami in new tab"
+   },
+   "OpenWithKami": {
+      "message": "Open with Kami"
+   },
+   "PleaseKeepThisWindowOpenAndOnTop": {
+      "message": "Please keep this window open and on top"
+   },
+   "PrinterContextMenuTitle": {
+      "message": "Open in Kami (PDF)"
+   },
+   "PrinterDescription": {
+      "message": "Open the page in Kami"
+   },
+   "ToolbarOpenSelectedLink": {
+      "message": "Open link"
+   },
+   "TrackAndGradeAllStudentsWork": {
+      "message": "Track and grade all students' work"
+   },
+   "UnknownErrorCouldNotGetMessageFromErrorCard": {
+      "message": "Unknown error: Could not get message from error card"
+   },
+   "UpdateWithKami": {
+      "message": "Update with Kami"
+   },
+   "UpdateWork": {
+      "message": "Update work"
+   },
+   "Version": {
+      "message": "VERSION"
+   },
+   "floating_kami_button_hide": {
+      "message": "Hide on this site"
+   },
+   "floating_kami_button_hide_all": {
+      "message": "Hide everywhere"
+   },
+   "floating_kami_button_hover": {
+      "message": "Show Companion"
+   },
+   "floating_kami_button_secondary_hover": {
+      "message": "Hide Companion"
+   },
+   "howToReopenPopup_gotIt": {
+      "message": "Got it"
+   },
+   "howToReopenPopup_pinItToYourBrowserToolbar": {
+      "message": "Pin it to your browser toolbar for easy access."
+   },
+   "howToReopenPopup_youCanBringCompanionBackAnytime": {
+      "message": "You can bring Companion back anytime from the extension icon."
+   },
+   "licenseExpiredPopover_companionIsntAvailable": {
+      "message": "Companion isn't available"
+   },
+   "licenseExpiredPopover_companionLicenseExpired": {
+      "message": "Companion license expired"
+   },
+   "licenseExpiredPopover_dismiss": {
+      "message": "Dismiss"
+   },
+   "licenseExpiredPopover_findOutMore": {
+      "message": "Find out more"
+   },
+   "licenseExpiredPopover_gotIt": {
+      "message": "Got it"
+   },
+   "licenseExpiredPopover_yourCompanionLicenseHasExpiredYoullStopSeeingCompanionAfterYouCloseThisMessage": {
+      "message": "Your Companion license has expired. You'll stop seeing Companion after you close this message."
+   },
+   "licenseExpiredPopover_yourSchoolsCompanionAccessHasEndedYoullStopSeeingCompanionAfterYouCloseThisMessage": {
+      "message": "Your school’s Companion access has ended. You’ll stop seeing Companion after you close this message."
+   },
+   "onboarding_close": {
+      "message": "Close onboarding"
+   },
+   "onboarding_indicator_arrow": {
+      "message": "arrow pointing to the Kami companion 'K' icon to open the toolbar"
+   },
+   "onboarding_new": {
+      "message": "New"
+   },
+   "onboarding_screenshot": {
+      "message": "Screenshot showing Kami Companion toolbar on a webpage"
+   },
+   "onboarding_student_blurb": {
+      "message": "Click the K to read text aloud, use voice-typing, and tools that help you understand any website."
+   },
+   "onboarding_teacher_blurb": {
+      "message": "Support student literacy and accessibility across the web. Click the K for reading, writing, and understanding tools."
+   },
+   "onboarding_title": {
+      "message": "Meet Kami Companion"
+   },
+   "popup_Beta": {
+      "message": "BETA"
+   },
+   "popup_BookCreatorForWebsites": {
+      "message": "Turn learning into shareable books and projects"
+   },
+   "popup_BookCreatorTry": {
+      "message": "Try Book Creator"
+   },
+   "popup_FindOutMore": {
+      "message": "Explore Companion"
+   },
+   "popup_HeaderCopy": {
+      "message": "Three trusted products under one accessible learning platform"
+   },
+   "popup_HideToolbar": {
+      "message": "Hide Companion"
+   },
+   "popup_KamiCompanionForWebsites": {
+      "message": "Bring accessibility and comprehension to the web"
+   },
+   "popup_KamiYouKnowAndLove": {
+      "message": "Enable interactive learning from any document"
+   },
+   "popup_New": {
+      "message": "NEW"
+   },
+   "popup_OpenKami": {
+      "message": "Open Kami"
+   },
+   "popup_ShowToolbar": {
+      "message": "Show Companion"
+   },
+   "popup_UnavailableOnSite": {
+      "message": "Companion not available"
+   },
+   "toolbar_Beta": {
+      "message": "BETA"
+   },
+   "toolbar_Exit": {
+      "message": "Exit"
+   },
+   "toolbar_LogIn": {
+      "message": "Log in"
+   },
+   "toolbar_NoResults": {
+      "message": "No results"
+   },
+   "toolbar_Play": {
+      "message": "Play"
+   },
+   "toolbar_Speak": {
+      "message": "Speak"
+   },
+   "toolbar_Stop": {
+      "message": "Stop"
+   },
+   "toolbar_UnexpectedErrorColon": {
+      "message": "Unexpected error:"
+   },
+   "toolbar_YouNeedToLoginFirstANewTabWillBeOpenedForYouToLogin": {
+      "message": "You need to login first. A new tab will be opened for you to login."
+   },
+   "toolbar_adjust_CopyToClipboard": {
+      "message": "Copy text"
+   },
+   "toolbar_aiTools_header": {
+      "message": "AI Tools"
+   },
+   "toolbar_authDialog_title": {
+      "message": "Login to Kami"
+   },
+   "toolbar_clear_language": {
+      "message": "Remove language"
+   },
+   "toolbar_coming_soon_google_workspace": {
+      "message": "Soon you can use Companion tools in your Google Workspace"
+   },
+   "toolbar_coming_soon_microsoft_365": {
+      "message": "Soon you can use Companion tools in Microsoft 365"
+   },
+   "toolbar_dictionary_and_picture_dictionary": {
+      "message": "Dictionary & Picture Dictionary"
+   },
+   "toolbar_dictionary_coming_soon": {
+      "message": "Dictionary - Coming Soon"
+   },
+   "toolbar_dictionary_google_workspace_support": {
+      "message": "Dictionary - Google Workspace support"
+   },
+   "toolbar_dictionary_microsoft_365_support": {
+      "message": "Dictionary - Microsoft 365 support"
+   },
+   "toolbar_dictionary_tab_tooltip": {
+      "message": "Dictionary"
+   },
+   "toolbar_dictionary_tooltip": {
+      "message": "Dictionary"
+   },
+   "toolbar_dictionary_tooltip_disable_pdfViewer": {
+      "message": "Enable area select mode to use Dictionary"
+   },
+   "toolbar_explain_CopyToClipboard": {
+      "message": "Copy explanation"
+   },
+   "toolbar_explain_ReadAloud": {
+      "message": "Read explanation aloud"
+   },
+   "toolbar_explain_coming_soon": {
+      "message": "Explain - Coming Soon"
+   },
+   "toolbar_explain_google_workspace_support": {
+      "message": "Explain - Google Workspace support"
+   },
+   "toolbar_explain_microsoft_365_support": {
+      "message": "Explain - Microsoft 365 support"
+   },
+   "toolbar_explain_tab_tooltip": {
+      "message": "Explain"
+   },
+   "toolbar_explain_tooltip": {
+      "message": "Explain"
+   },
+   "toolbar_explain_tooltip_pdf_disable": {
+      "message": "Enable area select to use Explain tool"
+   },
+   "toolbar_exportThisPageToKami_failedToExportPdf": {
+      "message": "Failed to export PDF"
+   },
+   "toolbar_export_this_page_to_kami": {
+      "message": "Open in Kami"
+   },
+   "toolbar_export_this_page_to_kami_coming_soon": {
+      "message": "Open this page in Kami"
+   },
+   "toolbar_export_this_page_to_kami_message_coming_soon": {
+      "message": "Write, draw, and explore with Kami right on the webpage"
+   },
+   "toolbar_export_this_page_to_kami_unavailable_tooltip": {
+      "message": "Open in Kami (Unavailable on this site)"
+   },
+   "toolbar_feedback_CloseFeedback": {
+      "message": "Close Feedback"
+   },
+   "toolbar_feedback_GiveFeedback": {
+      "message": "Submit Feedback"
+   },
+   "toolbar_feedback_Helpful": {
+      "message": "Helpful"
+   },
+   "toolbar_feedback_NotHelpful": {
+      "message": "Not Helpful"
+   },
+   "toolbar_icon_tooltip": {
+      "message": "Open Kami"
+   },
+   "toolbar_immersiveReader_ImmersiveReaderWasBlockedByThisWebsite": {
+      "message": "Immersive Reader was blocked by this website."
+   },
+   "toolbar_immersiveReader_ThereWasAnErrorLaunchingImmersiveReader": {
+      "message": "There was an error launching Immersive Reader: $errorMessage$",
+      "placeholders": {
+         "errorMessage": {
+            "content": "$1"
+         }
+      }
+   },
+   "toolbar_immersive_reader_available_tooltip": {
+      "message": "Immersive reader"
+   },
+   "toolbar_immersive_reader_unavailable_tooltip": {
+      "message": "Immersive reader is unavailable on this site"
+   },
+   "toolbar_languageSelection_AddToStarred": {
+      "message": "Add to starred"
+   },
+   "toolbar_languageSelection_All": {
+      "message": "All"
+   },
+   "toolbar_languageSelection_CloseLanguageOptions": {
+      "message": "Close language options"
+   },
+   "toolbar_languageSelection_LanguageDescription": {
+      "message": "These languages will show up for quick use in the Translate tool"
+   },
+   "toolbar_languageSelection_NoLanguagesMatchingQuery": {
+      "message": "No languages matching \"$1\""
+   },
+   "toolbar_languageSelection_OpenLanguageOptions": {
+      "message": "Open language options"
+   },
+   "toolbar_languageSelection_RemoveFromStarred": {
+      "message": "Remove from starred"
+   },
+   "toolbar_languageSelection_SearchLanguage": {
+      "message": "Search and select your preferred languages"
+   },
+   "toolbar_languageSelection_Starred": {
+      "message": "Starred"
+   },
+   "toolbar_language_select_placeholder": {
+      "message": "Select a language"
+   },
+   "toolbar_languages": {
+      "message": "Languages"
+   },
+   "toolbar_move_tooltip": {
+      "message": "Move"
+   },
+   "toolbar_picture_dictionary_coming_soon": {
+      "message": "Picture dictionary - Coming Soon"
+   },
+   "toolbar_picture_dictionary_google_workspace_support": {
+      "message": "Picture dictionary - Google Workspace support"
+   },
+   "toolbar_picture_dictionary_microsoft_365_support": {
+      "message": "Picture dictionary - Microsoft 365 support"
+   },
+   "toolbar_picture_dictionary_tab_tooltip": {
+      "message": "Picture dictionary"
+   },
+   "toolbar_picture_dictionary_tooltip": {
+      "message": "Picture dictionary"
+   },
+   "toolbar_picture_dictionary_tooltip_disable_pdfViewer": {
+      "message": "Enable area select to use Picture dictionary"
+   },
+   "toolbar_picture_dictionary_tooltip_pdf_disable": {
+      "message": "Enable area select mode to use Picture Dictionary"
+   },
+   "toolbar_predictiveText_ClickOnATextFieldToStartPredictiveText": {
+      "message": "Click where you want to write"
+   },
+   "toolbar_predictiveText_ComingSoon": {
+      "message": "Predictive Text - Coming soon"
+   },
+   "toolbar_predictiveText_PredictiveText": {
+      "message": "Predictive text"
+   },
+   "toolbar_predictiveText_PredictiveTextLanguages": {
+      "message": "Predictive text languages"
+   },
+   "toolbar_predictiveText_PredictiveTextTopics": {
+      "message": "Topics"
+   },
+   "toolbar_predictiveText_PredictiveText_disabled": {
+      "message": "Predictive text is unavailable on this site"
+   },
+   "toolbar_predictiveText_ReadOnHover": {
+      "message": "Read on hover"
+   },
+   "toolbar_predictiveText_Settings": {
+      "message": "Settings"
+   },
+   "toolbar_predictiveText_SpellingAssist": {
+      "message": "Spelling assist"
+   },
+   "toolbar_predictiveText_Topics_allTopics": {
+      "message": "All topics"
+   },
+   "toolbar_predictiveText_Topics_disabled": {
+      "message": "Topics isn't available in the selected language"
+   },
+   "toolbar_predictiveText_Topics_done": {
+      "message": "Done"
+   },
+   "toolbar_predictiveText_Topics_edit": {
+      "message": "Edit"
+   },
+   "toolbar_predictiveText_Topics_emptyStateLine1": {
+      "message": "Add a topic to see it here"
+   },
+   "toolbar_predictiveText_Topics_emptyStateLine2": {
+      "message": "and get better word suggestions"
+   },
+   "toolbar_predictiveText_Topics_limitReached": {
+      "message": "You've got $1 topics. Remove one to add a new one."
+   },
+   "toolbar_predictiveText_Topics_noResults": {
+      "message": "No topics found"
+   },
+   "toolbar_predictiveText_Topics_removeTopic": {
+      "message": "Remove $1"
+   },
+   "toolbar_predictiveText_Topics_searchPlaceholder": {
+      "message": "Search topics"
+   },
+   "toolbar_predictiveText_Topics_yourTopics": {
+      "message": "Your topics"
+   },
+   "toolbar_predictiveText_Topics_yourTopicsUpTo": {
+      "message": "Your topics (up to $1)"
+   },
+   "toolbar_predictiveText_coming_soon": {
+      "message": "Predictive text - Coming Soon"
+   },
+   "toolbar_predictiveText_google_docs_coming_soon_info": {
+      "message": "Soon you can use predictive text in your Google Docs"
+   },
+   "toolbar_predictiveText_google_docs_support": {
+      "message": "Predictive text - Google Docs support"
+   },
+   "toolbar_predictiveText_microsoft_365_support": {
+      "message": "Predictive text - Microsoft 365 support"
+   },
+   "toolbar_predictiveText_no_suggestions": {
+      "message": "No suggestions"
+   },
+   "toolbar_print_to_kami_coming_soon": {
+      "message": "Export to Kami - Coming Soon"
+   },
+   "toolbar_print_to_kami_dialog_confirmation": {
+      "message": "Got it. Let's go!"
+   },
+   "toolbar_print_to_kami_dialog_cta": {
+      "message": "Got it. Let's go!"
+   },
+   "toolbar_print_to_kami_dialog_cta_ignore": {
+      "message": "Don't show this option again"
+   },
+   "toolbar_print_to_kami_dialog_error_loading_video": {
+      "message": "Error loading video"
+   },
+   "toolbar_print_to_kami_dialog_one_moment_please": {
+      "message": "One moment please..."
+   },
+   "toolbar_print_to_kami_dialog_point_one": {
+      "message": "When the Print box appears, click the \u003Cmark>\"Destination\"\u003C/mark> dropdown"
+   },
+   "toolbar_print_to_kami_dialog_point_three": {
+      "message": "Click \u003Cmark>\"Print\"\u003C/mark> - your page will open in Kami!"
+   },
+   "toolbar_print_to_kami_dialog_point_two": {
+      "message": "Click \u003Cmark>\"See more...\"\u003C/mark>, then choose \u003Cmark>\"Kami\"\u003C/mark>"
+   },
+   "toolbar_print_to_kami_dialog_sub_title": {
+      "message": "It's quick and easy:"
+   },
+   "toolbar_print_to_kami_dialog_title": {
+      "message": "Open this page in Kami"
+   },
+   "toolbar_readAdjust_ReadAloud": {
+      "message": "Adjust read aloud"
+   },
+   "toolbar_readAdjust_coming_soon": {
+      "message": "Adjust - Coming Soon"
+   },
+   "toolbar_readAdjust_currentLevel": {
+      "message": "Current Level"
+   },
+   "toolbar_readAdjust_easy": {
+      "message": "Easy"
+   },
+   "toolbar_readAdjust_google_workspace_support": {
+      "message": "Adjust - Google Workspace support"
+   },
+   "toolbar_readAdjust_hard": {
+      "message": "Hard"
+   },
+   "toolbar_readAdjust_levelEasier": {
+      "message": "level easier"
+   },
+   "toolbar_readAdjust_levelHarder": {
+      "message": "level harder"
+   },
+   "toolbar_readAdjust_levelsEasier": {
+      "message": "levels easier"
+   },
+   "toolbar_readAdjust_levelsHarder": {
+      "message": "levels harder"
+   },
+   "toolbar_readAdjust_makeTextEasier": {
+      "message": "Make text easier"
+   },
+   "toolbar_readAdjust_makeTextHarder": {
+      "message": "Make text harder"
+   },
+   "toolbar_readAdjust_microsoft_365_support": {
+      "message": "Adjust - Microsoft 365 support"
+   },
+   "toolbar_readAdjust_tab_tooltip": {
+      "message": "Adjust"
+   },
+   "toolbar_readAdjust_tooltip": {
+      "message": "Adjust"
+   },
+   "toolbar_readAdjust_tooltip_pdf_disable": {
+      "message": "Enable area select to use Adjust"
+   },
+   "toolbar_read_aloud_ChangeVoice": {
+      "message": "Change voice: $voiceName$",
+      "placeholders": {
+         "voiceName": {
+            "content": "$1"
+         }
+      }
+   },
+   "toolbar_read_aloud_ChangeVoiceDefault": {
+      "message": "Change voice: Default voice"
+   },
+   "toolbar_read_aloud_CloseReadAloud": {
+      "message": "Close read aloud"
+   },
+   "toolbar_read_aloud_Loading_ellipsis": {
+      "message": "Loading..."
+   },
+   "toolbar_read_aloud_Pause": {
+      "message": "Pause"
+   },
+   "toolbar_read_aloud_Start": {
+      "message": "Start"
+   },
+   "toolbar_read_aloud_Stop": {
+      "message": "Stop"
+   },
+   "toolbar_read_aloud_coming_soon": {
+      "message": "Read aloud - Coming Soon"
+   },
+   "toolbar_read_aloud_google_docs_coming_soon_info": {
+      "message": "Soon you can use read aloud in your Google Docs"
+   },
+   "toolbar_read_aloud_google_docs_support": {
+      "message": "Read aloud - Google Docs support"
+   },
+   "toolbar_read_aloud_google_workspace_support": {
+      "message": "Read aloud - Google Workspace support"
+   },
+   "toolbar_read_aloud_microsoft_365_support": {
+      "message": "Read aloud - Microsoft 365 support"
+   },
+   "toolbar_read_aloud_tooltip": {
+      "message": "Open read aloud"
+   },
+   "toolbar_read_aloud_tooltip_disabled_pdfViewer": {
+      "message": "Enable area select mode to use Read Aloud"
+   },
+   "toolbar_readingFocus_ReadingAssist": {
+      "message": "Reading assist"
+   },
+   "toolbar_readingFocus_ReadingRuler": {
+      "message": "Reading ruler"
+   },
+   "toolbar_readingFocus_ScreenMasking": {
+      "message": "Screen masking"
+   },
+   "toolbar_readingFocus_Settings": {
+      "message": "Settings"
+   },
+   "toolbar_ruler_move_down": {
+      "message": "Move down"
+   },
+   "toolbar_ruler_move_left": {
+      "message": "Move left"
+   },
+   "toolbar_ruler_move_right": {
+      "message": "Move right"
+   },
+   "toolbar_ruler_move_up": {
+      "message": "Move up"
+   },
+   "toolbar_selection_mode_hover_area": {
+      "message": "Area select"
+   },
+   "toolbar_selection_mode_hover_default": {
+      "message": "Default select"
+   },
+   "toolbar_selection_mode_hover_none": {
+      "message": "Selection mode"
+   },
+   "toolbar_selection_mode_hover_word": {
+      "message": "Word select"
+   },
+   "toolbar_settings_Appearances": {
+      "message": "Appearance"
+   },
+   "toolbar_settings_ClearSearch": {
+      "message": "Clear search"
+   },
+   "toolbar_settings_Close": {
+      "message": "Close"
+   },
+   "toolbar_settings_ColorColon": {
+      "message": "Color:"
+   },
+   "toolbar_settings_FollowCursor": {
+      "message": "Follow cursor"
+   },
+   "toolbar_settings_FollowCursorColon": {
+      "message": "Follow cursor:"
+   },
+   "toolbar_settings_HeightColon": {
+      "message": "Height:"
+   },
+   "toolbar_settings_LanguageDescription": {
+      "message": "These languages will show up for quick use in the Voice Typing tool"
+   },
+   "toolbar_settings_LanguagePlaceHolder": {
+      "message": "Search and select your preferred languages"
+   },
+   "toolbar_settings_OpacityColon": {
+      "message": "Opacity:"
+   },
+   "toolbar_settings_Pitch": {
+      "message": "Pitch"
+   },
+   "toolbar_settings_PlayColon": {
+      "message": "Play:"
+   },
+   "toolbar_settings_PredictiveText": {
+      "message": "Predictive text"
+   },
+   "toolbar_settings_PressEnterToSelectInThisCategory": {
+      "message": "Press Enter to select in this category"
+   },
+   "toolbar_settings_PreviewColon": {
+      "message": "Preview:"
+   },
+   "toolbar_settings_ReadAloud": {
+      "message": "Read aloud"
+   },
+   "toolbar_settings_ReadingFocus": {
+      "message": "Reading focus"
+   },
+   "toolbar_settings_ReadingRuler": {
+      "message": "Reading ruler"
+   },
+   "toolbar_settings_RulerManualMode": {
+      "message": "Show move button"
+   },
+   "toolbar_settings_RulerStyleColon": {
+      "message": "Show borders:"
+   },
+   "toolbar_settings_RulerStyleLeftRight": {
+      "message": "Show vertical borders"
+   },
+   "toolbar_settings_RulerStyleLeftRightColon": {
+      "message": "Show vertical borders:"
+   },
+   "toolbar_settings_RulerStyleReadingLine": {
+      "message": "Show reading line"
+   },
+   "toolbar_settings_RulerStyleReadingLineColon": {
+      "message": "Show reading line:"
+   },
+   "toolbar_settings_RulerStyleTopBottom": {
+      "message": "Show horizontal borders"
+   },
+   "toolbar_settings_RulerStyleTopBottomColon": {
+      "message": "Show horizontal borders:"
+   },
+   "toolbar_settings_ScreenMasking": {
+      "message": "Screen masking"
+   },
+   "toolbar_settings_Search": {
+      "message": "Search"
+   },
+   "toolbar_settings_SelectASize": {
+      "message": "Select a Size"
+   },
+   "toolbar_settings_SelectATheme": {
+      "message": "Select a theme"
+   },
+   "toolbar_settings_SelectAVoice": {
+      "message": "Select a voice"
+   },
+   "toolbar_settings_Size": {
+      "message": "Size"
+   },
+   "toolbar_settings_Speed": {
+      "message": "Speed"
+   },
+   "toolbar_settings_Stop": {
+      "message": "Stop"
+   },
+   "toolbar_settings_Theme": {
+      "message": "Theme"
+   },
+   "toolbar_settings_Themes": {
+      "message": "Themes"
+   },
+   "toolbar_settings_ToolbarSettings": {
+      "message": "Toolbar settings"
+   },
+   "toolbar_settings_Translate": {
+      "message": "Translate"
+   },
+   "toolbar_settings_VoiceTyping": {
+      "message": "Voice typing"
+   },
+   "toolbar_settings_WidthColon": {
+      "message": "Width:"
+   },
+   "toolbar_settings_YourSystemDoesNotSupportTextToSpeech": {
+      "message": "Your system does not support read aloud."
+   },
+   "toolbar_settings_betaFeatures_Topics_description": {
+      "message": "Enable topic-based word suggestions in Predictive Text"
+   },
+   "toolbar_settings_betaFeatures_Topics_heading": {
+      "message": "Topics"
+   },
+   "toolbar_settings_betaFeatures_blurb": {
+      "message": "These features are still in development and may not work as expected."
+   },
+   "toolbar_settings_betaFeatures_doNotDemo": {
+      "message": "Please do not demo these features."
+   },
+   "toolbar_settings_betaFeatures_googleSlidesSelection_description": {
+      "message": "Enable text selection in Google Slides."
+   },
+   "toolbar_settings_betaFeatures_googleSlidesSelection_heading": {
+      "message": "Google Slides selection"
+   },
+   "toolbar_settings_betaFeatures_heading": {
+      "message": "Beta features (Experimental)"
+   },
+   "toolbar_settings_betaFeatures_spellingAssist_description": {
+      "message": "Enable the Spelling Assist feature in Predictive Text"
+   },
+   "toolbar_settings_betaFeatures_spellingAssist_heading": {
+      "message": "Spelling Assist"
+   },
+   "toolbar_settings_betaFeatures_toggleGoogleSlidesSelection": {
+      "message": "Toggle Google Slides text selection"
+   },
+   "toolbar_settings_betaFeatures_toggleSpellingAssist": {
+      "message": "Toggle spelling assist"
+   },
+   "toolbar_settings_displaydefault_button": {
+      "message": "Minimized button"
+   },
+   "toolbar_settings_displaydefault_title": {
+      "message": "Show companion on a new page as"
+   },
+   "toolbar_settings_displaydefault_toolbar": {
+      "message": "Full toolbar"
+   },
+   "toolbar_settings_menu_HelpAndSupport": {
+      "message": "Help and support"
+   },
+   "toolbar_settings_menu_HideToolbar": {
+      "message": "Hide Companion"
+   },
+   "toolbar_settings_menu_MinimizeToolbar": {
+      "message": "Minimize Companion"
+   },
+   "toolbar_settings_menu_SubmitFeedback": {
+      "message": "Submit feedback"
+   },
+   "toolbar_settings_menu_title": {
+      "message": "Settings"
+   },
+   "toolbar_settings_predictiveText_FontSize": {
+      "message": "Font size"
+   },
+   "toolbar_settings_predictiveText_FontSize14": {
+      "message": "Font size 14"
+   },
+   "toolbar_settings_predictiveText_FontSize16": {
+      "message": "Font size 16"
+   },
+   "toolbar_settings_predictiveText_FontSize18": {
+      "message": "Font size 18"
+   },
+   "toolbar_settings_predictiveText_FontSize20": {
+      "message": "Font size 20"
+   },
+   "toolbar_settings_predictiveText_FontSize22": {
+      "message": "Font size 22"
+   },
+   "toolbar_settings_predictiveText_FontSizeSelection": {
+      "message": "Font size selection"
+   },
+   "toolbar_settings_predictiveText_FontSizeText": {
+      "message": "Text"
+   },
+   "toolbar_settings_predictiveText_HoverOverWordToReadAloud": {
+      "message": "Hover over any word to have it read aloud."
+   },
+   "toolbar_settings_predictiveText_HowManyWordsToShow": {
+      "message": "How many words to show"
+   },
+   "toolbar_settings_predictiveText_NumberOfSuggestedWords": {
+      "message": "Number of suggested words to show"
+   },
+   "toolbar_settings_predictiveText_PlaceholderText": {
+      "message": "Please select a number"
+   },
+   "toolbar_settings_predictiveText_PredictiveText": {
+      "message": "Predictive text"
+   },
+   "toolbar_settings_predictiveText_ReadOnHover": {
+      "message": "Read on hover"
+   },
+   "toolbar_settings_predictiveText_ShowNumbers": {
+      "message": "Show numbers next to words"
+   },
+   "toolbar_settings_predictiveText_ShowNumbersDescription": {
+      "message": "Use the numbers on your keyboard to insert the corresponding word."
+   },
+   "toolbar_settings_predictiveText_SpellingAssist": {
+      "message": "Spelling assist"
+   },
+   "toolbar_settings_predictiveText_SpellingAssistDescription": {
+      "message": "Get help finding the right word when you spell it how it sounds, like “elefant” for “elephant”."
+   },
+   "toolbar_settings_predictiveText_ToggleNumbers": {
+      "message": "Toggle show numbers next to words"
+   },
+   "toolbar_settings_predictiveText_ToggleReadOnHover": {
+      "message": "Toggle read on hover"
+   },
+   "toolbar_settings_predictiveText_ToggleSpellingAssist": {
+      "message": "Toggle spelling assist"
+   },
+   "toolbar_settings_size_1x": {
+      "message": "1x"
+   },
+   "toolbar_settings_size_2x": {
+      "message": "2x"
+   },
+   "toolbar_settings_size_3x": {
+      "message": "3x"
+   },
+   "toolbar_settings_theme_Dark": {
+      "message": "Dark"
+   },
+   "toolbar_settings_theme_Light": {
+      "message": "Light"
+   },
+   "toolbar_settings_title": {
+      "message": "Settings"
+   },
+   "toolbar_settings_translate_Languages": {
+      "message": "Translate languages"
+   },
+   "toolbar_settings_use_companion_title": {
+      "message": "Use Companion everywhere"
+   },
+   "toolbar_settings_use_companion_toggle_explanation": {
+      "message": " When it's on, Companion pops up on every site. Otherwise, open Companion from the extension icon when you need it."
+   },
+   "toolbar_settings_use_companion_toggle_off": {
+      "message": "Off"
+   },
+   "toolbar_settings_use_companion_toggle_on": {
+      "message": "On"
+   },
+   "toolbar_settings_voiceTyping_ChooseYourPal": {
+      "message": "Choose your pal"
+   },
+   "toolbar_settings_voiceTyping_EnableVoiceTypingPal": {
+      "message": "Enable voice typing pal"
+   },
+   "toolbar_settings_voiceTyping_Interaction": {
+      "message": "Interaction"
+   },
+   "toolbar_settings_voiceTyping_NotAvailableInGoogleDocs": {
+      "message": "Not available in Google Docs"
+   },
+   "toolbar_settings_voiceTyping_PalDescription": {
+      "message": "The voice typing pal appears near your cursor and moves as you speak, helping you see when voice typing is active."
+   },
+   "toolbar_settings_voiceTyping_Pal_bird": {
+      "message": "Bird"
+   },
+   "toolbar_settings_voiceTyping_Pal_cat": {
+      "message": "Cat"
+   },
+   "toolbar_settings_voiceTyping_Pal_cheese": {
+      "message": "Cheese"
+   },
+   "toolbar_settings_voiceTyping_Pal_default": {
+      "message": "Default"
+   },
+   "toolbar_settings_voiceTyping_Pal_dog": {
+      "message": "Dog"
+   },
+   "toolbar_settings_voiceTyping_Pal_flower": {
+      "message": "Flower"
+   },
+   "toolbar_settings_voiceTyping_Pal_rocket": {
+      "message": "Rocket"
+   },
+   "toolbar_settings_voiceTyping_RemoveLanguage": {
+      "message": "Remove language"
+   },
+   "toolbar_settings_voiceTyping_VoiceTypingLanguages": {
+      "message": "Voice typing languages"
+   },
+   "toolbar_summarise_CopyToClipboard": {
+      "message": "Copy summary"
+   },
+   "toolbar_summarize_ReadAloud": {
+      "message": "Read summary aloud"
+   },
+   "toolbar_summarize_coming_soon": {
+      "message": "Summarize - Coming Soon"
+   },
+   "toolbar_summarize_google_workspace_support": {
+      "message": "Summarize - Google Workspace support"
+   },
+   "toolbar_summarize_microsoft_365_support": {
+      "message": "Summarize - Microsoft 365 support"
+   },
+   "toolbar_summarize_tab_tooltip": {
+      "message": "Summarize"
+   },
+   "toolbar_summarize_too_short": {
+      "message": "Sorry, this selection is too short to summarize"
+   },
+   "toolbar_summarize_tooltip": {
+      "message": "Summarize"
+   },
+   "toolbar_summarize_tooltip_pdf_disable": {
+      "message": "Enable area select to use Summarize tool"
+   },
+   "toolbar_switch_Off": {
+      "message": "Off"
+   },
+   "toolbar_switch_On": {
+      "message": "On"
+   },
+   "toolbar_translate_CopyToClipboard": {
+      "message": "Copy translation"
+   },
+   "toolbar_translate_ReadAloud": {
+      "message": "Read translation aloud"
+   },
+   "toolbar_translate_languages_tooltip": {
+      "message": "Translate languages"
+   },
+   "toolbar_translate_tab_tooltip": {
+      "message": "Translate"
+   },
+   "toolbar_translation_AdjustReadAloudSpeed": {
+      "message": "Adjust read aloud speed"
+   },
+   "toolbar_translation_CopiedToClipboard": {
+      "message": "✨ Copied to clipboard"
+   },
+   "toolbar_translation_ICouldNotTranslateThat": {
+      "message": "I could not translate that."
+   },
+   "toolbar_translation_NoLanguagesAvailable": {
+      "message": "No languages available"
+   },
+   "toolbar_translation_SpeakFaster": {
+      "message": "Speak faster"
+   },
+   "toolbar_translation_SpeakSlower": {
+      "message": "Speak slower"
+   },
+   "toolbar_translation_StopReadAloud": {
+      "message": "Stop Read Aloud"
+   },
+   "toolbar_translation_TranslatedBy": {
+      "message": "Translated by"
+   },
+   "toolbar_translation_UnableToConnectToTheTranslationService": {
+      "message": "Unable to connect to the translation service."
+   },
+   "toolbar_translation_coming_soon": {
+      "message": "Translate - Coming Soon"
+   },
+   "toolbar_translation_google_workspace_support": {
+      "message": "Translate - Google Workspace support"
+   },
+   "toolbar_translation_microsoft_365_support": {
+      "message": "Translate - Microsoft 365 support"
+   },
+   "toolbar_translation_tooltip": {
+      "message": "Translate"
+   },
+   "toolbar_translation_tooltip_disable_pdfViewer": {
+      "message": "Enable area select to use Translate"
+   },
+   "toolbar_voiceTyping_ClickOnATextFieldToStartVoiceTyping": {
+      "message": "Click where you want to write"
+   },
+   "toolbar_voiceTyping_Punctuation": {
+      "message": "Voice Punctuation"
+   },
+   "toolbar_voiceTyping_StopVoiceTyping": {
+      "message": "Stop voice typing"
+   },
+   "toolbar_voiceTyping_VoiceTypingLanguage": {
+      "message": "Voice typing - $1"
+   },
+   "toolbar_voiceTyping_VoiceTyping_disabled_tooltip": {
+      "message": "Voice typing is unavailable on this site"
+   },
+   "toolbar_voiceTyping_coming_soon": {
+      "message": "Voice typing - Coming Soon"
+   },
+   "toolbar_voiceTyping_dropdown_MoreLanguages": {
+      "message": "More languages"
+   },
+   "toolbar_voiceTyping_error_AudioCaptureFailed": {
+      "message": "Audio capture failed."
+   },
+   "toolbar_voiceTyping_error_EdgeSupportError": {
+      "message": "Error: Microsoft Edge does not support Voice Typing."
+   },
+   "toolbar_voiceTyping_error_NetworkError": {
+      "message": "Network error."
+   },
+   "toolbar_voiceTyping_error_NoSpeechDetectedVoiceTypingHasStopped": {
+      "message": "No speech detected. Voice typing has stopped."
+   },
+   "toolbar_voiceTyping_error_UnexpectedErrorErrorMessage": {
+      "message": "Unexpected error: $1"
+   },
+   "toolbar_voiceTyping_error_VoiceTypingIsNotAllowed": {
+      "message": "Voice typing is not allowed."
+   },
+   "toolbar_voiceTyping_error_VoiceTypingIsNotAllowedItMayHaveBeenDisabledByThisWebsite": {
+      "message": "Voice typing is not allowed. It may have been disabled by this website."
+   },
+   "toolbar_voiceTyping_expanded_VoiceTypingLanguages": {
+      "message": "Voice typing languages"
+   },
+   "toolbar_voiceTyping_google_docs_coming_soon_info": {
+      "message": "Soon you can use voice typing in your Google Docs"
+   },
+   "toolbar_voiceTyping_google_docs_support": {
+      "message": "Voice typing - Google Docs support"
+   },
+   "toolbar_voiceTyping_microsoft_365_support": {
+      "message": "Voice typing - Microsoft 365 support"
+   },
+   "toolbar_voiceconfig_settings_pitch": {
+      "message": "Adjust pitch"
+   },
+   "toolbar_voiceconfig_settings_speed": {
+      "message": "Adjust speed"
+   },
+   "toolbar_voices_Default": {
+      "message": "Default"
+   },
+   "toolbar_voices_DefaultVoice": {
+      "message": "Default Voice"
+   },
+   "toolbar_voices_NoResultsFound": {
+      "message": "No results found"
+   }
+}

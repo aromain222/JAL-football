@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RF",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Gekyle",
+      "height": 603,
+      "id": 183817,
+      "jersey_number": "84",
+      "last_name": "Baker",
+      "position": "WR",
+      "speed": null,
+      "team": {
+        "abbreviation": "TCUHOR",
+        "city": "TCU",
+        "id": 305,
+        "nickname": "Horned Frogs",
+        "primary_color": "#4d1979",
+        "secondary_color": "#ffffff",
+        "slug": "tcu-horned-frogs"
+      },
+      "weight": 170
+    }
+  ]
+}

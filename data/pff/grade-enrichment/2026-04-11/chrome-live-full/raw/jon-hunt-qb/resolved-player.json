@@ -1,0 +1,28 @@
+{
+  "candidate_count": 4,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jon",
+    "height": 600,
+    "id": 185832,
+    "jersey_number": "19",
+    "last_name": "Hunt",
+    "position": "QB",
+    "speed": null,
+    "team": {
+      "abbreviation": "COASTA",
+      "city": "Coastal Carolina",
+      "id": 141,
+      "nickname": "Chanticleers",
+      "primary_color": "#009297",
+      "secondary_color": "#ffffff",
+      "slug": "coastal-carolina-chanticleers"
+    },
+    "weight": 223
+  }
+}

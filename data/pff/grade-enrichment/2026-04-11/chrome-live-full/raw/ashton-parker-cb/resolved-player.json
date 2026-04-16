@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Ashton",
+    "height": 601,
+    "id": 190398,
+    "jersey_number": "D30",
+    "last_name": "Parker",
+    "position": "CB",
+    "speed": null,
+    "team": {
+      "abbreviation": "APPSTA",
+      "city": "Appalachian State",
+      "id": 108,
+      "nickname": "Mountaineers",
+      "primary_color": "#222222",
+      "secondary_color": "#ffcc00",
+      "slug": "appalachian-state-mountaineers"
+    },
+    "weight": 185
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "SN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Keenan",
+    "height": 600,
+    "id": 158118,
+    "jersey_number": "D16",
+    "last_name": "Nelson Jr.",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "OHIOST",
+      "city": "Ohio State",
+      "id": 260,
+      "nickname": "Buckeyes",
+      "primary_color": "#bb0000",
+      "secondary_color": "#a8adb4",
+      "slug": "ohio-state-buckeyes"
+    },
+    "weight": 205
+  }
+}

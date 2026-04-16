@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RF",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Ty",
+      "height": 603,
+      "id": 198739,
+      "jersey_number": "14",
+      "last_name": "Collins",
+      "position": "QB",
+      "speed": null,
+      "team": {
+        "abbreviation": "MEMPHI",
+        "city": "Memphis",
+        "id": 218,
+        "nickname": "Tigers",
+        "primary_color": "#003087",
+        "secondary_color": "#898d8d",
+        "slug": "memphis-tigers"
+      },
+      "weight": 215
+    }
+  ]
+}

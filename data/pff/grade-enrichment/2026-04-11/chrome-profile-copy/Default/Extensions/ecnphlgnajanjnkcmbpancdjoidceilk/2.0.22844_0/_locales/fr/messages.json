@@ -1,0 +1,541 @@
+{
+   "AccessHighQualityReadyToUseBayouBridgesInstructionalMaterialsInKami": {
+      "message": "Accédez à du matériel pédagogique Bayou Bridges de haute qualité et prêt à l'emploi sur Kami !"
+   },
+   "Alpha": {
+      "message": "ALPHA"
+   },
+   "AnnotateWithKami": {
+      "message": "Annoter avec Kami"
+   },
+   "CanvasNewAssignmentKamiAssignmentAdded": {
+      "message": "fichier ajouté"
+   },
+   "CanvasNewAssignmentTooltipBody": {
+      "message": "Cliquez ici pour ajouter un fichier à attribuer dans Kami à vos élèves."
+   },
+   "CanvasNewAssignmentTooltipGotIt": {
+      "message": "J'ai compris"
+   },
+   "CanvasNewAssignmentTooltipHeader": {
+      "message": "Vous pouvez désormais facilement créer un devoir Kami !"
+   },
+   "CanvasNewAssignmentTooltipLearnMore": {
+      "message": "En savoir plus"
+   },
+   "CheckingAssignmentType": {
+      "message": "Vérification du type de devoir en cours…"
+   },
+   "ClassView": {
+      "message": "Vue de la Classe"
+   },
+   "ClassViewDescription": {
+      "message": "Vous pouvez à présent facilement afficher le travail entier d'une classe et fournir des commentaires en temps réel."
+   },
+   "ClassViewDescriptionText": {
+      "message": "Vous pouvez désormais afficher les devoirs de toute la classe, suivre les progrès et noter plusieurs élèves en même temps."
+   },
+   "ClassViewInKami": {
+      "message": "Vue de la Classe dans Kami"
+   },
+   "DisableInSettings": {
+      "message": "Désactiver dans les paramètres"
+   },
+   "DownloadYourDocumentsIntoKami": {
+      "message": "Téléchargez vos documents dans Kami"
+   },
+   "EditAndUpdateAllStudentsCopies": {
+      "message": "Modifier et mettre à jour les copies de tous les élèves"
+   },
+   "EditAssignment": {
+      "message": "Modifier le devoir"
+   },
+   "EditWithKami": {
+      "message": "Modifier avec Kami"
+   },
+   "ExploreLouisianaLibrary": {
+      "message": "Explorez la Louisiana Library"
+   },
+   "GotIt": {
+      "message": "J'ai compris"
+   },
+   "GradeWithKami": {
+      "message": "Noter avec Kami"
+   },
+   "KamiAssignment": {
+      "message": "Devoir Kami"
+   },
+   "KamiIsAttachingYourFile": {
+      "message": "Kami est en train de joindre votre fichier"
+   },
+   "LearnMore": {
+      "message": "En savoir plus"
+   },
+   "LouisianaLibraryForSocialStudiesNowInKami": {
+      "message": "La Louisiana Library for Social Studies est désormais sur Kami !"
+   },
+   "MakeEditsToAssignedWorkAndPublishChangesToAllStudentsCopies": {
+      "message": "Apportez des modifications au travail assigné et publiez les modifications sur les copies de tous les élèves."
+   },
+   "MakeEditsToAssignmentAndUpdateAllStudentCopies": {
+      "message": "Apportez des modifications au travail et mettez à jour toutes les copies des élèves."
+   },
+   "Next": {
+      "message": "Suivant"
+   },
+   "OpenClassView": {
+      "message": "Ouvrir Class View"
+   },
+   "OpenInClassView": {
+      "message": "Ouvrir dans la Vue de la Classe"
+   },
+   "OpenKamiInNewTab": {
+      "message": "Ouvrir Kami dans un nouvel onglet"
+   },
+   "OpenWithKami": {
+      "message": "Ouvrir avec Kami"
+   },
+   "PleaseKeepThisWindowOpenAndOnTop": {
+      "message": "Veuillez garder cette fenêtre ouverte et en haut"
+   },
+   "PrinterContextMenuTitle": {
+      "message": "Ouvrir dans Kami (PDF)"
+   },
+   "PrinterDescription": {
+      "message": "Ouvrir la page dans Kami"
+   },
+   "TrackAndGradeAllStudentsWork": {
+      "message": "Suivre et noter le travail de tous les élèves"
+   },
+   "UnknownErrorCouldNotGetMessageFromErrorCard": {
+      "message": "Erreur inconnue : impossible d'obtenir le message de la carte d'erreur"
+   },
+   "UpdateWithKami": {
+      "message": "Mettre à jour avec Kami"
+   },
+   "UpdateWork": {
+      "message": "Mettre à jour le travail"
+   },
+   "popup_Beta": {
+      "message": "BÊTA"
+   },
+   "popup_HideToolbar": {
+      "message": "Masquer la barre d'outils"
+   },
+   "popup_OpenKami": {
+      "message": "Ouvrir Kami"
+   },
+   "popup_ShowToolbar": {
+      "message": "Afficher la barre d'outils"
+   },
+   "toolbar_Beta": {
+      "message": "BÊTA"
+   },
+   "toolbar_LogIn": {
+      "message": "Se connecter"
+   },
+   "toolbar_NoResults": {
+      "message": "Aucun résultat"
+   },
+   "toolbar_Speak": {
+      "message": "Parler"
+   },
+   "toolbar_Stop": {
+      "message": "Arrêter"
+   },
+   "toolbar_UnexpectedErrorColon": {
+      "message": "Erreur inattendue :"
+   },
+   "toolbar_YouNeedToLoginFirstANewTabWillBeOpenedForYouToLogin": {
+      "message": "Vous devez d'abord vous connecter. Un nouvel onglet s'ouvrira pour que vous puissiez vous connecter."
+   },
+   "toolbar_coming_soon_google_workspace": {
+      "message": "Vous pourrez bientôt utiliser les outils Companion dans votre Google Workspace"
+   },
+   "toolbar_coming_soon_microsoft_365": {
+      "message": "Vous pourrez bientôt utiliser les outils Companion dans Microsoft 365"
+   },
+   "toolbar_dictionary_and_picture_dictionary": {
+      "message": "Dictionnaire et imagier"
+   },
+   "toolbar_dictionary_coming_soon": {
+      "message": "Dictionnaire – prochainement"
+   },
+   "toolbar_dictionary_google_workspace_support": {
+      "message": "Dictionnaire – assistance de Google Workspace"
+   },
+   "toolbar_dictionary_microsoft_365_support": {
+      "message": "Dictionnaire – assistance de Microsoft 365"
+   },
+   "toolbar_dictionary_tooltip": {
+      "message": "Dictionnaire"
+   },
+   "toolbar_explain_ReadAloud": {
+      "message": "Lire l'explication à voix haute"
+   },
+   "toolbar_explain_coming_soon": {
+      "message": "Expliquer – prochainement"
+   },
+   "toolbar_explain_google_workspace_support": {
+      "message": "Expliquer – assistance de Google Workspace"
+   },
+   "toolbar_explain_microsoft_365_support": {
+      "message": "Expliquer – assistance de Microsoft 365"
+   },
+   "toolbar_explain_title": {
+      "message": "Expliquer"
+   },
+   "toolbar_explain_tooltip": {
+      "message": "Expliquer"
+   },
+   "toolbar_feedback_CloseFeedback": {
+      "message": "Fermer les commentaires"
+   },
+   "toolbar_feedback_GiveFeedback": {
+      "message": "Fournir des commentaires"
+   },
+   "toolbar_feedback_HelpUsImprove": {
+      "message": "Aidez-nous à améliorer"
+   },
+   "toolbar_feedback_Helpful": {
+      "message": "Utile"
+   },
+   "toolbar_feedback_NotHelpful": {
+      "message": "Pas utile"
+   },
+   "toolbar_icon_tooltip": {
+      "message": "Ouvrir Kami"
+   },
+   "toolbar_immersive_reader_available_tooltip": {
+      "message": "Lecture immersive"
+   },
+   "toolbar_immersive_reader_unavailable_tooltip": {
+      "message": "Lecture immersive (indisponible sur ce site)"
+   },
+   "toolbar_languageSelection_AddToStarred": {
+      "message": "Ajouter aux favoris"
+   },
+   "toolbar_languageSelection_All": {
+      "message": "Toutes"
+   },
+   "toolbar_languageSelection_CloseLanguageOptions": {
+      "message": "Fermer les options linguistiques"
+   },
+   "toolbar_languageSelection_OpenLanguageOptions": {
+      "message": "Ouvrir les options linguistiques"
+   },
+   "toolbar_languageSelection_RemoveFromStarred": {
+      "message": "Retirer des favoris"
+   },
+   "toolbar_languageSelection_SearchLanguage": {
+      "message": "Rechercher une langue"
+   },
+   "toolbar_languageSelection_Starred": {
+      "message": "Ajouté aux favoris"
+   },
+   "toolbar_language_select_placeholder": {
+      "message": "Sélectionner une langue"
+   },
+   "toolbar_lookup_Definitions": {
+      "message": "Définitions"
+   },
+   "toolbar_lookup_Pictures": {
+      "message": "Images"
+   },
+   "toolbar_picture_dictionary_coming_soon": {
+      "message": "Imagier – prochainement"
+   },
+   "toolbar_picture_dictionary_google_workspace_support": {
+      "message": "Imagier – assistance de Google Workspace"
+   },
+   "toolbar_picture_dictionary_microsoft_365_support": {
+      "message": "Imagier – assistance de Microsoft 365"
+   },
+   "toolbar_picture_dictionary_tooltip": {
+      "message": "Imagier"
+   },
+   "toolbar_predictiveText_ComingSoon": {
+      "message": "Saisie intuitive – prochainement"
+   },
+   "toolbar_predictiveText_coming_soon_text": {
+      "message": "Choisissez les bons mots lors de votre saisie pour écrire plus rapidement et plus facilement"
+   },
+   "toolbar_predictiveText_coming_soon_title": {
+      "message": "Saisie intuitive"
+   },
+   "toolbar_predictiveText_tooltip": {
+      "message": "Saisie intuitive – prochainement"
+   },
+   "toolbar_read_aloud_ChangeVoice": {
+      "message": "Changer la voix : $voiceName$",
+      "placeholders": {
+         "voiceName": {
+            "content": "$1"
+         }
+      }
+   },
+   "toolbar_read_aloud_ChangeVoiceDefault": {
+      "message": "Changer de voix : voix par défaut"
+   },
+   "toolbar_read_aloud_CloseReadAloud": {
+      "message": "Fermer la lecture à voix haute"
+   },
+   "toolbar_read_aloud_Start": {
+      "message": "Commencer"
+   },
+   "toolbar_read_aloud_Stop": {
+      "message": "Arrêter"
+   },
+   "toolbar_read_aloud_coming_soon": {
+      "message": "Lecture à voix haute – prochainement"
+   },
+   "toolbar_read_aloud_google_workspace_support": {
+      "message": "Lecture à voix haute – assistance de Google Workspace"
+   },
+   "toolbar_read_aloud_microsoft_365_support": {
+      "message": "Lecture à voix haute – assistance de Microsoft 365"
+   },
+   "toolbar_read_aloud_tooltip": {
+      "message": "Ouvrir la lecture à voix haute"
+   },
+   "toolbar_readingFocus_ReadingAssist": {
+      "message": "Assistance à la lecture"
+   },
+   "toolbar_readingFocus_ReadingRuler": {
+      "message": "Règle de lecture"
+   },
+   "toolbar_readingFocus_ScreenMasking": {
+      "message": "Masquage de l'écran"
+   },
+   "toolbar_readingFocus_Settings": {
+      "message": "Paramètres"
+   },
+   "toolbar_settings_Appearances": {
+      "message": "Apparence"
+   },
+   "toolbar_settings_ClearSearch": {
+      "message": "Effacer la recherche"
+   },
+   "toolbar_settings_Close": {
+      "message": "Fermer"
+   },
+   "toolbar_settings_ColorColon": {
+      "message": "Couleur :"
+   },
+   "toolbar_settings_FollowCursor": {
+      "message": "Suivre le curseur"
+   },
+   "toolbar_settings_FollowCursorColon": {
+      "message": "Suivre le curseur :"
+   },
+   "toolbar_settings_HeightColon": {
+      "message": "Hauteur :"
+   },
+   "toolbar_settings_OpacityColon": {
+      "message": "Opacité :"
+   },
+   "toolbar_settings_Pitch": {
+      "message": "Hauteur"
+   },
+   "toolbar_settings_PlayColon": {
+      "message": "Lire :"
+   },
+   "toolbar_settings_PressEnterToSelectInThisCategory": {
+      "message": "Appuyez sur Entrée pour sélectionner dans cette catégorie"
+   },
+   "toolbar_settings_PreviewColon": {
+      "message": "Aperçu :"
+   },
+   "toolbar_settings_ReadAloud": {
+      "message": "Lire à voix haute"
+   },
+   "toolbar_settings_ReadingFocus": {
+      "message": "Concentration sur la lecture"
+   },
+   "toolbar_settings_ReadingRuler": {
+      "message": "Règle de lecture"
+   },
+   "toolbar_settings_RulerStyleColon": {
+      "message": "Afficher les bordures :"
+   },
+   "toolbar_settings_RulerStyleLeftRight": {
+      "message": "Afficher les bordures verticales"
+   },
+   "toolbar_settings_RulerStyleLeftRightColon": {
+      "message": "Afficher les bordures verticales :"
+   },
+   "toolbar_settings_RulerStyleReadingLine": {
+      "message": "Afficher la ligne de lecture"
+   },
+   "toolbar_settings_RulerStyleReadingLineColon": {
+      "message": "Afficher la ligne de lecture :"
+   },
+   "toolbar_settings_RulerStyleTopBottom": {
+      "message": "Afficher les bordures horizontales"
+   },
+   "toolbar_settings_RulerStyleTopBottomColon": {
+      "message": "Afficher les bordures horizontales :"
+   },
+   "toolbar_settings_ScreenMasking": {
+      "message": "Masquage de l'écran"
+   },
+   "toolbar_settings_Search": {
+      "message": "Rechercher"
+   },
+   "toolbar_settings_SelectASize": {
+      "message": "Sélectionnez une taille"
+   },
+   "toolbar_settings_SelectATheme": {
+      "message": "Sélectionner un thème"
+   },
+   "toolbar_settings_SelectAVoice": {
+      "message": "Sélectionner une voix"
+   },
+   "toolbar_settings_Size": {
+      "message": "Taille"
+   },
+   "toolbar_settings_Speed": {
+      "message": "Vitesse"
+   },
+   "toolbar_settings_Stop": {
+      "message": "Arrêter"
+   },
+   "toolbar_settings_Theme": {
+      "message": "Thème"
+   },
+   "toolbar_settings_Themes": {
+      "message": "Thèmes"
+   },
+   "toolbar_settings_ToolbarSettings": {
+      "message": "Paramètres de la barre d'outils"
+   },
+   "toolbar_settings_WidthColon": {
+      "message": "Largeur :"
+   },
+   "toolbar_settings_YourSystemDoesNotSupportTextToSpeech": {
+      "message": "Votre système ne prend pas en charge la lecture à voix haute."
+   },
+   "toolbar_settings_menu_HelpAndSupport": {
+      "message": "Aide et assistance"
+   },
+   "toolbar_settings_menu_HideToolbar": {
+      "message": "Masquer la barre d'outils"
+   },
+   "toolbar_settings_menu_SubmitFeedback": {
+      "message": "Envoyer des commentaires"
+   },
+   "toolbar_settings_menu_title": {
+      "message": "Paramètres"
+   },
+   "toolbar_settings_size_1x": {
+      "message": "x 1"
+   },
+   "toolbar_settings_size_2x": {
+      "message": "x 2"
+   },
+   "toolbar_settings_size_3x": {
+      "message": "x 3"
+   },
+   "toolbar_settings_theme_Dark": {
+      "message": "Sombre"
+   },
+   "toolbar_settings_theme_Light": {
+      "message": "Clair"
+   },
+   "toolbar_settings_title": {
+      "message": "Paramètres"
+   },
+   "toolbar_summarize_ReadAloud": {
+      "message": "Lire le résumé à voix haute"
+   },
+   "toolbar_summarize_coming_soon": {
+      "message": "Résumer – prochainement"
+   },
+   "toolbar_summarize_google_workspace_support": {
+      "message": "Résumer – assistance de Google Workspace"
+   },
+   "toolbar_summarize_microsoft_365_support": {
+      "message": "Résumer – assistance de Microsoft 365"
+   },
+   "toolbar_summarize_title": {
+      "message": "Résumer"
+   },
+   "toolbar_summarize_tooltip": {
+      "message": "Résumer"
+   },
+   "toolbar_switch_Off": {
+      "message": "Désactivé"
+   },
+   "toolbar_switch_On": {
+      "message": "Activé"
+   },
+   "toolbar_translate_ReadAloud": {
+      "message": "Lire la traduction à voix haute"
+   },
+   "toolbar_translation_AdjustReadAloudSpeed": {
+      "message": "Ajuster la vitesse de lecture à voix haute"
+   },
+   "toolbar_translation_CopiedToClipboard": {
+      "message": "✨ Copié dans le presse-papiers"
+   },
+   "toolbar_translation_ICouldNotTranslateThat": {
+      "message": "Je ne pourrais pas traduire cela."
+   },
+   "toolbar_translation_NoLanguagesAvailable": {
+      "message": "Aucune langue disponible"
+   },
+   "toolbar_translation_ReadTranslationAloud": {
+      "message": "Lire la traduction à voix haute"
+   },
+   "toolbar_translation_SpeakFaster": {
+      "message": "Parler plus rapidement"
+   },
+   "toolbar_translation_SpeakSlower": {
+      "message": "Parler plus lentement"
+   },
+   "toolbar_translation_StopReadAloud": {
+      "message": "Arrêter la lecture à voix haute"
+   },
+   "toolbar_translation_TranslatedBy": {
+      "message": "Traduit par"
+   },
+   "toolbar_translation_UnableToConnectToTheTranslationService": {
+      "message": "Impossible de se connecter au service de traduction."
+   },
+   "toolbar_translation_coming_soon": {
+      "message": "Traduire – prochainement"
+   },
+   "toolbar_translation_google_workspace_support": {
+      "message": "Traduire – assistance de Google Workspace"
+   },
+   "toolbar_translation_microsoft_365_support": {
+      "message": "Traduire – assistance de Microsoft 365"
+   },
+   "toolbar_translation_title": {
+      "message": "Traduire"
+   },
+   "toolbar_translation_tooltip": {
+      "message": "Traduire"
+   },
+   "toolbar_voiceTyping_ComingSoon": {
+      "message": "Saisie vocale – prochainement"
+   },
+   "toolbar_voiceTyping_coming_soon_text": {
+      "message": "Utilisez votre voix pour saisir sur des sites Web et dans vos documents"
+   },
+   "toolbar_voiceTyping_coming_soon_title": {
+      "message": "Saisie vocale"
+   },
+   "toolbar_voiceTyping_tooltip": {
+      "message": "Saisie vocale – prochainement"
+   },
+   "toolbar_voices_Default": {
+      "message": "Par défaut"
+   },
+   "toolbar_voices_DefaultVoice": {
+      "message": "Voix par défaut"
+   },
+   "toolbar_voices_NoResultsFound": {
+      "message": "Aucun résultat trouvé"
+   }
+}

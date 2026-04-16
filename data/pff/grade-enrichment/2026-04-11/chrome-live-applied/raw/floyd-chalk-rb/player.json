@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "SN",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Floyd",
+      "height": 507,
+      "id": 167095,
+      "jersey_number": "3",
+      "last_name": "Chalk IV",
+      "position": "HB",
+      "speed": null,
+      "team": {
+        "abbreviation": "SJSTAT",
+        "city": "San Jose State",
+        "id": 285,
+        "nickname": "Spartans",
+        "primary_color": "#ffc021",
+        "secondary_color": "#005893",
+        "slug": "san-jose-state-spartans"
+      },
+      "weight": 192
+    }
+  ]
+}

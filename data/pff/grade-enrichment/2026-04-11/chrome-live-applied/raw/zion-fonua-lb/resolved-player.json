@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Zion",
+    "height": 600,
+    "id": 184049,
+    "jersey_number": "D23",
+    "last_name": "Fonua",
+    "position": "LB",
+    "speed": null,
+    "team": {
+      "abbreviation": "SOUTHD",
+      "city": "South Dakota",
+      "id": 291,
+      "nickname": "Coyotes",
+      "primary_color": "#ad0000",
+      "secondary_color": "#000000",
+      "slug": "south-dakota-coyotes"
+    },
+    "weight": 245
+  }
+}

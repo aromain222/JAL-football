@@ -1,0 +1,28 @@
+{
+  "candidate_count": 7,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "J",
+    "current_eligible_year": 2024,
+    "dob": null,
+    "draft": null,
+    "first_name": "Maurice",
+    "height": 511,
+    "id": 167416,
+    "jersey_number": "6",
+    "last_name": "Smith",
+    "position": "HB",
+    "speed": null,
+    "team": {
+      "abbreviation": "WNEWME",
+      "city": "Western New Mexico",
+      "id": 410,
+      "nickname": "Mustangs",
+      "primary_color": "#663399",
+      "secondary_color": "#DAA520",
+      "slug": "western-new-mexico-mustangs"
+    },
+    "weight": 205
+  }
+}

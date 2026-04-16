@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Ni",
+      "height": 603,
+      "id": 129559,
+      "jersey_number": "62",
+      "last_name": "Mansell",
+      "position": "G",
+      "speed": null,
+      "team": {
+        "abbreviation": "SOUTHA",
+        "city": "South Alabama",
+        "id": 288,
+        "nickname": "Jaguars",
+        "primary_color": "#00205b",
+        "secondary_color": "#bf0d3e",
+        "slug": "south-alabama-jaguars"
+      },
+      "weight": 295
+    }
+  ]
+}

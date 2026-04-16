@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "SN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Terrence",
+    "height": 605,
+    "id": 144020,
+    "jersey_number": "74",
+    "last_name": "Enos Jr.",
+    "position": "T",
+    "speed": null,
+    "team": {
+      "abbreviation": "KSTATE",
+      "city": "Kansas State",
+      "id": 199,
+      "nickname": "Wildcats",
+      "primary_color": "#582c83",
+      "secondary_color": "#8a8d8f",
+      "slug": "kansas-state-wildcats"
+    },
+    "weight": 310
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "F",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Kolby",
+    "height": 509,
+    "id": 198683,
+    "jersey_number": "27",
+    "last_name": "Thomas",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "LATECH",
+      "city": "Louisiana Tech",
+      "id": 208,
+      "nickname": "Bulldogs",
+      "primary_color": "#002f8b",
+      "secondary_color": "#ff0000",
+      "slug": "louisiana-tech-bulldogs"
+    },
+    "weight": 165
+  }
+}

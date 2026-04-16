@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RS",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Zy'Terrio",
+      "height": 603,
+      "id": 172843,
+      "jersey_number": "71",
+      "last_name": "Lee",
+      "position": "T",
+      "speed": null,
+      "team": {
+        "abbreviation": "CAMPBE",
+        "city": "Campbell",
+        "id": 131,
+        "nickname": "Fighting Camels",
+        "primary_color": "#ea7125",
+        "secondary_color": "#000000",
+        "slug": "campbell-fighting-camels"
+      },
+      "weight": 310
+    }
+  ]
+}

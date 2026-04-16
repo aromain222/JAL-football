@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RSN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Michael",
+    "height": 600,
+    "id": 144959,
+    "jersey_number": "D2",
+    "last_name": "Gravely Jr.",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "BALLST",
+      "city": "Ball State",
+      "id": 117,
+      "nickname": "Cardinals",
+      "primary_color": "#da0000",
+      "secondary_color": "#ffffff",
+      "slug": "ball-state-cardinals"
+    },
+    "weight": 201
+  }
+}

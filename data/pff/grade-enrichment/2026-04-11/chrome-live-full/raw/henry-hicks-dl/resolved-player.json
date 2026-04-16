@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "S",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Henry",
+    "height": 602,
+    "id": 211931,
+    "jersey_number": "D55",
+    "last_name": "Hicks",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "LIBERT",
+      "city": "Liberty",
+      "id": 206,
+      "nickname": "Flames",
+      "primary_color": "#a70f00",
+      "secondary_color": "#02298a",
+      "slug": "liberty-flames"
+    },
+    "weight": 280
+  }
+}

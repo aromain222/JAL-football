@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "J",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Alessandro",
+    "height": 602,
+    "id": 175939,
+    "jersey_number": "D97",
+    "last_name": "Perez",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "TEXASM",
+      "city": "Texas A&M",
+      "id": 312,
+      "nickname": "Aggies",
+      "primary_color": "#5c0025",
+      "secondary_color": "#ffffff",
+      "slug": "texas-am-aggies"
+    },
+    "weight": 234
+  }
+}

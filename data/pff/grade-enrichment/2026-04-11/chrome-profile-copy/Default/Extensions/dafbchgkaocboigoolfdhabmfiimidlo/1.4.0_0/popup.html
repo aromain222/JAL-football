@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<title>ChatGPT Bulk Delete</title>
+		<link rel="stylesheet" href="popup.css" />
+	</head>
+	<body>
+		<div class="container">
+			<h1>🧹 Bulk Delete ChatGPT Chats</h1>
+			<p class="subtitle">
+				Effortlessly manage and delete your ChatGPT conversations.
+			</p>
+
+			<button id="addCheckboxesBtn" class="btn primary">
+				➕ Select Conversations
+			</button>
+			<button id="removeCheckboxesBtn" class="btn secondary">
+				❌ Remove Checkboxes
+			</button>
+			<button id="bulkArchiveBtn" class="btn warning">📦 Bulk Archive</button>
+			<button id="bulkDeleteBtn" class="btn danger">🗑 Bulk Delete</button>
+
+			<!-- New Elements to display selection + progress -->
+			<p id="selectedCount">Selected Chats: 0</p>
+			<progress
+				id="progressBar"
+				value="0"
+				max="100"
+				style="width: 100%"
+			></progress>
+		</div>
+		<script type="module" src="./js/popup.js"></script>
+	</body>
+</html>

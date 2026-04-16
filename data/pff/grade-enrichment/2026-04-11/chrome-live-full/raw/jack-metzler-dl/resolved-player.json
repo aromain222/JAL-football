@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "S",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jack",
+    "height": 603,
+    "id": 198449,
+    "jersey_number": "D92",
+    "last_name": "Metzler",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "FSBULL",
+      "city": "Fresno State",
+      "id": 169,
+      "nickname": "Bulldogs",
+      "primary_color": "#db0032",
+      "secondary_color": "#002e6d",
+      "slug": "fresno-state-bulldogs"
+    },
+    "weight": 230
+  }
+}

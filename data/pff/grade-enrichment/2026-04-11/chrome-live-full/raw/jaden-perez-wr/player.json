@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "F",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jaden",
+      "height": 600,
+      "id": 204195,
+      "jersey_number": "83",
+      "last_name": "Perez",
+      "position": "WR",
+      "speed": null,
+      "team": {
+        "abbreviation": "OKSTAT",
+        "city": "Oklahoma State",
+        "id": 262,
+        "nickname": "Cowboys",
+        "primary_color": "#ff6500",
+        "secondary_color": "#000000",
+        "slug": "oklahoma-state-cowboys"
+      },
+      "weight": 170
+    }
+  ]
+}

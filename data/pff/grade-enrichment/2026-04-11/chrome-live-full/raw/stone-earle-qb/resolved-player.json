@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RSN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Stone",
+    "height": 600,
+    "id": 123504,
+    "jersey_number": "4",
+    "last_name": "Earle",
+    "position": "QB",
+    "speed": null,
+    "team": {
+      "abbreviation": "ABICHR",
+      "city": "Abilene Christian",
+      "id": 100,
+      "nickname": "Wildcats",
+      "primary_color": "#4f2683",
+      "secondary_color": "#c5c6c8",
+      "slug": "abilene-christian-wildcats"
+    },
+    "weight": 215
+  }
+}

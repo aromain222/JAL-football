@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "S",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Brandon",
+    "height": 602,
+    "id": 183528,
+    "jersey_number": "D21",
+    "last_name": "Jacob Jr.",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "UTSARR",
+      "city": "UTSA",
+      "id": 331,
+      "nickname": "Roadrunners",
+      "primary_color": "#f15a22",
+      "secondary_color": "#0c2340",
+      "slug": "utsa-roadrunners"
+    },
+    "weight": 175
+  }
+}

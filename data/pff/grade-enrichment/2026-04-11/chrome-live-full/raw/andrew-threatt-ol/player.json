@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Andrew",
+      "height": 603,
+      "id": 162588,
+      "jersey_number": "72",
+      "last_name": "Threatt",
+      "position": "T",
+      "speed": null,
+      "team": {
+        "abbreviation": "WESTCA",
+        "city": "Western Carolina",
+        "id": 344,
+        "nickname": "Catamounts",
+        "primary_color": "#592c88",
+        "secondary_color": "#c1a875",
+        "slug": "western-carolina-catamounts"
+      },
+      "weight": 315
+    }
+  ]
+}

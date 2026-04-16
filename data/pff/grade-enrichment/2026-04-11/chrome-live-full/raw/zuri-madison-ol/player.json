@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": null,
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Zuri",
+      "height": 603,
+      "id": 184390,
+      "jersey_number": "59",
+      "last_name": "Madison",
+      "position": "G",
+      "speed": null,
+      "team": {
+        "abbreviation": "SOUTHU",
+        "city": "Southern University",
+        "id": 297,
+        "nickname": "Jaguars",
+        "primary_color": "#69b3e7",
+        "secondary_color": "#ffc72c",
+        "slug": "southern-university-jaguars"
+      },
+      "weight": 300
+    }
+  ]
+}

@@ -1,0 +1,1358 @@
+{
+   "24hourMode": {
+      "message": "Afișarea orei in format de 24 de ore"
+   },
+   "24hourModeTitle": {
+      "message": "Ora spectacolului în 24 de ore, adică. 18:00"
+   },
+   "DND": {
+      "message": "Nu deranja"
+   },
+   "DNDisEnabled": {
+      "message": "Modul Nu deranja este activat"
+   },
+   "PIN": {
+      "message": "PIN"
+   },
+   "Xseconds": {
+      "message": "$1 secunde"
+   },
+   "Xuser": {
+      "message": "$1 utilizator"
+   },
+   "Xusers": {
+      "message": "$1 utilizatori"
+   },
+   "aboutMe": {
+      "message": "Despre"
+   },
+   "account": {
+      "message": "Cont"
+   },
+   "activeCalendars": {
+      "message": "Calendare active"
+   },
+   "addNotification": {
+      "message": "Adaugă notificare"
+   },
+   "addSkinsOrThemes": {
+      "message": "Teme & skin-uri"
+   },
+   "addToGoogleCalendar": {
+      "message": "Adăugați în Google Calendar"
+   },
+   "addVideoConferencing": {
+      "message": "Adaugă conferință video"
+   },
+   "added": {
+      "message": "Adăugat"
+   },
+   "addedForSomeday": {
+      "message": "Adăugat $1 pe $2"
+   },
+   "addedForToday": {
+      "message": "Adăugat $1 pentru astăzi"
+   },
+   "addedForTodayAt": {
+      "message": "Adăugat $1 $2"
+   },
+   "addedForTomorrow": {
+      "message": "Adăugat $1 pentru mâine"
+   },
+   "addedForTomorrowAt": {
+      "message": "Adăugat $1 pentru mâine, $2"
+   },
+   "addedTimedEventInThePast": {
+      "message": "Timpul acestui eveniment a trecut deja! Doriți să-l schimbați pe mâine la aceeași oră?"
+   },
+   "admin": {
+      "message": "Administrator"
+   },
+   "after": {
+      "message": "După"
+   },
+   "agenda": {
+      "message": "Program"
+   },
+   "all": {
+      "message": "Tot"
+   },
+   "allCalendars": {
+      "message": "Toate calendarele"
+   },
+   "allEvents": {
+      "message": "Toate evenimentele"
+   },
+   "alreadyDonated": {
+      "message": "Am contribuit deja"
+   },
+   "always": {
+      "message": "Întotdeauna"
+   },
+   "alwaysSpeak": {
+      "message": "Vorbește mereu"
+   },
+   "amount": {
+      "message": "Sumă"
+   },
+   "andNightTimesAfter": {
+      "message": "și orele de noapte după"
+   },
+   "annually": {
+      "message": "Anual"
+   },
+   "anyAmount": {
+      "message": "ORICE sumă"
+   },
+   "auto": {
+      "message": "Auto"
+   },
+   "available": {
+      "message": "Disponibil"
+   },
+   "beforeEachEvent": {
+      "message": "înainte de fiecare eveniment"
+   },
+   "beforeStart": {
+      "message": "Înainte de început"
+   },
+   "bestDeal": {
+      "message": "Cea mai bună ofertă"
+   },
+   "bestDealTooltip": {
+      "message": "Economisește bani"
+   },
+   "birthdays": {
+      "message": "Zile de naștere"
+   },
+   "bitcoin": {
+      "message": "Bitcoin"
+   },
+   "busy": {
+      "message": "Ocupat"
+   },
+   "buttonClickAction": {
+      "message": "Acțiune la click pe buton"
+   },
+   "by": {
+      "message": "de"
+   },
+   "calendar": {
+      "message": "Calendar"
+   },
+   "cancel": {
+      "message": "Anulează"
+   },
+   "cancelAnytime": {
+      "message": "Poți anula oricând"
+   },
+   "card": {
+      "message": "Card"
+   },
+   "changeThisDomain": {
+      "message": "Pentru a schimba acest domeniu de e-mail acum $1"
+   },
+   "changeThisDomain2": {
+      "message": "Deconectați-vă și conectați-vă ca alt utilizator"
+   },
+   "changelog": {
+      "message": "Jurnal modificări"
+   },
+   "changesOnlyReflectedOnCalendarX": {
+      "message": "Urmează să faci modificări care vor fi reflectate doar pe calendarul $1."
+   },
+   "changingIcon": {
+      "message": "Schimbați pictograma butonului sau afișați data de astăzi"
+   },
+   "checkBothPermissions": {
+      "message": "Trebuie să bifezi ambele permisiuni pentru a vedea toate calendarele, orele de memento și culorile."
+   },
+   "clearCache": {
+      "message": "Ștergeți memoria cache a extensiei"
+   },
+   "clickOkToRestartExtension": {
+      "message": "Apasă OK pentru a reporni extensia"
+   },
+   "clickToolbarIconToContinue": {
+      "message": "Fă clic pe pictograma din bară pentru a continua"
+   },
+   "clickingAnywhereOnNotification": {
+      "message": "Click oriunde pe notificare"
+   },
+   "clickingXOnNotification": {
+      "message": "Click pe X în notificare"
+   },
+   "close": {
+      "message": "Închide"
+   },
+   "cont": {
+      "message": "cont."
+   },
+   "continue": {
+      "message": "Continua"
+   },
+   "contribute": {
+      "message": "Contribuie"
+   },
+   "copiedToClipboard": {
+      "message": "Copiat în clipboard"
+   },
+   "copyToMyCalendar": {
+      "message": "Copiază în calendarul meu"
+   },
+   "createDeleteEvents": {
+      "message": "Creați evenimente făcând clic pe calendar"
+   },
+   "createEvent": {
+      "message": "Creați un eveniment"
+   },
+   "createdBy": {
+      "message": "Creat de"
+   },
+   "currencyCode": {
+      "message": "USD"
+   },
+   "customView": {
+      "message": "Vizualizare personalizată"
+   },
+   "customizeNotifications": {
+      "message": "Personalizează notificările"
+   },
+   "d": {
+      "message": "z"
+   },
+   "daily": {
+      "message": "Zilnic"
+   },
+   "date": {
+      "message": "Dată"
+   },
+   "day": {
+      "message": "Zi"
+   },
+   "dayMaxEventRows": {
+      "message": "Numărul maxim de evenimente pe zi"
+   },
+   "dayOfYear": {
+      "message": "Ziua din an"
+   },
+   "default": {
+      "message": "Implicit"
+   },
+   "defaultCalendar": {
+      "message": "Calendar implicit"
+   },
+   "defaultDate": {
+      "message": "Dată implicită"
+   },
+   "defaultEventDuration": {
+      "message": "Durata implicită a evenimentului"
+   },
+   "defaultEventNotificationTime": {
+      "message": "Ora implicită de notificare"
+   },
+   "defaultSnoozeBeforeTime": {
+      "message": "amânare implicită anticipată"
+   },
+   "defaultSnoozeTime": {
+      "message": "durata implicită de amânare"
+   },
+   "defaultVisibility": {
+      "message": "Vizibilitate implicită"
+   },
+   "delete": {
+      "message": "Șterge"
+   },
+   "deleteAll": {
+      "message": "Ștergeți tot"
+   },
+   "deleteRemindersFromPopup": {
+      "message": "Șterge evenimentele din fereastra de mementouri"
+   },
+   "description": {
+      "message": "Vezi următoarele evenimente, primește notificări și amână evenimente fără să deschizi pagina Google Calendar!"
+   },
+   "detectTime": {
+      "message": "Detectează ora"
+   },
+   "developingMore": {
+      "message": "și lucrez la mai multe dintre sugestiile tale..."
+   },
+   "developingMoreSuggestions": {
+      "message": "și lucrez la mai multe dintre ale tale $1"
+   },
+   "developingMoreSuggestions_suggestions": {
+      "message": "Sugestii"
+   },
+   "dimPastEvents": {
+      "message": "Estompează evenimentele trecute"
+   },
+   "dir": {
+      "message": "ltr"
+   },
+   "disableAll": {
+      "message": "Dezactivează tot"
+   },
+   "disabledSkinsUseEnable": {
+      "message": "Ai dezactivat temele, folosește butonul Activează"
+   },
+   "discoverMyApps": {
+      "message": "Descoperă aplicațiile mele"
+   },
+   "dismiss": {
+      "message": "Închide"
+   },
+   "dismissAll": {
+      "message": "Inlatura tot"
+   },
+   "dismissAllInNotificationWindow": {
+      "message": "Inlatura toate evenimentele în fereastra de notificare"
+   },
+   "dismissEventAfterClickingJoinVideo": {
+      "message": "Închide evenimentul când participi la apel video"
+   },
+   "dismissesEvents": {
+      "message": "Închide evenimentele"
+   },
+   "displayEventTitlesInReminderWindowTitle": {
+      "message": "Afișează titlurile evenimentelor în titlul ferestrei de mementouri"
+   },
+   "displaySecondaryTimezone": {
+      "message": "Afișează fusul orar secundar"
+   },
+   "displayThisOnly": {
+      "message": "Afișează doar acesta"
+   },
+   "doNotDisturb": {
+      "message": "Nu deranja"
+   },
+   "doNotDisturbForTodayToolTip": {
+      "message": "Nu deranja până mâine la 7am"
+   },
+   "doNotDisturbIndefinitelyToolTip": {
+      "message": "Activează Nu deranja până îl dezactivezi manual"
+   },
+   "doNotDisturbToolTip": {
+      "message": "Dezactivează sunetul, vocea și notificările desktop din această extensie"
+   },
+   "doNotShowNotificationsForAlldayEvents": {
+      "message": "Nu afișați notificări pentru evenimentele care dureaza toata ziua"
+   },
+   "doNotShowNotificationsForRepeatingEvents": {
+      "message": "Nu afișa notificări pentru evenimentele recurente"
+   },
+   "doNotShowPastNotifications": {
+      "message": "Nu afișați notificări pentru evenimentele trecute"
+   },
+   "doNotShowPastNotificationsTitle": {
+      "message": "Utilizați acest lucru numai dacă primiți mementouri de pe un al doilea dispozitiv/computer, astfel încât atunci când deschideți browserul sau reluați din standby să nu primiți notificări anterioare. Dacă bifați această opțiune și nu este cazul, atunci S-AR PUTEA SĂ PIERDEȚI MEMENTOURI!"
+   },
+   "done": {
+      "message": "Gata"
+   },
+   "dontSend": {
+      "message": "Nu trimite"
+   },
+   "duplicate": {
+      "message": "Duplică"
+   },
+   "edge": {
+      "message": "Edge"
+   },
+   "edit": {
+      "message": "Editează"
+   },
+   "editEventDetails": {
+      "message": "Editează evenimentul"
+   },
+   "email": {
+      "message": "E-mail"
+   },
+   "enable": {
+      "message": "Activează"
+   },
+   "ends": {
+      "message": "Se termină"
+   },
+   "enterAnAmount": {
+      "message": "Trebuie să introduceți o sumă!"
+   },
+   "event": {
+      "message": "Eveniment"
+   },
+   "eventAdded": {
+      "message": "Eveniment adăugat"
+   },
+   "eventConflictHandling": {
+      "message": "Gestionarea conflictelor de evenimente"
+   },
+   "eventDeleted": {
+      "message": "Eveniment șters"
+   },
+   "eventDescription": {
+      "message": "Descriere"
+   },
+   "eventSaved": {
+      "message": "Eveniment salvat"
+   },
+   "eventUpdated": {
+      "message": "Eveniment actualizat"
+   },
+   "every2Weeks": {
+      "message": "La fiecare 2 săptămâni"
+   },
+   "everyWeekday": {
+      "message": "În fiecare zi lucrătoare (Lun-Vin)"
+   },
+   "everyX_Y": {
+      "message": "La fiecare $1 $2"
+   },
+   "everyX_YOnDays": {
+      "message": "La fiecare $1 $2 în $3"
+   },
+   "ex": {
+      "message": "de ex."
+   },
+   "example": {
+      "message": "exemplu"
+   },
+   "excludeFromNotificationsUse": {
+      "message": "Pentru a exclude notificările, utilizați fila Notificări"
+   },
+   "excludeRecurringEventsButtonIcon": {
+      "message": "Excluderea evenimentelor recurente din pictograma buton"
+   },
+   "excludeRecurringEventsButtonIconTooltip": {
+      "message": "Evenimentele recurente nu vor apărea în pictograma buton"
+   },
+   "excluded": {
+      "message": "Exclus"
+   },
+   "exportOptions": {
+      "message": "Exportă opțiunile"
+   },
+   "extensionUpdated": {
+      "message": "Extensia a fost actualizată!"
+   },
+   "extensionUpdates": {
+      "message": "Actualizări extensie"
+   },
+   "extraFeatures": {
+      "message": "Caracteristici suplimentare"
+   },
+   "extraFeaturesPopup1": {
+      "message": "Aceste opțiuni estompate sunt funcții suplimentare la care am lucrat mult."
+   },
+   "extraFeaturesPopup2": {
+      "message": "Pentru a debloca aceste funcții, contribuie cu o sumă pentru a susține munca mea."
+   },
+   "failureWithPayPalPurchase": {
+      "message": "Anulat sau tranzacția esuata! Încercați alternativ $1?"
+   },
+   "feedback": {
+      "message": "Feedback"
+   },
+   "findDate": {
+      "message": "Găsește data"
+   },
+   "firstDay": {
+      "message": "Prima zi"
+   },
+   "followMe": {
+      "message": "Urmărește-mă"
+   },
+   "forever": {
+      "message": "Pentru totdeauna"
+   },
+   "frequencyOnDays": {
+      "message": "$1 în $2"
+   },
+   "goToToday": {
+      "message": "Mergi la astăzi"
+   },
+   "going": {
+      "message": "Particip"
+   },
+   "googleAccountsSignIn": {
+      "message": "Conectează-te cu Google"
+   },
+   "googleTasksSupport": {
+      "message": "Suport Google Tasks"
+   },
+   "groupNotifications": {
+      "message": "Grupează toate evenimentele într-o singură notificare"
+   },
+   "guests": {
+      "message": "Invitați"
+   },
+   "h": {
+      "message": "h"
+   },
+   "help": {
+      "message": "Ajutor"
+   },
+   "hideAfter": {
+      "message": "Ascunde după"
+   },
+   "hideButton": {
+      "message": "Ascunde butonul"
+   },
+   "hideColonInTime": {
+      "message": "Ascunde două puncte în formatul de 24 de ore"
+   },
+   "hideColonInTimeToolTip": {
+      "message": "Ex: Pentru spațiu limitat, 10:00 va fi afișat ca 1000"
+   },
+   "hideDelete": {
+      "message": "Ascunde Ștergere"
+   },
+   "hideMorningAndNightHours": {
+      "message": "Ascunde orele de dimineață și noapte în vizualizările zi/săptămână"
+   },
+   "hideMorningHoursBefore": {
+      "message": "Ascunde orele de dimineață înainte de"
+   },
+   "hideReminderHeader": {
+      "message": "Ascunde antetul mementoului"
+   },
+   "highlightWeekends": {
+      "message": "Evidențierea weekendurilor"
+   },
+   "hoursRemaining": {
+      "message": "Arata numărul de ore ramase până la următorul eveniment"
+   },
+   "hoursRemainingTitle": {
+      "message": "Dacă evenimentul este mai târziu în timpul zilei și la mai puțin de 24 de ore distanță, atunci orele rămase vor fi afișate ex. 4h"
+   },
+   "iconClassic": {
+      "message": "Clasic"
+   },
+   "iconDefault": {
+      "message": "Implicit"
+   },
+   "iconDefault2WithDate": {
+      "message": "Implicit cu data curentă"
+   },
+   "iconDefault2WithDateInverted": {
+      "message": "Implicit cu data curentă inversată"
+   },
+   "iconMonochrome": {
+      "message": "Monocrom clasic"
+   },
+   "iconMonochrome2": {
+      "message": "Monocrom"
+   },
+   "iconMonochrome2WithDate": {
+      "message": "Monocrom cu data curentă"
+   },
+   "iconNew": {
+      "message": "Nou"
+   },
+   "iconNew2": {
+      "message": "Întunecat"
+   },
+   "iconNew2WithDate": {
+      "message": "Întunecat cu data curentă"
+   },
+   "iconNewWithDate": {
+      "message": "Nou cu data curentă"
+   },
+   "iconTooltip": {
+      "message": "Pictograma de utilizat pentru butonul pop-up"
+   },
+   "importOptions": {
+      "message": "Importă opțiunile"
+   },
+   "includesExtraFeaturesForX": {
+      "message": "Include funcțiile suplimentare pentru $1"
+   },
+   "indefinitely": {
+      "message": "Pe termen nelimitat"
+   },
+   "individualNotifications": {
+      "message": "Afișează fiecare eveniment într-o notificare individuală"
+   },
+   "joinByPhone": {
+      "message": "Participă prin telefon"
+   },
+   "joinVideoCall": {
+      "message": "Participă la apel video"
+   },
+   "joinWithX": {
+      "message": "Participă cu $1"
+   },
+   "joiningInstructions": {
+      "message": "Instrucțiuni de participare"
+   },
+   "jumpToStartOfMonthForNextPrev": {
+      "message": "Sari la începutul lunii când folosești următorul/anteriorul"
+   },
+   "justStartTyping": {
+      "message": "Sfat rapid: Începe să tastezi direct!"
+   },
+   "keyboardShortcuts": {
+      "message": "Scurtături de la tastatură"
+   },
+   "keys": {
+      "message": "Taste"
+   },
+   "label": {
+      "message": "Etichetă"
+   },
+   "language": {
+      "message": "Limbă"
+   },
+   "languageToolTip": {
+      "message": "Schimbă limba de afișare și de notificare vocală. Notă: S-ar putea să vedeți mai multe limbi simultan pentru că acestea sunt regulile: Va afișa ceea ce am tradus în limba pe care o alegeți aici, dacă nu am tradus câteva cuvinte îl va căuta în limba browserului dvs., dacă nu le-am tradus le va afișa în engleză. Notă: pentru a schimba limba calendarului din fereastra pop-up doar pentru 'varianta veche', folosiți setările Google Calendar."
+   },
+   "lastDayOfMonth": {
+      "message": "Ultima zi a lunii"
+   },
+   "licenseOnlyValidFor": {
+      "message": "Licența va fi valabilă numai pentru utilizatorii care se conectează la Google Calendar cu un"
+   },
+   "list": {
+      "message": "Listă"
+   },
+   "loadOptions": {
+      "message": "Încarcă opțiunile"
+   },
+   "loading": {
+      "message": "Încărcare..."
+   },
+   "local": {
+      "message": "Local"
+   },
+   "longerSnoozeTimes": {
+      "message": "Timpi de amânare mai lungi"
+   },
+   "m": {
+      "message": "m"
+   },
+   "makeThisAMonthlyContribution": {
+      "message": "Fă această contribuție lunară"
+   },
+   "makeThisAMonthlyContributionTooltip": {
+      "message": "Ajută la menținerea suportului și actualizărilor"
+   },
+   "map": {
+      "message": "Hartă"
+   },
+   "markCompleted": {
+      "message": "Marchează ca finalizat"
+   },
+   "markUncompleted": {
+      "message": "Marchează ca nefinalizat"
+   },
+   "maxDaysAhead": {
+      "message": "Numărul de zile ramase"
+   },
+   "maxDaysAheadTitle": {
+      "message": "Numărul maxim de zile pentru afișarea numărătorii inverse pe pictogramă"
+   },
+   "maxEventsToStack": {
+      "message": "Numărul maxim de evenimente în vizualizarea cronologică"
+   },
+   "maximized": {
+      "message": "Maximizat"
+   },
+   "maybe": {
+      "message": "Poate"
+   },
+   "minimized": {
+      "message": "Minimizat"
+   },
+   "minimumAmount": {
+      "message": "Trebuie să contribuiți cu cel puțin $1"
+   },
+   "month": {
+      "message": "Lună"
+   },
+   "monthly": {
+      "message": "Lunar"
+   },
+   "monthlyOnDayX": {
+      "message": "Lunar în ziua $1"
+   },
+   "monthlyOnTheFirstX": {
+      "message": "Lunar în prima $1"
+   },
+   "monthlyOnTheFourthX": {
+      "message": "Lunar în a patra $1"
+   },
+   "monthlyOnTheLastX": {
+      "message": "Lunar în ultima $1"
+   },
+   "monthlyOnTheSecondX": {
+      "message": "Lunar în a doua $1"
+   },
+   "monthlyOnTheThirdX": {
+      "message": "Lunar în a treia $1"
+   },
+   "monthlyPaymentBonus": {
+      "message": "Bonus la plată lunară"
+   },
+   "more": {
+      "message": "mai mult"
+   },
+   "moreInfo": {
+      "message": "Mai multe informații"
+   },
+   "moreSnoozeTimes": {
+      "message": "Mai multe opțiuni de amânare..."
+   },
+   "multipleUserLicense": {
+      "message": "Licență pentru mai mulți utilizatori"
+   },
+   "multipleUserLicenseFor": {
+      "message": "Licență pentru $1 utilizatori"
+   },
+   "muteVoiceWhileSleeping": {
+      "message": "Program Nu deranja"
+   },
+   "nameNoTM": {
+      "message": "Checker Plus pentru Google Calendar"
+   },
+   "native": {
+      "message": "nativ"
+   },
+   "networkProblem": {
+      "message": "Problemă de rețea"
+   },
+   "never": {
+      "message": "Niciodată"
+   },
+   "next": {
+      "message": "Următor"
+   },
+   "no": {
+      "message": "Nu"
+   },
+   "noRepeat": {
+      "message": "Nu se repetă"
+   },
+   "noUpdateNotifications": {
+      "message": "Fără notificări de actualizare"
+   },
+   "none": {
+      "message": "Niciuna"
+   },
+   "notLoggedIn": {
+      "message": "Neautentificat"
+   },
+   "nothingPlanned": {
+      "message": "Nimic planificat."
+   },
+   "notification": {
+      "message": "Notificare"
+   },
+   "notificationButton": {
+      "message": "Buton notificare"
+   },
+   "notificationButton1": {
+      "message": "Buton notificare #1"
+   },
+   "notificationButton2": {
+      "message": "Buton notificare #2"
+   },
+   "notificationSound": {
+      "message": "Notificare sonoră"
+   },
+   "notificationSoundSelectionToolTip": {
+      "message": "Alegeți diferite sunete de notificare"
+   },
+   "notificationTextToSpeech": {
+      "message": "Notificare vocală"
+   },
+   "notificationTextToSpeechTitle": {
+      "message": "Titlul evenimentului tău va fi rostit cu voce tare folosind soft specializat foarte util când computerul tău nu este prin preajma!"
+   },
+   "notificationWindowSize": {
+      "message": "Dimensiune fereastră notificare"
+   },
+   "notificationsForCalendars": {
+      "message": "Notificări pentru calendare"
+   },
+   "notificationsGuideToolTip": {
+      "message": "Sunete, voci, notificări desktop"
+   },
+   "occurrences": {
+      "message": "apariții"
+   },
+   "off": {
+      "message": "Oprit"
+   },
+   "ok": {
+      "message": "OK"
+   },
+   "omniboxDefault": {
+      "message": "Cină la 7pm"
+   },
+   "omniboxDefaultTom": {
+      "message": "8am Cafea cu Nancy"
+   },
+   "on": {
+      "message": "Pe"
+   },
+   "onTheSameDay": {
+      "message": "În aceeași zi"
+   },
+   "onTheSameDayAt": {
+      "message": "În aceeași zi la $1"
+   },
+   "onetime": {
+      "message": "O singură dată"
+   },
+   "onlyInterruptIfIdle": {
+      "message": "Întrerupe doar dacă este inactiv"
+   },
+   "onlyNonPrimary": {
+      "message": "Numai calendarele non-principale"
+   },
+   "onlyShowEventsWithNotifications": {
+      "message": "Afișați numai evenimentele cu notificări"
+   },
+   "onlyThisEvent": {
+      "message": "Acest eveniment"
+   },
+   "open": {
+      "message": "Deschide"
+   },
+   "openCalendar": {
+      "message": "Deschideți calendarul"
+   },
+   "openCheckerPlusDetached": {
+      "message": "Deschide Checker Plus detașat"
+   },
+   "openCheckerPlusSidePanel": {
+      "message": "Deschide Checker Plus în panoul lateral"
+   },
+   "openCheckerPlusTab": {
+      "message": "Deschide Checker Plus într-un tab"
+   },
+   "openExistingCalendarTab": {
+      "message": "Deschide tabul calendarului existent"
+   },
+   "openGoogleCalendar": {
+      "message": "Deschide Google Calendar"
+   },
+   "openPopupPreview": {
+      "message": "Deschide Checker Plus"
+   },
+   "openPopupPreviewToolTip": {
+      "message": "Foarte personalizabil."
+   },
+   "opensMoreSnoozeTimes": {
+      "message": "Deschide mai multe opțiuni de amânare"
+   },
+   "option": {
+      "message": "Opțiune"
+   },
+   "options": {
+      "message": "opțiuni"
+   },
+   "or": {
+      "message": "sau"
+   },
+   "organiser": {
+      "message": "Organizator"
+   },
+   "other": {
+      "message": "Altul"
+   },
+   "otherAmount": {
+      "message": "Altă sumă"
+   },
+   "otherPlans": {
+      "message": "Alte planuri"
+   },
+   "otherPlansDescription": {
+      "message": "Preț educațional, anual ..."
+   },
+   "pendingNotifications": {
+      "message": "Notificări în așteptare"
+   },
+   "pendingNotificationsIntervalToolTip": {
+      "message": "Dacă nu ai acționat asupra mementourilor, un memento va anima la acest interval în bara de instrumente. Notă: Doar primul memento va reda un sunet (dacă este activat mai sus)"
+   },
+   "permissionIsRequired": {
+      "message": "Permisiunea este necesară"
+   },
+   "pinExtensionToToolbar": {
+      "message": "Fixează extensia în bara de instrumente"
+   },
+   "popout": {
+      "message": "Pop-out"
+   },
+   "popup": {
+      "message": "Pop-up"
+   },
+   "popupWindow": {
+      "message": "Fereastră pop-up"
+   },
+   "popupWindowNotificationToolTip": {
+      "message": "Apare în mijlocul ecranului ca mementourile Outlook și rămâne până este închisă"
+   },
+   "previous": {
+      "message": "Anterior"
+   },
+   "primaryTimezone": {
+      "message": "Fus orar principal"
+   },
+   "private": {
+      "message": "Privat"
+   },
+   "processing": {
+      "message": "Procesare"
+   },
+   "public": {
+      "message": "Public"
+   },
+   "quickAdd": {
+      "message": "Adăugare rapidă"
+   },
+   "quickAddDefaultText": {
+      "message": "de ex. 7pm Cină la Bob's"
+   },
+   "quickAddDefaultTextMultipleDays": {
+      "message": "de ex. În vizită în NYC"
+   },
+   "quickAddDefaultTextMultipleHours": {
+      "message": "de ex. Mic dejun la Tiffany's"
+   },
+   "quickAddTitle": {
+      "message": "de ex. Fotbal în 20 min"
+   },
+   "quickAddsAutocomplete": {
+      "message": "Adăugare rapidă cu completare automată"
+   },
+   "quotaDetails": {
+      "message": "Detalii cotă"
+   },
+   "quotaExtraFeature": {
+      "message": "Aceasta este o funcție suplimentară din cauza cotei impuse de Google Calendar."
+   },
+   "realtimeSyncing": {
+      "message": "Sincronizare în timp real"
+   },
+   "recommended": {
+      "message": "Recomandat"
+   },
+   "recurringEvent": {
+      "message": "Eveniment recurent"
+   },
+   "recurringEventPrompt": {
+      "message": "Doriți să modificați doar acest eveniment sau toate evenimentele din serie?"
+   },
+   "reducedDonationAd_notification": {
+      "message": "Veste bună, utilizator vechi [Click pentru a închide]"
+   },
+   "reducedDonationAd_popup": {
+      "message": "Veste bună, utilizator vechi! Obține $1 pentru doar $2"
+   },
+   "refresh": {
+      "message": "Împrospătare"
+   },
+   "removeShareLinks": {
+      "message": "Ascundeți linkurile de partajare"
+   },
+   "removeShareLinksTooltip": {
+      "message": "Elimină link-urile Facebook, Twitter etc."
+   },
+   "repeatEvery": {
+      "message": "Repetă la fiecare"
+   },
+   "repeatOn": {
+      "message": "Repetă în"
+   },
+   "reschedule": {
+      "message": "reprogramare"
+   },
+   "reset": {
+      "message": "Resetează"
+   },
+   "runInBackground": {
+      "message": "Rulați în fundal când browserul este închis"
+   },
+   "runInBackgroundToolTip": {
+      "message": "Continuați să primiți notificări chiar și în timp ce browserul este închis! Recomand acest lucru doar utilizatorilor avansați."
+   },
+   "runInBackgroundWarning1": {
+      "message": "Vă rugăm să citiți cu atenție despre $1"
+   },
+   "runInBackgroundWarning1b": {
+      "message": "Aplicații in fundal"
+   },
+   "runInBackgroundWarning2": {
+      "message": "Dacă ai dezactivat aplicațiile de fundal în Chrome, le poți reactiva citind $1"
+   },
+   "save": {
+      "message": "Salvează"
+   },
+   "saveOptions": {
+      "message": "Salvează opțiunile"
+   },
+   "saving": {
+      "message": "Salvare ..."
+   },
+   "schedule": {
+      "message": "Program"
+   },
+   "search": {
+      "message": "Caută"
+   },
+   "secondaryTimezone": {
+      "message": "Fus orar secundar"
+   },
+   "seeUpdates": {
+      "message": "Vezi actualizările"
+   },
+   "selectAllDay": {
+      "message": "Selectează toată ziua"
+   },
+   "send": {
+      "message": "Trimite"
+   },
+   "sendInviteToGuests": {
+      "message": "Doriți să trimiteți invitații invitaților?"
+   },
+   "sendUpdateAboutCancelingEvent": {
+      "message": "Vreți să anunțați invitații că anulați evenimentul?"
+   },
+   "sendUpdateToExistingGuests": {
+      "message": "Doriți să trimiteți actualizări invitaților existenți?"
+   },
+   "sendUpdates": {
+      "message": "Trimite actualizări"
+   },
+   "setDateTime": {
+      "message": "Setați data/ora"
+   },
+   "share": {
+      "message": "Partajare"
+   },
+   "shareIntro": {
+      "message": "Încearcă această extensie Chrome grozavă"
+   },
+   "showBusyEvents": {
+      "message": "Afișează evenimentele ocupate"
+   },
+   "showButtonTooltip": {
+      "message": "Afișați eticheta explicativa atunci când treceți cu mouse-ul peste pictograma buton"
+   },
+   "showButtonTooltipTooltip": {
+      "message": "Afișați următoarele evenimente când treceți cu mouse-ul peste pictograma buton"
+   },
+   "showCalendarNames": {
+      "message": "Afișează numele calendarelor"
+   },
+   "showConsoleMessages": {
+      "message": "Mesaje de jurnal înregistrate în Consola Javascript"
+   },
+   "showConsoleMessagesTitle": {
+      "message": "Destinat doar depanării și poate încetini extensia!"
+   },
+   "showContextMenuItem": {
+      "message": "Afișați elementul din meniul contextual la clic dreapta"
+   },
+   "showContextMenuItemTooltip": {
+      "message": "Adaugă un element de meniu atunci când faceți clic dreapta în orice pagină web sau pagină web de e-mail pentru a-l adăuga rapid în calendar"
+   },
+   "showDayOnBadge": {
+      "message": "Afișați ziua curentă a săptămânii pe pictograma buton"
+   },
+   "showDayOnBadgeExceptWhenDaysLeft": {
+      "message": "Cu excepția cazului în care următorul eveniment este la câteva zile distanță"
+   },
+   "showDayOnBadgeExceptWhenHoursLeft": {
+      "message": "Cu excepția cazului în care următorul eveniment este la câteva ore distanță"
+   },
+   "showDayOnBadgeExceptWhenMinutesLeft": {
+      "message": "Cu excepția cazului în care următorul eveniment survine in câteva minute"
+   },
+   "showDayOnBadgeTooltip": {
+      "message": "În loc de numărătoarea inversă până la următorul eveniment, afișați ziua curentă a săptămânii, cum ar fi 'Marți' etc. Notă: De asemenea, puteți enumera excepțiile!"
+   },
+   "showDesktopNotifications": {
+      "message": "Notificări desktop"
+   },
+   "showEventIcons": {
+      "message": "Afișează pictogramele evenimentelor"
+   },
+   "showEventTimeOnBadge": {
+      "message": "Afișați ora evenimentului pe pictograma butonului"
+   },
+   "showEventTimeOnBadgeTooltip": {
+      "message": "Afișați timpul până la următorul eveniment în partea de sus a pictogramei"
+   },
+   "showLocationOrSource": {
+      "message": "Afișează locația, sursa sau participă la apel video"
+   },
+   "showMinutesLeftInBadge": {
+      "message": "Afișați minutele ramase până la următorul eveniment"
+   },
+   "showMinutesLeftInBadgeTitle": {
+      "message": "Dacă evenimentul va avea loc în curând, afișați minutele ramase până la următorul eveniment"
+   },
+   "showNotifsCreatedInPast": {
+      "message": "Afișează notificări pentru evenimente create în trecut"
+   },
+   "showOnlyQuickWhenTextSelected": {
+      "message": "Afișați adăugarea rapidă numai când este selectat text"
+   },
+   "showPendingNotificationsEvery": {
+      "message": "Afișează memento pentru notificări la fiecare"
+   },
+   "showTimeSpecificEventsBeforeAllDay": {
+      "message": "Afișează evenimentele cu oră specifică înaintea evenimentelor pe toată ziua."
+   },
+   "showTimeSpecificEventsBeforeAllDayTooltip": {
+      "message": "Dacă mâine aveți un eveniment de o zi întreagă și un eveniment de la 10 dimineața, va arăta 10 dimineața în loc de 1d"
+   },
+   "showUpdateNotificationsForEvertyhing": {
+      "message": "Afișează notificări pentru toate actualizările și corecțiile de erori"
+   },
+   "showUpdateNotificationsForInterestingUpdates": {
+      "message": "Afișează notificări doar pentru actualizări importante"
+   },
+   "showWeekNumbers": {
+      "message": "Afișează numerele săptămânilor"
+   },
+   "sidePanel": {
+      "message": "Panou lateral"
+   },
+   "signIn": {
+      "message": "Conectează-te"
+   },
+   "signInAsUserOfOrg": {
+      "message": "Trebuie $1 cu adresa de e-mail a organizației dvs."
+   },
+   "signInAsUserOfOrg2": {
+      "message": "Deconectați-vă și conectați-vă la calendar"
+   },
+   "skin": {
+      "message": "Temă"
+   },
+   "skins": {
+      "message": "Teme"
+   },
+   "slotDuration": {
+      "message": "Durata intervalului"
+   },
+   "slotDurationToolTip": {
+      "message": "Incrementul de timp folosit la crearea sau modificarea evenimentelor în calendar"
+   },
+   "snooze": {
+      "message": "amânare"
+   },
+   "snoozeAll": {
+      "message": "Amână-le pe toate"
+   },
+   "snoozingChangesEventTime": {
+      "message": "Amânarea mută evenimentul la o oră nouă"
+   },
+   "somedayAt": {
+      "message": "Cândva la"
+   },
+   "source": {
+      "message": "Sursă"
+   },
+   "successful": {
+      "message": "realizat"
+   },
+   "support": {
+      "message": "Suport"
+   },
+   "syncDND": {
+      "message": "Sincronizează setarea Nu deranja pe toate extensiile Checker Plus"
+   },
+   "syncDismissedAndSnoozedRemindersAcrossExtensions": {
+      "message": "Sincronizează mementourile închise și amânate între extensii"
+   },
+   "task": {
+      "message": "Sarcină"
+   },
+   "taskDeleted": {
+      "message": "Sarcină ștearsă"
+   },
+   "taskSaved": {
+      "message": "Sarcină salvată"
+   },
+   "tasks": {
+      "message": "Sarcini"
+   },
+   "testDescription": {
+      "message": "Descrierea testului"
+   },
+   "testEvent": {
+      "message": "Eveniment de test"
+   },
+   "testIt": {
+      "message": "Testează-l!"
+   },
+   "thankYouForYourContribution": {
+      "message": "Funcțiile sunt acum deblocate Vă mulțumim pentru contribuție!"
+   },
+   "theresAProblem": {
+      "message": "Există o problemă"
+   },
+   "thisAndFollowingEvents": {
+      "message": "Acest și următoarele evenimente"
+   },
+   "thisEventOverlapsWith": {
+      "message": "Acest eveniment se suprapune cu"
+   },
+   "time": {
+      "message": "Oră"
+   },
+   "timeRemainingForCurrentEvent": {
+      "message": "Afișați timpul rămas pentru evenimentul curent"
+   },
+   "timers": {
+      "message": "Cronometre"
+   },
+   "timezone": {
+      "message": "Fus orar"
+   },
+   "to": {
+      "message": "Către"
+   },
+   "todayAt": {
+      "message": "Astăzi la"
+   },
+   "tom": {
+      "message": "tom"
+   },
+   "tomorrowAt": {
+      "message": "Mâine la"
+   },
+   "transparencyFree": {
+      "message": "Liber"
+   },
+   "transparent": {
+      "message": "Transparent"
+   },
+   "tryAgain": {
+      "message": "Încearcă din nou"
+   },
+   "tryAgainLater": {
+      "message": "Încearcă mai târziu"
+   },
+   "turnOff": {
+      "message": "Dezactivează"
+   },
+   "turnOffGoogleCalendarNotifications": {
+      "message": "Dezactivează notificările native din Google Calendar"
+   },
+   "undo": {
+      "message": "Revocare"
+   },
+   "unlimited": {
+      "message": "Nelimitat"
+   },
+   "unlockOtherExtensions": {
+      "message": "Deblochează celelalte extensii deschizând pagina de contribuție și folosește linkul Am Contribuit Deja de mai sus."
+   },
+   "untilX": {
+      "message": "până la $1"
+   },
+   "update": {
+      "message": "Actualizează"
+   },
+   "useChromeSignIn": {
+      "message": "Conectează-te cu Chrome"
+   },
+   "useDetailsFromCurrentPage": {
+      "message": "Folosește detalii din pagina curentă"
+   },
+   "useTheXToChangeViews": {
+      "message": "Folosește pictograma $1 pentru a schimba vizualizările calendarului"
+   },
+   "useTheXToCloseForAFewMinutes": {
+      "message": "Folosește $1 pentru a ignora fereastra timp de 5 minute"
+   },
+   "useTheXorXToDismissEvents": {
+      "message": "Folosește $1 sau $2 pentru a închide evenimentele"
+   },
+   "usingCalendarsFromMultipleAccounts": {
+      "message": "Folosești calendare din mai multe conturi"
+   },
+   "videoCall": {
+      "message": "Apel video"
+   },
+   "videoConferencingAdded": {
+      "message": "Conferință video adăugată"
+   },
+   "view": {
+      "message": "Vezi"
+   },
+   "viewRelatedEmail": {
+      "message": "Vezi e-mailul asociat"
+   },
+   "visibleCalendars": {
+      "message": "Calendare vizibile"
+   },
+   "voiceNotificationOnlyIfIdle": {
+      "message": "Numai dacă sunteți departe de computer cel puțin"
+   },
+   "voiceNotificationOnlyIfIdleTooltip": {
+      "message": "Utilizați această opțiune dacă doriți să auziți vocea NUMAI atunci când nu utilizați computerul sau acesta este inactiv"
+   },
+   "voiceTest": {
+      "message": "Salut"
+   },
+   "volume": {
+      "message": "Volum"
+   },
+   "warnForAnyCalendar": {
+      "message": "Avertizează pentru orice calendar"
+   },
+   "warnForSameCalendar": {
+      "message": "Avertizează pentru același calendar"
+   },
+   "week": {
+      "message": "Săptămână"
+   },
+   "weekNumberCalculation": {
+      "message": "Calcul număr săptămână"
+   },
+   "weekly": {
+      "message": "Săptămânal"
+   },
+   "weeksInMonth": {
+      "message": "Săptămâni în lună"
+   },
+   "welcome": {
+      "message": "Bine ai venit"
+   },
+   "what": {
+      "message": "Ce"
+   },
+   "when": {
+      "message": "Când"
+   },
+   "whenEventStarts": {
+      "message": "Când începe evenimentul"
+   },
+   "where": {
+      "message": "Unde"
+   },
+   "who": {
+      "message": "Cine"
+   },
+   "xTimes": {
+      "message": "$1 ori"
+   },
+   "year": {
+      "message": "An"
+   },
+   "yearly": {
+      "message": "Anual"
+   },
+   "yes": {
+      "message": "Da"
+   },
+   "yourOffline": {
+      "message": "Ești offline! Dezactivează/reactivează conexiunea la rețea, repornește browserul sau încearcă Opțiuni > Admin > Dezactivează verificarea online"
+   }
+}

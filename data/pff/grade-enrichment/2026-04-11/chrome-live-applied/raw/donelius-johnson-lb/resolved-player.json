@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Donelius",
+    "height": 600,
+    "id": 160380,
+    "jersey_number": "D0",
+    "last_name": "Johnson",
+    "position": "LB",
+    "speed": null,
+    "team": {
+      "abbreviation": "KESTAT",
+      "city": "Kennesaw State",
+      "id": 200,
+      "nickname": "Owls",
+      "primary_color": "#ffc629",
+      "secondary_color": "#000000",
+      "slug": "kennesaw-state-owls"
+    },
+    "weight": 226
+  }
+}

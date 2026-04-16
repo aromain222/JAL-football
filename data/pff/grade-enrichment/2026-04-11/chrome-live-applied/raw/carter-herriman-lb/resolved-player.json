@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Carter",
+    "height": 601,
+    "id": 184083,
+    "jersey_number": "D47",
+    "last_name": "Herriman",
+    "position": "LB",
+    "speed": null,
+    "team": {
+      "abbreviation": "EASTMI",
+      "city": "Eastern Michigan",
+      "id": 160,
+      "nickname": "Eagles",
+      "primary_color": "#0b5f24",
+      "secondary_color": "#7f7f7f",
+      "slug": "eastern-michigan-eagles"
+    },
+    "weight": 220
+  }
+}

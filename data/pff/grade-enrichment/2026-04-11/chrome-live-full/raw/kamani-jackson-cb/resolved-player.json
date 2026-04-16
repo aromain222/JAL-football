@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "F",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Kamani",
+    "height": 511,
+    "id": 190374,
+    "jersey_number": "D18",
+    "last_name": "Jackson",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "WSTATE",
+      "city": "Washington State",
+      "id": 341,
+      "nickname": "Cougars",
+      "primary_color": "#97002f",
+      "secondary_color": "#5e6a71",
+      "slug": "washington-state-cougars"
+    },
+    "weight": 181
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "S",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Derrick",
+    "height": 601,
+    "id": 173129,
+    "jersey_number": "23",
+    "last_name": "Carroll",
+    "position": "HB",
+    "speed": null,
+    "team": {
+      "abbreviation": "TCUHOR",
+      "city": "TCU",
+      "id": 305,
+      "nickname": "Horned Frogs",
+      "primary_color": "#4d1979",
+      "secondary_color": "#ffffff",
+      "slug": "tcu-horned-frogs"
+    },
+    "weight": 230
+  }
+}

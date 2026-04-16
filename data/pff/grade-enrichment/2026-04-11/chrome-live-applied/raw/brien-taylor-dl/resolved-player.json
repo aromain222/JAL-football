@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "SN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "Brien",
+    "height": 604,
+    "id": 184433,
+    "jersey_number": "D33",
+    "last_name": "Taylor Jr.",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "UFGATO",
+      "city": "Florida",
+      "id": 163,
+      "nickname": "Gators",
+      "primary_color": "#fa4616",
+      "secondary_color": "#0021a5",
+      "slug": "florida-gators"
+    },
+    "weight": 294
+  }
+}

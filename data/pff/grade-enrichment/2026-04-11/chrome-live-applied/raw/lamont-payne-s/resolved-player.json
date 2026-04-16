@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RS",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Lamont",
+    "height": 0,
+    "id": 170292,
+    "jersey_number": "D27",
+    "last_name": "Payne Jr.",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "PENNST",
+      "city": "Penn State",
+      "id": 266,
+      "nickname": "Nittany Lions",
+      "primary_color": "#041e42",
+      "secondary_color": "#ffffff",
+      "slug": "penn-state-nittany-lions"
+    },
+    "weight": 190
+  }
+}

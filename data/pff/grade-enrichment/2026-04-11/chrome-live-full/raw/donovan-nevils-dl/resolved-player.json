@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Donovan",
+    "height": 603,
+    "id": 125726,
+    "jersey_number": "D96",
+    "last_name": "Nevils",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "NALABA",
+      "city": "North Alabama",
+      "id": 389,
+      "nickname": "Lions",
+      "primary_color": "#46166b",
+      "secondary_color": "#db9f11",
+      "slug": "north-alabama-lions"
+    },
+    "weight": 260
+  }
+}

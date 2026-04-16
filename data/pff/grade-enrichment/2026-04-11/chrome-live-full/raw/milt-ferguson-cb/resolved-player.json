@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Milt",
+    "height": 510,
+    "id": 189986,
+    "jersey_number": "D36",
+    "last_name": "Ferguson",
+    "position": "CB",
+    "speed": null,
+    "team": {
+      "abbreviation": "JMADIS",
+      "city": "James Madison",
+      "id": 197,
+      "nickname": "Dukes",
+      "primary_color": "#450084",
+      "secondary_color": "#b5a36a",
+      "slug": "james-madison-dukes"
+    },
+    "weight": 172
+  }
+}

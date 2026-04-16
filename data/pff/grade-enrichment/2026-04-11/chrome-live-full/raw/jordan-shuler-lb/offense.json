@@ -1,0 +1,49 @@
+{
+  "offense_summary": {
+    "subject": {
+      "eligible": "offense",
+      "grade_keys": [
+        "offense",
+        "offense_penalty",
+        "hands_fumble",
+        "screen_block",
+        "run",
+        "pass_block",
+        "run_block",
+        "pass_route",
+        "pass",
+        "snap"
+      ],
+      "league_id": 2,
+      "player_id": 186444,
+      "roster": "offense",
+      "season": 2025,
+      "secondary": false,
+      "week": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    "week_totals": [],
+    "weeks": []
+  }
+}

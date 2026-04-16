@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RSN",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Tim",
+      "height": 600,
+      "id": 173507,
+      "jersey_number": "4",
+      "last_name": "Grear Jr.",
+      "position": "WR",
+      "speed": null,
+      "team": {
+        "abbreviation": "AKRONZ",
+        "city": "Akron",
+        "id": 102,
+        "nickname": "Zips",
+        "primary_color": "#c29c41",
+        "secondary_color": "#000e41",
+        "slug": "akron-zips"
+      },
+      "weight": 190
+    }
+  ]
+}

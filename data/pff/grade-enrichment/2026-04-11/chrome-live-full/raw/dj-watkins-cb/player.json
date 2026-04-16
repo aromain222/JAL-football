@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "F",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "DJ",
+      "height": 600,
+      "id": 204644,
+      "jersey_number": "D14",
+      "last_name": "Watkins",
+      "position": "CB",
+      "speed": null,
+      "team": {
+        "abbreviation": "ARKSTA",
+        "city": "Arkansas State",
+        "id": 113,
+        "nickname": "Red Wolves",
+        "primary_color": "#ed1b2e",
+        "secondary_color": "#000000",
+        "slug": "arkansas-state-red-wolves"
+      },
+      "weight": 184
+    }
+  ]
+}

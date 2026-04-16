@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "S",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Larry",
+    "height": 604,
+    "id": 188505,
+    "jersey_number": "48",
+    "last_name": "Benton III",
+    "position": "TE",
+    "speed": null,
+    "team": {
+      "abbreviation": "VANDYC",
+      "city": "Vanderbilt",
+      "id": 333,
+      "nickname": "Commodores",
+      "primary_color": "#000000",
+      "secondary_color": "#d8ab4c",
+      "slug": "vanderbilt-commodores"
+    },
+    "weight": 232
+  }
+}

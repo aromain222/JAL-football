@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Syris",
+    "height": 604,
+    "id": 188169,
+    "jersey_number": "62",
+    "last_name": "Corley",
+    "position": "T",
+    "speed": null,
+    "team": {
+      "abbreviation": "CALIFO",
+      "city": "California",
+      "id": 130,
+      "nickname": "Golden Bears",
+      "primary_color": "#003262",
+      "secondary_color": "#fdb515",
+      "slug": "california-golden-bears"
+    },
+    "weight": 310
+  }
+}

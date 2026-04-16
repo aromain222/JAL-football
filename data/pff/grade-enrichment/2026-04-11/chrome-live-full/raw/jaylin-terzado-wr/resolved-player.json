@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jaylin",
+    "height": 600,
+    "id": 159940,
+    "jersey_number": "9",
+    "last_name": "Terzado",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "WESTCA",
+      "city": "Western Carolina",
+      "id": 344,
+      "nickname": "Catamounts",
+      "primary_color": "#592c88",
+      "secondary_color": "#c1a875",
+      "slug": "western-carolina-catamounts"
+    },
+    "weight": 180
+  }
+}

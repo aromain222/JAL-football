@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": null,
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Desmond",
+      "height": 604,
+      "id": 183331,
+      "jersey_number": "74",
+      "last_name": "Jackson",
+      "position": "T",
+      "speed": null,
+      "team": {
+        "abbreviation": "UNCATT",
+        "city": "North Carolina A&T",
+        "id": 246,
+        "nickname": "Aggies",
+        "primary_color": "#004684",
+        "secondary_color": "#fdb927",
+        "slug": "north-carolina-at-aggies"
+      },
+      "weight": 305
+    }
+  ]
+}

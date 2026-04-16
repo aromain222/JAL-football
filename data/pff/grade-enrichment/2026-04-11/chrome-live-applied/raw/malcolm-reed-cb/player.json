@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "J",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Malcolm",
+      "height": 603,
+      "id": 164772,
+      "jersey_number": "D2",
+      "last_name": "Reed",
+      "position": "S",
+      "speed": null,
+      "team": {
+        "abbreviation": "UNCCEN",
+        "city": "North Carolina Central",
+        "id": 247,
+        "nickname": "Eagles",
+        "primary_color": "#6a2c3e",
+        "secondary_color": "#5b6770",
+        "slug": "north-carolina-central-eagles"
+      },
+      "weight": 180
+    }
+  ]
+}

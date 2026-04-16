@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RF",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jacob",
+      "height": 604,
+      "id": 189988,
+      "jersey_number": "77",
+      "last_name": "Hohenshelt",
+      "position": "G",
+      "speed": null,
+      "team": {
+        "abbreviation": "LAFAYE",
+        "city": "Lafayette",
+        "id": 203,
+        "nickname": "Leopards",
+        "primary_color": "#65001c",
+        "secondary_color": "#ffffff",
+        "slug": "lafayette-leopards"
+      },
+      "weight": 294
+    }
+  ]
+}

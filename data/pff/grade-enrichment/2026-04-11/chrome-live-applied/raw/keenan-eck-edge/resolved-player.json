@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Keenan",
+    "height": 604,
+    "id": 208862,
+    "jersey_number": "D58",
+    "last_name": "Eck",
+    "position": "ED",
+    "speed": null,
+    "team": {
+      "abbreviation": "WESTVI",
+      "city": "West Virginia",
+      "id": 343,
+      "nickname": "Mountaineers",
+      "primary_color": "#002b5c",
+      "secondary_color": "#ffc600",
+      "slug": "west-virginia-mountaineers"
+    },
+    "weight": 213
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Ozarrio",
+      "height": 509,
+      "id": 184323,
+      "jersey_number": "12",
+      "last_name": "Smith",
+      "position": "HB",
+      "speed": null,
+      "team": {
+        "abbreviation": "HOUSCH",
+        "city": "Houston Christian",
+        "id": 183,
+        "nickname": "Huskies",
+        "primary_color": "#00529c",
+        "secondary_color": "#f85512",
+        "slug": "houston-christian-huskies"
+      },
+      "weight": 200
+    }
+  ]
+}

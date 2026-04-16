@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "F",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Sidney",
+    "height": 0,
+    "id": 204521,
+    "jersey_number": "D97",
+    "last_name": "Dupuy",
+    "position": "DI",
+    "speed": null,
+    "team": {
+      "abbreviation": "SDSTAT",
+      "city": "San Diego State",
+      "id": 284,
+      "nickname": "Aztecs",
+      "primary_color": "#bf2c37",
+      "secondary_color": "#231f20",
+      "slug": "san-diego-state-aztecs"
+    },
+    "weight": 275
+  }
+}

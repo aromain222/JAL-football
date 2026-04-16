@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "F",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jenoa",
+    "height": 510,
+    "id": 205043,
+    "jersey_number": "15",
+    "last_name": "Alford",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "UMASSM",
+      "city": "Massachusetts",
+      "id": 216,
+      "nickname": "Minutemen",
+      "primary_color": "#971b2f",
+      "secondary_color": "#000000",
+      "slug": "massachusetts-minutemen"
+    },
+    "weight": 165
+  }
+}

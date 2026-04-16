@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position+team",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Chase",
+    "height": 602,
+    "id": 188332,
+    "jersey_number": "D43",
+    "last_name": "Bogle",
+    "position": "LB",
+    "speed": null,
+    "team": {
+      "abbreviation": "ARKSTA",
+      "city": "Arkansas State",
+      "id": 113,
+      "nickname": "Red Wolves",
+      "primary_color": "#ed1b2e",
+      "secondary_color": "#000000",
+      "slug": "arkansas-state-red-wolves"
+    },
+    "weight": 213
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "J",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "K'Wan",
+    "height": 509,
+    "id": 144492,
+    "jersey_number": "4",
+    "last_name": "Powell",
+    "position": "HB",
+    "speed": null,
+    "team": {
+      "abbreviation": "USFBUL",
+      "city": "USF",
+      "id": 327,
+      "nickname": "Bulls",
+      "primary_color": "#004a36",
+      "secondary_color": "#a08b4d",
+      "slug": "usf-bulls"
+    },
+    "weight": 205
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RSN",
+      "current_eligible_year": 2026,
+      "dob": null,
+      "draft": null,
+      "first_name": "Devyn",
+      "height": 602,
+      "id": 121800,
+      "jersey_number": "D31",
+      "last_name": "Curtis",
+      "position": "LB",
+      "speed": null,
+      "team": {
+        "abbreviation": "ARKSTA",
+        "city": "Arkansas State",
+        "id": 113,
+        "nickname": "Red Wolves",
+        "primary_color": "#ed1b2e",
+        "secondary_color": "#000000",
+        "slug": "arkansas-state-red-wolves"
+      },
+      "weight": 237
+    }
+  ]
+}

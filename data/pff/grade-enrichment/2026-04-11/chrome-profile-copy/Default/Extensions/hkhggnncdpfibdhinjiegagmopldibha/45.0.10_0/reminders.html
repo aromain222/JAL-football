@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Reminders</title>
+  	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  	
+  	<link rel="icon" href="images/bell-32.png" sizes="32x32">
+	<link rel="icon" href="images/bell-48.png" sizes="64x64"/>
+
+    <link rel="stylesheet" href="css/jdom.css">
+	
+  	<style>
+        :root {
+            --time-picker-min-width: 100px;
+            --event-height: 100px; /* 100px for PC and 98px for Mac delcared below: cause scroll bar appearing on mac, strangely this might have resolved the invalid value for bounds issue */
+        }
+
+        body.mac {
+            --event-height: 98px;
+        }
+
+        @-moz-document url-prefix() {
+            /* matches Chrome default */
+            body {
+                font-family: "Segoe UI", Tahoma, sans-serif;
+                font-size: 75%;
+            }
+        }
+
+  		body {
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease-in;
+            overflow: hidden;
+            font-size: 14px;
+        }
+  		
+  		body.hideDelete .delete {display:none}
+
+  		.hide {display:none}
+  		
+  		xx#eventsWrapper {position:relative}
+
+  		#events {
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+  		.event {
+              height: var(--event-height);
+              border-bottom:1px solid var(--bg-light-color-hover);
+              position:relative
+        }
+  		.event:last-child {border-bottom-style:none}
+  		
+		.leftSide {
+            padding: 4px 0;
+            padding-inline-start: 15px;
+            text-overflow: ellipsis;
+            overflow-x: hidden;
+        }
+
+  		.rightSide {min-width:132px;margin-inline-end:8px}
+  		body.hideDelete .rightSide {min-width:88px}
+  		
+  		.linkWrapper {padding:3px 0;font-size:13px}
+  		.link {color:gray;text-decoration:none;white-space:nowrap;text-overflow: ellipsis;overflow: hidden}
+        .link:hover {text-decoration:underline}
+        .titleWrapper {margin-inline-end:8px}
+  		.title {
+            font-size: 22px;
+            vertical-align: middle;
+            text-decoration: none;
+            overflow-y: hidden;
+            text-overflow: ellipsis;
+            max-height: 88px; /* not necessary for max 2 line ellipsis stuff */
+            display: inline-block;
+            -webkit-box-orient: vertical;
+            -moz-box-orient: vertical;
+            -webkit-line-clamp: 2;
+        }
+  		.title:hover {text-decoration:underline;color:blue;cursor:pointer}
+
+        :root[color-scheme='dark'] .repeating {
+            filter: invert(1);
+        }
+
+        #newsNotification {
+            --icon-color: green;
+        }
+  		
+        .calendar-name {
+            white-space:nowrap;
+            font-size:12px;
+            vertical-align:middle;
+        }
+
+        .fc-theme-standard a {
+            font-family: Arial, sans-serif;
+            color: revert;
+        }
+
+  		.timeElapsed {white-space:nowrap;font-size:11px;vertical-align: top}
+
+  		.snoozeButtons {
+            -moz-user-select: none;
+            user-select: none;
+
+            j-button {
+                font-size: 13px;
+                margin: 0;
+                border-radius: 5px;
+                --button-padding: 10px 10px;
+                &:hover {
+                    background-color: var(--bg-light-color-hover);
+                }
+            }
+        }
+
+        :is(#headerButtons, .snoozeButtons, .rightSide) j-button {
+            --button-text-color: var(--text-color);
+        }
+
+  		.snoozeButtonsVisible .snoozeButtons {
+            transform:scale(1) translateX(0px);
+            opacity:1;
+            pointer-events:auto;
+        }
+
+        .snooze {
+            justify-content: center;
+            width: 42px;
+        }
+
+        .snooze::part(label), .snoozeButtons ::part(label) {
+            min-width: auto;
+        }
+
+  		.mustDonate {opacity: 0.6;font-style:italic}
+  		
+		.more {
+            --icon-size: 18px;
+        }
+
+		.repeating {
+            vertical-align: top;
+            margin:0 5px;
+            opacity:0.3;
+            -webkit-transition: opacity .2s ease-in;
+            -moz-transition: opacity .2s ease-in;
+            transition:opacity .2s ease-in;
+        }
+		.repeating:hover {opacity:1}
+		
+		#header {
+            display:none;
+            position:relative;
+            height:40px;
+            padding-right:5px;
+            background: var(--bg-light-color-hover);
+            xxborder-bottom: 1px solid var(--border-color);
+        }
+		#header.visible {display:flex}
+
+		#dateSnooze, #timeSnooze {
+            width: 110px;
+            text-align: center;
+        }
+		
+		.eventIcon {min-width:24px;text-align:center;margin-inline-end:8px}
+		.eventIcon img, .eventIcon svg {max-width:24px}
+		.linkImageWrapper {margin-inline-end:3px}
+		.linkImageWrapper, .linkImage {
+            --icon-size: 16px;
+            --icon-padding: 2px;
+        }
+		.linkImage {color:#888}
+		
+        @keyframes close-notification {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .close-notification {
+            animation: close-notification 0.2s forwards;
+        }
+
+        #dateTimeSnoozeDialog #native-dialog-message-wrapper {
+            min-height: 230px;
+        }
+	</style>
+
+	<script src="js/common.js"></script>
+    <script src="js/jdom.js"></script>
+    <script src="js/icons.js"></script>
+
+  	<script defer src="js/checkerPlusForCalendar.js"></script>
+  	<script defer src="js/reminders.js"></script>
+	
+	<body id="calendar-reminder-window">
+        <div id="header" class="layout horizontal center">
+            <div class="flex"><j-button id="settings" icon="settings" msgTitle="options"></j-button></div>
+            <div class="snoozeButtonsWrapper" popover xxposition="center-start"> <!-- layout horizontal center-center -->
+                <div class="snoozeButtons layout vertical">
+                    <div class="layout horizontal">
+                        <j-button snoozeInMinutes="5">5<span msg="m">m</span></j-button><j-button snoozeInMinutes="15">15<span msg="m">m</span></j-button><j-button snoozeInMinutes="30">30<span msg="m">m</span></j-button><j-button snoozeInMinutes="60">1<span msg="h">h</span></j-button><j-button snoozeInMinutes="120">2<span msg="h">h</span></j-button><j-button snoozeInMinutes="240">4<span msg="h">h</span></j-button><j-button snoozeInMinutes="480">8<span msg="h">h</span></j-button><j-button snoozeInDays="1"><span msg="tomorrow"></span></j-button><j-button snoozeInDays="2">2<span msg="d">d</span></j-button><j-button snoozeInDays="7">7<span msg="d">d</span></j-button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <j-button id="newsNotification" icon="new-releases" hidden></j-button>
+                <j-tooltip for="newsNotification" animation-delay="100" position="end">
+                    <div id="newsNotificationReducedDonationMessage">Good news</div>
+                </j-tooltip>
+            </div>
+            <div id="headerButtons">
+                <j-button class="snooze" icon="snooze" msgTitle="snoozeAll"></j-button>
+                <j-button id="dismissAll" class="dismiss" icon="done-all" msgTitle="dismissAll"></j-button>
+            </div>
+        </div>
+        <div id="events"></div>
+        
+        <div class="eventTemplate layout horizontal" hidden>
+            <div class="snoozeButtonsWrapper" popover position="center-start"> <!-- layout horizontal center-center -->
+                <div class="snoozeButtons layout vertical">
+                    <div class="layout horizontal center-center snooze-before-wrapper">
+                        <j-button class="snoozeBefore" snoozeInMinutes="-480" msgTitle="beforeStart">-8<span msg="h">h</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-240" msgTitle="beforeStart">-4<span msg="h">h</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-120" msgTitle="beforeStart">-2<span msg="h">h</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-60" msgTitle="beforeStart">-1<span msg="h">h</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-30" msgTitle="beforeStart">-30<span msg="m">m</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-15" msgTitle="beforeStart">-15<span msg="m">m</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-10" msgTitle="beforeStart">-10<span msg="m">m</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-5" msgTitle="beforeStart">-5<span msg="m">m</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-2" msgTitle="beforeStart">-2<span msg="m">m</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="-1" msgTitle="beforeStart">-1<span msg="m">m</span></j-button><j-button class="snoozeBefore" snoozeInMinutes="0" msgTitle="beforeStart">0<span msg="m">m</span></j-button>
+                    </div>
+                    <div class="layout horizontal center-center">
+                        <j-button snoozeInMinutes="5">5<span msg="m">m</span></j-button><j-button snoozeInMinutes="15">15<span msg="m">m</span></j-button><j-button snoozeInMinutes="30">30<span msg="m">m</span></j-button><j-button snoozeInMinutes="45">45<span msg="m">m</span></j-button><j-button snoozeInMinutes="60">1<span msg="h">h</span></j-button><j-button snoozeInMinutes="120">2<span msg="h">h</span></j-button><j-button snoozeInMinutes="240">4<span msg="h">h</span></j-button><j-button snoozeInMinutes="480">8<span msg="h">h</span></j-button>
+                    </div>
+                    <div class="layout horizontal center-center">
+                        <j-button snoozeInDays="1"><span msg="tomorrow">1</span></j-button><j-tooltip position="top">Wednesdayaa</j-tooltip>
+                        <j-button snoozeInDays="1.5">1.5<span msg="d">d</span></j-button><j-tooltip position="top">Thursday</j-tooltip>
+                        <j-button snoozeInDays="2">2<span msg="d">d</span></j-button><j-tooltip position="top">Thursday</j-tooltip>
+                        <j-button snoozeInDays="3">3<span msg="d">d</span></j-button><j-tooltip position="top">Friday</j-tooltip>
+                        <j-button snoozeInDays="7">7<span msg="d">d</span></j-button><j-tooltip position="top">Friday</j-tooltip>
+                        <j-button class="more" icon="more-horiz"></j-button>
+                    </div>
+                </div>
+            </div>
+            <div class="leftSide flex layout vertical center-justified" style="overflow-y:hidden">
+                <div class="layout horizontal center">
+                    <div class="eventIcon"></div><div class="titleWrapper self-start"><div class="title"></div> <span class='calendar-name'></span></div><img class="repeating" msgTitle="recurringEvent" src="images/repeating.png" hidden/> <div class='timeElapsed'></div>
+                </div>
+                <div class="sourceWrapper linkWrapper layout horizontal center"><div class="linkImageWrapper"><j-icon class="linkImage" icon="link"></j-icon></div> <a class="link" target="_blank">http</a></div>
+                <div class="locationWrapper linkWrapper layout horizontal center"><div class="linkImageWrapper"><j-icon class="linkImage" icon="place"></j-icon></div> <a class="link" target="_blank">http</a></div>
+                <div class="videoWrapper linkWrapper layout horizontal center"><div class="linkImageWrapper"><j-icon class="linkImage" icon="videocam"></j-icon></div> <a class="link" target="_blank">Join with Google Meet</a></div>
+            </div>
+            <div class="rightSide layout horizontal center">
+                <j-button class="snooze" icon="snooze"></j-button>
+                <j-button icon="delete" class="delete" msgTitle="delete"></j-button>
+                <j-button icon="done" class="dismiss" msgTitle="dismiss"></j-button>
+            </div>
+        </div>
+
+        <template id="date-time-snooze-dialog-template">
+            <div class="horizontal gap-10">
+                <input id="dateSnooze" type="text" msgPlaceholder="date"/> <input id="timeSnooze" type="text" msgPlaceholder="time"/>
+            </div>
+        </template>
+
+        <template id="closeWindowDialogTemplate">
+            <span msgHTML="useTheXorXToDismissEvents" msgArg1="<j-icon icon='done' style='vertical-align: middle'></j-icon>" msgArg2="<j-icon icon='done-all' style='vertical-align: middle'></j-icon>">Use the <j-icon icon='close'></j-icon> to close the window for 5 minutes</span>
+            <br>
+            <span msgHTML="useTheXToCloseForAFewMinutes" msgArg1="<j-icon icon='close' style='vertical-align: middle'></j-icon>">Use the <j-icon icon='close'></j-icon> to close the window for 5 minutes</span>
+        </template>
+
+	</body>
+</head>
+</html>

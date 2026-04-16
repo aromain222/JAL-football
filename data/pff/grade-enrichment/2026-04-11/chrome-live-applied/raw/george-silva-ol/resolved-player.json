@@ -1,0 +1,28 @@
+{
+  "candidate_count": 2,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "SN",
+    "current_eligible_year": 2026,
+    "dob": null,
+    "draft": null,
+    "first_name": "George",
+    "height": 607,
+    "id": 174129,
+    "jersey_number": "71",
+    "last_name": "Silva",
+    "position": "T",
+    "speed": null,
+    "team": {
+      "abbreviation": "OUDUCK",
+      "city": "Oregon",
+      "id": 264,
+      "nickname": "Ducks",
+      "primary_color": "#20883f",
+      "secondary_color": "#fee11a",
+      "slug": "oregon-ducks"
+    },
+    "weight": 305
+  }
+}

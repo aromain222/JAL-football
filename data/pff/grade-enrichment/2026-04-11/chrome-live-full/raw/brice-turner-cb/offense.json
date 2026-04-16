@@ -1,0 +1,109 @@
+{
+  "offense_summary": {
+    "subject": {
+      "eligible": "offense",
+      "grade_keys": [
+        "offense",
+        "offense_penalty",
+        "hands_fumble",
+        "screen_block",
+        "run",
+        "pass_block",
+        "run_block",
+        "pass_route",
+        "pass",
+        "snap"
+      ],
+      "league_id": 2,
+      "player_id": 170244,
+      "roster": "offense",
+      "season": 2025,
+      "secondary": false,
+      "week": [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "20"
+      ]
+    },
+    "week_totals": [
+      {
+        "declined_penalties": 0,
+        "franchise_id": 238,
+        "grades_offense": 60,
+        "grades_offense_penalty": 65,
+        "grades_run_block": 60,
+        "league_id": 2,
+        "penalties": 0,
+        "player_game_count": 1,
+        "season": 2025,
+        "season_id": 2025,
+        "snap_counts_pass": 0,
+        "snap_counts_pass_block": 0,
+        "snap_counts_pass_route": 0,
+        "snap_counts_run": 0,
+        "snap_counts_run_block": 1,
+        "snap_counts_total": 1,
+        "snap_counts_total_pass": 0,
+        "snap_counts_total_run": 1,
+        "team_name": "NEBRASKA"
+      }
+    ],
+    "weeks": [
+      {
+        "away_franchise_id": 223,
+        "away_team_name": "MSTATE",
+        "declined_penalties": 0,
+        "game": {
+          "away_franchise_id": 223,
+          "away_team_name": "MSTATE",
+          "game_id": 29128,
+          "home_franchise_id": 238,
+          "home_team_name": "NEBRAS",
+          "player_franchise_id": 238,
+          "position": null,
+          "status": null,
+          "week": 6
+        },
+        "game_id": 29128,
+        "grades_offense": 60,
+        "grades_offense_penalty": 65,
+        "grades_run_block": 60,
+        "home_franchise_id": 238,
+        "home_team_name": "NEBRAS",
+        "jersey_number": "D26",
+        "penalties": 0,
+        "player_franchise_id": 238,
+        "player_id": 170244,
+        "position": null,
+        "snap_counts_pass": 0,
+        "snap_counts_pass_block": 0,
+        "snap_counts_pass_route": 0,
+        "snap_counts_run": 0,
+        "snap_counts_run_block": 1,
+        "snap_counts_total": 1,
+        "snap_counts_total_pass": 0,
+        "snap_counts_total_run": 1,
+        "status": null,
+        "week": 6
+      }
+    ]
+  }
+}

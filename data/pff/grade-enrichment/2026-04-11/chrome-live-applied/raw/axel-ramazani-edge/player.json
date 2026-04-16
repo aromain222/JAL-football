@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "F",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Axel",
+      "height": 0,
+      "id": 200060,
+      "jersey_number": "N0",
+      "last_name": "Ramazani",
+      "position": "ED",
+      "speed": null,
+      "team": {
+        "abbreviation": "UNIPAN",
+        "city": "Northern Iowa",
+        "id": 255,
+        "nickname": "Panthers",
+        "primary_color": "#4b116f",
+        "secondary_color": "#ffcc00",
+        "slug": "northern-iowa-panthers"
+      },
+      "weight": 241
+    }
+  ]
+}

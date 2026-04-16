@@ -1,0 +1,541 @@
+{
+   "AccessHighQualityReadyToUseBayouBridgesInstructionalMaterialsInKami": {
+      "message": "Отримайте доступ до високоякісних, готових до використання навчальних матеріалів Bayou Bridges у Kami!"
+   },
+   "Alpha": {
+      "message": "АЛЬФА"
+   },
+   "AnnotateWithKami": {
+      "message": "Анотувати з Kami"
+   },
+   "CanvasNewAssignmentKamiAssignmentAdded": {
+      "message": "файл додано"
+   },
+   "CanvasNewAssignmentTooltipBody": {
+      "message": "Натисніть тут, щоб додати файл, щоб призначити його учням через Kami."
+   },
+   "CanvasNewAssignmentTooltipGotIt": {
+      "message": "Зрозуміло"
+   },
+   "CanvasNewAssignmentTooltipHeader": {
+      "message": "Тепер створити завдання Kami дуже просто!"
+   },
+   "CanvasNewAssignmentTooltipLearnMore": {
+      "message": "Докладніше"
+   },
+   "CheckingAssignmentType": {
+      "message": "Перевірка типу завдання..."
+   },
+   "ClassView": {
+      "message": "Перегляд класу"
+   },
+   "ClassViewDescription": {
+      "message": "Тепер ви можете легко переглядати роботу всього класу і давати відгуки в режимі реального часу."
+   },
+   "ClassViewDescriptionText": {
+      "message": "Тепер ви можете переглядати завдання для всього класу, відстежувати прогрес і оцінювати кількох учнів одночасно."
+   },
+   "ClassViewInKami": {
+      "message": "Перегляд класу в Kami"
+   },
+   "DisableInSettings": {
+      "message": "Вимкнути в налаштуваннях"
+   },
+   "DownloadYourDocumentsIntoKami": {
+      "message": "Скачайте свої документи до Kami"
+   },
+   "EditAndUpdateAllStudentsCopies": {
+      "message": "Відредагувати та оновити копії всіх учнів"
+   },
+   "EditAssignment": {
+      "message": "Редагування завдання"
+   },
+   "EditWithKami": {
+      "message": "Редагувати з Kami"
+   },
+   "ExploreLouisianaLibrary": {
+      "message": "Ознайомтеся ​з Луїзіанською бібліотекою"
+   },
+   "GotIt": {
+      "message": "Зрозуміло"
+   },
+   "GradeWithKami": {
+      "message": "Оцінка з Kami"
+   },
+   "KamiAssignment": {
+      "message": "Завдання Kami"
+   },
+   "KamiIsAttachingYourFile": {
+      "message": "Kami прикріплює ваш файл"
+   },
+   "LearnMore": {
+      "message": "Докладніше"
+   },
+   "LouisianaLibraryForSocialStudiesNowInKami": {
+      "message": "Луїзіанська бібліотека соціальних досліджень — тепер і в Kami!"
+   },
+   "MakeEditsToAssignedWorkAndPublishChangesToAllStudentsCopies": {
+      "message": "Вносьте правки в завдання і публікуйте зміни в усіх копіях учнів."
+   },
+   "MakeEditsToAssignmentAndUpdateAllStudentCopies": {
+      "message": "Внесіть правки до завдання та оновіть усі копії учня"
+   },
+   "Next": {
+      "message": "Далі"
+   },
+   "OpenClassView": {
+      "message": "Відкрити перегляд класу"
+   },
+   "OpenInClassView": {
+      "message": "Відкрити в перегляді класу"
+   },
+   "OpenKamiInNewTab": {
+      "message": "Відкрити Kami у новій вкладці"
+   },
+   "OpenWithKami": {
+      "message": "Відкрити з Kami"
+   },
+   "PleaseKeepThisWindowOpenAndOnTop": {
+      "message": "Тримайте це вікно відкритим і зверху"
+   },
+   "PrinterContextMenuTitle": {
+      "message": "Відкрити в Kami (PDF)"
+   },
+   "PrinterDescription": {
+      "message": "Відкрити сторінку в Kami"
+   },
+   "TrackAndGradeAllStudentsWork": {
+      "message": "Відстежити та оцінити роботу всіх учнів"
+   },
+   "UnknownErrorCouldNotGetMessageFromErrorCard": {
+      "message": "Невідома помилка: не вдалося отримати повідомлення з картки помилок"
+   },
+   "UpdateWithKami": {
+      "message": "Оновити з Kami"
+   },
+   "UpdateWork": {
+      "message": "Оновити роботу"
+   },
+   "popup_Beta": {
+      "message": "БЕТА"
+   },
+   "popup_HideToolbar": {
+      "message": "Приховати панель інструментів"
+   },
+   "popup_OpenKami": {
+      "message": "Відкрити Kami"
+   },
+   "popup_ShowToolbar": {
+      "message": "Показати панель інструментів"
+   },
+   "toolbar_Beta": {
+      "message": "БЕТА"
+   },
+   "toolbar_LogIn": {
+      "message": "Увійти"
+   },
+   "toolbar_NoResults": {
+      "message": "Немає результатів"
+   },
+   "toolbar_Speak": {
+      "message": "Говорити"
+   },
+   "toolbar_Stop": {
+      "message": "Зупинити"
+   },
+   "toolbar_UnexpectedErrorColon": {
+      "message": "Несподівана помилка:"
+   },
+   "toolbar_YouNeedToLoginFirstANewTabWillBeOpenedForYouToLogin": {
+      "message": "Спочатку потрібно увійти в систему. Для входу буде відкрито нову вкладку."
+   },
+   "toolbar_coming_soon_google_workspace": {
+      "message": "Незабаром ви зможете використовувати інструменти Companion у своєму Google Workspace"
+   },
+   "toolbar_coming_soon_microsoft_365": {
+      "message": "Незабаром ви зможете використовувати інструменти Companion у Microsoft 365"
+   },
+   "toolbar_dictionary_and_picture_dictionary": {
+      "message": "Словник і словник з малюнками"
+   },
+   "toolbar_dictionary_coming_soon": {
+      "message": "Словник – Незабаром"
+   },
+   "toolbar_dictionary_google_workspace_support": {
+      "message": "Словник – Підтримка Google Workspace"
+   },
+   "toolbar_dictionary_microsoft_365_support": {
+      "message": "Словник – Підтримка Microsoft 365"
+   },
+   "toolbar_dictionary_tooltip": {
+      "message": "Словник"
+   },
+   "toolbar_explain_ReadAloud": {
+      "message": "Читати пояснення вголос"
+   },
+   "toolbar_explain_coming_soon": {
+      "message": "Пояснити – Незабаром"
+   },
+   "toolbar_explain_google_workspace_support": {
+      "message": "Пояснити – Підтримка Google Workspace"
+   },
+   "toolbar_explain_microsoft_365_support": {
+      "message": "Пояснити – Підтримка Microsoft 365"
+   },
+   "toolbar_explain_title": {
+      "message": "Пояснити"
+   },
+   "toolbar_explain_tooltip": {
+      "message": "Пояснити"
+   },
+   "toolbar_feedback_CloseFeedback": {
+      "message": "Закрити відгук"
+   },
+   "toolbar_feedback_GiveFeedback": {
+      "message": "Залишити відгук"
+   },
+   "toolbar_feedback_HelpUsImprove": {
+      "message": "Допоможіть нам покращитися"
+   },
+   "toolbar_feedback_Helpful": {
+      "message": "Корисно"
+   },
+   "toolbar_feedback_NotHelpful": {
+      "message": "Некорисно"
+   },
+   "toolbar_icon_tooltip": {
+      "message": "Відкрити Kami"
+   },
+   "toolbar_immersive_reader_available_tooltip": {
+      "message": "Імерсивний читач"
+   },
+   "toolbar_immersive_reader_unavailable_tooltip": {
+      "message": "Імерсивний читач (недоступно на цьому сайті)"
+   },
+   "toolbar_languageSelection_AddToStarred": {
+      "message": "Додати до позначених зірочкою"
+   },
+   "toolbar_languageSelection_All": {
+      "message": "Всі"
+   },
+   "toolbar_languageSelection_CloseLanguageOptions": {
+      "message": "Закрити мовні параметри"
+   },
+   "toolbar_languageSelection_OpenLanguageOptions": {
+      "message": "Відкрити мовні параметри"
+   },
+   "toolbar_languageSelection_RemoveFromStarred": {
+      "message": "Видалити з позначених зірочкою"
+   },
+   "toolbar_languageSelection_SearchLanguage": {
+      "message": "Мова пошуку"
+   },
+   "toolbar_languageSelection_Starred": {
+      "message": "Позначені зірочкою"
+   },
+   "toolbar_language_select_placeholder": {
+      "message": "Вибрати мову"
+   },
+   "toolbar_lookup_Definitions": {
+      "message": "Визначення"
+   },
+   "toolbar_lookup_Pictures": {
+      "message": "Зображення"
+   },
+   "toolbar_picture_dictionary_coming_soon": {
+      "message": "Словник з малюнками – Незабаром"
+   },
+   "toolbar_picture_dictionary_google_workspace_support": {
+      "message": "Словник з малюнками – Підтримка Google Workspace"
+   },
+   "toolbar_picture_dictionary_microsoft_365_support": {
+      "message": "Малюнковий словник – Підтримка Microsoft 365"
+   },
+   "toolbar_picture_dictionary_tooltip": {
+      "message": "Словник з малюнками"
+   },
+   "toolbar_predictiveText_ComingSoon": {
+      "message": "Предиктивне введення тексту – Незабаром"
+   },
+   "toolbar_predictiveText_coming_soon_text": {
+      "message": "Вибирайте правильні слова, щоб писати швидше та легше"
+   },
+   "toolbar_predictiveText_coming_soon_title": {
+      "message": "Предиктивне введення тексту"
+   },
+   "toolbar_predictiveText_tooltip": {
+      "message": "Предиктивне введення тексту – Незабаром"
+   },
+   "toolbar_read_aloud_ChangeVoice": {
+      "message": "Змінити голос: $voiceName$",
+      "placeholders": {
+         "voiceName": {
+            "content": "$1"
+         }
+      }
+   },
+   "toolbar_read_aloud_ChangeVoiceDefault": {
+      "message": "Змінити голос: Голос за замовчуванням"
+   },
+   "toolbar_read_aloud_CloseReadAloud": {
+      "message": "Закрити читання вголос"
+   },
+   "toolbar_read_aloud_Start": {
+      "message": "Почати"
+   },
+   "toolbar_read_aloud_Stop": {
+      "message": "Зупинити"
+   },
+   "toolbar_read_aloud_coming_soon": {
+      "message": "Читати вголос – Незабаром"
+   },
+   "toolbar_read_aloud_google_workspace_support": {
+      "message": "Читати вголос – Підтримка Google Workspace"
+   },
+   "toolbar_read_aloud_microsoft_365_support": {
+      "message": "Читати вголос – Підтримка Microsoft 365"
+   },
+   "toolbar_read_aloud_tooltip": {
+      "message": "Відкрити читання вголос"
+   },
+   "toolbar_readingFocus_ReadingAssist": {
+      "message": "Допомога при читанні"
+   },
+   "toolbar_readingFocus_ReadingRuler": {
+      "message": "Лінійка для читання"
+   },
+   "toolbar_readingFocus_ScreenMasking": {
+      "message": "Маскування екрана"
+   },
+   "toolbar_readingFocus_Settings": {
+      "message": "Налаштування"
+   },
+   "toolbar_settings_Appearances": {
+      "message": "Зовнішній вигляд"
+   },
+   "toolbar_settings_ClearSearch": {
+      "message": "Очистити пошук"
+   },
+   "toolbar_settings_Close": {
+      "message": "Закрити"
+   },
+   "toolbar_settings_ColorColon": {
+      "message": "Колір:"
+   },
+   "toolbar_settings_FollowCursor": {
+      "message": "Слідкувати за курсором"
+   },
+   "toolbar_settings_FollowCursorColon": {
+      "message": "Слідкувати за курсором:"
+   },
+   "toolbar_settings_HeightColon": {
+      "message": "Висота:"
+   },
+   "toolbar_settings_OpacityColon": {
+      "message": "Непрозорість:"
+   },
+   "toolbar_settings_Pitch": {
+      "message": "Висота голосу"
+   },
+   "toolbar_settings_PlayColon": {
+      "message": "Відтворити:"
+   },
+   "toolbar_settings_PressEnterToSelectInThisCategory": {
+      "message": "Натисніть Enter, щоб вибрати в цій категорії"
+   },
+   "toolbar_settings_PreviewColon": {
+      "message": "Попередній перегляд:"
+   },
+   "toolbar_settings_ReadAloud": {
+      "message": "Читати вголос"
+   },
+   "toolbar_settings_ReadingFocus": {
+      "message": "Фокус читання"
+   },
+   "toolbar_settings_ReadingRuler": {
+      "message": "Лінійка для читання"
+   },
+   "toolbar_settings_RulerStyleColon": {
+      "message": "Показати межі:"
+   },
+   "toolbar_settings_RulerStyleLeftRight": {
+      "message": "Показати вертикальні межі"
+   },
+   "toolbar_settings_RulerStyleLeftRightColon": {
+      "message": "Показати вертикальні межі:"
+   },
+   "toolbar_settings_RulerStyleReadingLine": {
+      "message": "Показати рядок читання"
+   },
+   "toolbar_settings_RulerStyleReadingLineColon": {
+      "message": "Показати рядок читання:"
+   },
+   "toolbar_settings_RulerStyleTopBottom": {
+      "message": "Показати горизонтальні межі"
+   },
+   "toolbar_settings_RulerStyleTopBottomColon": {
+      "message": "Показати горизонтальні межі:"
+   },
+   "toolbar_settings_ScreenMasking": {
+      "message": "Маскування екрана"
+   },
+   "toolbar_settings_Search": {
+      "message": "Пошук"
+   },
+   "toolbar_settings_SelectASize": {
+      "message": "Вибрати розмір"
+   },
+   "toolbar_settings_SelectATheme": {
+      "message": "Вибрати тему"
+   },
+   "toolbar_settings_SelectAVoice": {
+      "message": "Вибрати голос"
+   },
+   "toolbar_settings_Size": {
+      "message": "Розмір"
+   },
+   "toolbar_settings_Speed": {
+      "message": "Швидкість"
+   },
+   "toolbar_settings_Stop": {
+      "message": "Зупинити"
+   },
+   "toolbar_settings_Theme": {
+      "message": "Тема"
+   },
+   "toolbar_settings_Themes": {
+      "message": "Теми"
+   },
+   "toolbar_settings_ToolbarSettings": {
+      "message": "Налаштування панелі інструментів"
+   },
+   "toolbar_settings_WidthColon": {
+      "message": "Ширина:"
+   },
+   "toolbar_settings_YourSystemDoesNotSupportTextToSpeech": {
+      "message": "Ваша система не підтримує читання вголос."
+   },
+   "toolbar_settings_menu_HelpAndSupport": {
+      "message": "Допомога та підтримка"
+   },
+   "toolbar_settings_menu_HideToolbar": {
+      "message": "Приховати панель інструментів"
+   },
+   "toolbar_settings_menu_SubmitFeedback": {
+      "message": "Надіслати відгук"
+   },
+   "toolbar_settings_menu_title": {
+      "message": "Налаштування"
+   },
+   "toolbar_settings_size_1x": {
+      "message": "1x"
+   },
+   "toolbar_settings_size_2x": {
+      "message": "2x"
+   },
+   "toolbar_settings_size_3x": {
+      "message": "3x"
+   },
+   "toolbar_settings_theme_Dark": {
+      "message": "Темна"
+   },
+   "toolbar_settings_theme_Light": {
+      "message": "Світла"
+   },
+   "toolbar_settings_title": {
+      "message": "Налаштування"
+   },
+   "toolbar_summarize_ReadAloud": {
+      "message": "Читати підсумок вголос"
+   },
+   "toolbar_summarize_coming_soon": {
+      "message": "Підсумувати – Незабаром"
+   },
+   "toolbar_summarize_google_workspace_support": {
+      "message": "Підсумувати – Підтримка Google Workspace"
+   },
+   "toolbar_summarize_microsoft_365_support": {
+      "message": "Підсумувати – Підтримка Microsoft 365"
+   },
+   "toolbar_summarize_title": {
+      "message": "Підсумувати"
+   },
+   "toolbar_summarize_tooltip": {
+      "message": "Підсумувати"
+   },
+   "toolbar_switch_Off": {
+      "message": "Вимк."
+   },
+   "toolbar_switch_On": {
+      "message": "Увімк."
+   },
+   "toolbar_translate_ReadAloud": {
+      "message": "Читати переклад вголос"
+   },
+   "toolbar_translation_AdjustReadAloudSpeed": {
+      "message": "Налаштувати швидкість читання вголос"
+   },
+   "toolbar_translation_CopiedToClipboard": {
+      "message": "✨ Скопійовано в буфер обміну"
+   },
+   "toolbar_translation_ICouldNotTranslateThat": {
+      "message": "Я не зміг (змогла) цього перекласти."
+   },
+   "toolbar_translation_NoLanguagesAvailable": {
+      "message": "Немає доступних мов"
+   },
+   "toolbar_translation_ReadTranslationAloud": {
+      "message": "Читати переклад вголос"
+   },
+   "toolbar_translation_SpeakFaster": {
+      "message": "Говорити швидше"
+   },
+   "toolbar_translation_SpeakSlower": {
+      "message": "Говорити повільніше"
+   },
+   "toolbar_translation_StopReadAloud": {
+      "message": "Припинити читання вголос"
+   },
+   "toolbar_translation_TranslatedBy": {
+      "message": "Переклав:"
+   },
+   "toolbar_translation_UnableToConnectToTheTranslationService": {
+      "message": "Не вдалося під'єднатися до служби перекладу."
+   },
+   "toolbar_translation_coming_soon": {
+      "message": "Перекласти – Незабаром"
+   },
+   "toolbar_translation_google_workspace_support": {
+      "message": "Перекласти – Підтримка Google Workspace"
+   },
+   "toolbar_translation_microsoft_365_support": {
+      "message": "Перекласти – Підтримка Microsoft 365"
+   },
+   "toolbar_translation_title": {
+      "message": "Перекласти"
+   },
+   "toolbar_translation_tooltip": {
+      "message": "Перекласти"
+   },
+   "toolbar_voiceTyping_ComingSoon": {
+      "message": "Голосовий набір тексту – Незабаром"
+   },
+   "toolbar_voiceTyping_coming_soon_text": {
+      "message": "Використовуйте голос для набору тексту на вебсайтах і в документах"
+   },
+   "toolbar_voiceTyping_coming_soon_title": {
+      "message": "Голосовий набір тексту"
+   },
+   "toolbar_voiceTyping_tooltip": {
+      "message": "Голосовий набір тексту – Незабаром"
+   },
+   "toolbar_voices_Default": {
+      "message": "За замовчуванням"
+   },
+   "toolbar_voices_DefaultVoice": {
+      "message": "Голос за замовчуванням"
+   },
+   "toolbar_voices_NoResultsFound": {
+      "message": "Результатів не знайдено"
+   }
+}

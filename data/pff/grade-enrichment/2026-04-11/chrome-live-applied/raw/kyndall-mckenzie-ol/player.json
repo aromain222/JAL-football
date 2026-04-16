@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Kyndall",
+      "height": 602,
+      "id": 162527,
+      "jersey_number": "74",
+      "last_name": "McKenzie",
+      "position": "G",
+      "speed": null,
+      "team": {
+        "abbreviation": "MEMPHI",
+        "city": "Memphis",
+        "id": 218,
+        "nickname": "Tigers",
+        "primary_color": "#003087",
+        "secondary_color": "#898d8d",
+        "slug": "memphis-tigers"
+      },
+      "weight": 310
+    }
+  ]
+}

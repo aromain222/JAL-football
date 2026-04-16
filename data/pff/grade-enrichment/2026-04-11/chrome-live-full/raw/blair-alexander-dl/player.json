@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Blair",
+      "height": 602,
+      "id": 157424,
+      "jersey_number": "D55",
+      "last_name": "Alexander",
+      "position": "DI",
+      "speed": null,
+      "team": {
+        "abbreviation": "NCSTAT",
+        "city": "North Carolina State",
+        "id": 248,
+        "nickname": "Wolfpack",
+        "primary_color": "#ef1216",
+        "secondary_color": "#ffffff",
+        "slug": "north-carolina-state-wolfpack"
+      },
+      "weight": 240
+    }
+  ]
+}

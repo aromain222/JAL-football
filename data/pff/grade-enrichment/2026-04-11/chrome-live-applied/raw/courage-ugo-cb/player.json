@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "Courage",
+      "height": 600,
+      "id": 184921,
+      "jersey_number": "D22",
+      "last_name": "Ugochukwu",
+      "position": "CB",
+      "speed": null,
+      "team": {
+        "abbreviation": "UABBLA",
+        "city": "UAB",
+        "id": 321,
+        "nickname": "Blazers",
+        "primary_color": "#295135",
+        "secondary_color": "#aa9767",
+        "slug": "uab-blazers"
+      },
+      "weight": 195
+    }
+  ]
+}

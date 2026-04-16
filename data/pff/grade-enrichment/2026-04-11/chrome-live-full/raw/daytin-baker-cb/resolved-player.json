@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RJ",
+    "current_eligible_year": 2027,
+    "dob": null,
+    "draft": null,
+    "first_name": "Daytin",
+    "height": 511,
+    "id": 167165,
+    "jersey_number": "D29",
+    "last_name": "Baker",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "ALBSTA",
+      "city": "Albany State",
+      "id": 360,
+      "nickname": "Golden Rams",
+      "primary_color": "#b8860b",
+      "secondary_color": "#4169e1",
+      "slug": "albany-state-golden-rams"
+    },
+    "weight": 175
+  }
+}

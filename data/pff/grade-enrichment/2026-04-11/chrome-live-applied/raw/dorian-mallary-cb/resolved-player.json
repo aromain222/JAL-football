@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "partial-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "F",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Dorian",
+    "height": 511,
+    "id": 206247,
+    "jersey_number": "D38",
+    "last_name": "Mallary Jr.",
+    "position": "CB",
+    "speed": null,
+    "team": {
+      "abbreviation": "USFBUL",
+      "city": "USF",
+      "id": 327,
+      "nickname": "Bulls",
+      "primary_color": "#004a36",
+      "secondary_color": "#a08b4d",
+      "slug": "usf-bulls"
+    },
+    "weight": 175
+  }
+}

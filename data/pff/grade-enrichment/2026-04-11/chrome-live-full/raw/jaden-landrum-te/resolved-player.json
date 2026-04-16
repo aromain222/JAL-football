@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": "RF",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jaden",
+    "height": 603,
+    "id": 184683,
+    "jersey_number": "42",
+    "last_name": "Landrum",
+    "position": "TE",
+    "speed": null,
+    "team": {
+      "abbreviation": "COLOST",
+      "city": "Colorado State",
+      "id": 144,
+      "nickname": "Rams",
+      "primary_color": "#1e4d2b",
+      "secondary_color": "#c8c372",
+      "slug": "colorado-state-rams"
+    },
+    "weight": 225
+  }
+}

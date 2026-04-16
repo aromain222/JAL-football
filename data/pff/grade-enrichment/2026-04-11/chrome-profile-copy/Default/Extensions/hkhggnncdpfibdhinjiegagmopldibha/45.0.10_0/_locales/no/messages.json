@@ -1,0 +1,1229 @@
+{
+   "24hourMode": {
+      "message": "24 timers klokkevisning"
+   },
+   "24hourModeTitle": {
+      "message": "Vis tid i 24-timers format dvs. 18:00"
+   },
+   "DND": {
+      "message": "DND"
+   },
+   "DNDisEnabled": {
+      "message": "Ikke Forstyrr er aktivert"
+   },
+   "LAST_ITEM_DO_NOT_REMOVE": {
+      "message": "LAST_ITEM_DO_NOT_REMOVE"
+   },
+   "Xday": {
+      "message": "$1 dag"
+   },
+   "Xdays": {
+      "message": "$1 dager"
+   },
+   "Xhour": {
+      "message": "$1 time"
+   },
+   "Xhours": {
+      "message": "$1 timer"
+   },
+   "Xminute": {
+      "message": "$1 minutt"
+   },
+   "Xminutes": {
+      "message": "$1 minutter"
+   },
+   "Xseconds": {
+      "message": "$1 sekunder"
+   },
+   "Xuser": {
+      "message": "$1 bruker"
+   },
+   "Xusers": {
+      "message": "$1 brukere"
+   },
+   "Xweeks": {
+      "message": "$1 Uker"
+   },
+   "aboutMe": {
+      "message": "Om meg"
+   },
+   "accessGranted": {
+      "message": "Tilgang godkjent"
+   },
+   "accessNotGrantedSeeAccountOptions": {
+      "message": "Tilgang ikke gitt! $1 Vennligst se $2 avsnitt."
+   },
+   "accessNotGrantedSeeAccountOptions_accounts": {
+      "message": "Kontoer"
+   },
+   "account": {
+      "message": "Konto"
+   },
+   "accounts": {
+      "message": "Kontoer"
+   },
+   "addNotification": {
+      "message": "Legg til en varsling"
+   },
+   "addSkinsOrThemes": {
+      "message": "Legg til skinn eller temaer"
+   },
+   "addSpeechEngines": {
+      "message": "Legg til stemme"
+   },
+   "addToGoogleCalendar": {
+      "message": "Legg til i Google Kalender"
+   },
+   "added": {
+      "message": "Lagt"
+   },
+   "addedForSomeday": {
+      "message": "Lagt $1 for$2"
+   },
+   "addedForSomedayAt": {
+      "message": "Lagt $1 for$2på $3"
+   },
+   "addedForToday": {
+      "message": "Lagt $1 for i dag"
+   },
+   "addedForTodayAt": {
+      "message": "Lagt $1 for$2"
+   },
+   "addedForTomorrow": {
+      "message": "Lagt $1 for i morgen"
+   },
+   "addedForTomorrowAt": {
+      "message": "Lagt $1 i morgen på$2"
+   },
+   "addedTimedEventInThePast": {
+      "message": "Tidspunktet for denne hendelsen har allerede passert! Ønsker du meg å endre det til samme tid i morgen?"
+   },
+   "admin": {
+      "message": "Admin"
+   },
+   "agenda": {
+      "message": "Agenda"
+   },
+   "all": {
+      "message": "Alle"
+   },
+   "allDayText": {
+      "message": "hele dagen"
+   },
+   "allEvents": {
+      "message": "Alle hendelser"
+   },
+   "allowThisExtensionToReadYourFacebookEvent": {
+      "message": "Tillate denne forlengelsen å lese din Facebook begivenhet?"
+   },
+   "alreadyDonated": {
+      "message": "Allerede donert?"
+   },
+   "always": {
+      "message": "Alltid"
+   },
+   "alwaysSpeak": {
+      "message": "Snakk alltid"
+   },
+   "amount": {
+      "message": "Beløp"
+   },
+   "andNightTimesAfter": {
+      "message": "og natt ganger etter"
+   },
+   "anyAmount": {
+      "message": "ET HVILKET SOM HELST beløp"
+   },
+   "auto": {
+      "message": "Automatisk"
+   },
+   "autoSizePopupWindow": {
+      "message": "Autostørrelse popup-vindu"
+   },
+   "available": {
+      "message": "Tilgjengelig"
+   },
+   "beforeEachEvent": {
+      "message": "før hvert arrangement"
+   },
+   "beforeStart": {
+      "message": "Før start"
+   },
+   "bitcoin": {
+      "message": "Bitcoin"
+   },
+   "busy": {
+      "message": "opptatt"
+   },
+   "button": {
+      "message": "Knapp"
+   },
+   "buttonClickAction": {
+      "message": "Knappeklikk-handling"
+   },
+   "by": {
+      "message": "ved"
+   },
+   "calendar": {
+      "message": "Kalender"
+   },
+   "cancel": {
+      "message": "Avbryt"
+   },
+   "card": {
+      "message": "Kort"
+   },
+   "changeThisDomain": {
+      "message": "Endre e-domenet nå $1"
+   },
+   "changeThisDomain2": {
+      "message": "Logg av og Logg på som en annen bruker"
+   },
+   "changelog": {
+      "message": "Oppdateringslogg"
+   },
+   "changesOnlyReflectedOnCalendarX": {
+      "message": "Du kommer til å gjøre endringer som vil bare vises på kalenderen $1."
+   },
+   "changingIcon": {
+      "message": "Endre knappeikonet eller vise dagens dato"
+   },
+   "clearCache": {
+      "message": "Klart forlengelsen cache"
+   },
+   "clickToolbarIconToContinue": {
+      "message": "Klikk ikonet på verktøylinjen for å fortsette"
+   },
+   "clickingAnywhereOnNotification": {
+      "message": "Klikke på varsling"
+   },
+   "clickingXOnNotification": {
+      "message": "Å klikke X på varsling"
+   },
+   "close": {
+      "message": "Lukk"
+   },
+   "closeEsc": {
+      "message": "Lukk (Esc)"
+   },
+   "cont": {
+      "message": "FORTS."
+   },
+   "continue": {
+      "message": "Fortsett"
+   },
+   "contribute": {
+      "message": "Bidra"
+   },
+   "copyToMyCalendar": {
+      "message": "Kopiere til kalenderen"
+   },
+   "createDeleteEvents": {
+      "message": "Opprett hendelser ved å klikke i kalenderen"
+   },
+   "createEvent": {
+      "message": "Opprett hendelse"
+   },
+   "createdBy": {
+      "message": "Laget av"
+   },
+   "currentDefaultHasNotBeenGrantedAccess": {
+      "message": "Gjeldende $1 $2 har ikke fått tilgang!"
+   },
+   "currentDefaultHasNotBeenGrantedAccess_DefaultAccount": {
+      "message": "standardkontoen"
+   },
+   "currentDefaultHasNotBeenGrantedAccess_EMAIL_HERE": {
+      "message": "[EMAIL_HERE]"
+   },
+   "custom": {
+      "message": "Egendefinert"
+   },
+   "customView": {
+      "message": "Egendefinert visning"
+   },
+   "customizeNotifications": {
+      "message": "Tilpass varslene"
+   },
+   "d": {
+      "message": "d"
+   },
+   "date": {
+      "message": "Dato"
+   },
+   "day": {
+      "message": "Dag"
+   },
+   "dayOfYear": {
+      "message": "Dagen i året"
+   },
+   "days": {
+      "message": "dager"
+   },
+   "daysAgo": {
+      "message": "$1 dager siden"
+   },
+   "daysArray": {
+      "message": "søndag, mandag, tirsdag, onsdag, torsdag, fredag, lørdag"
+   },
+   "daysArrayShort": {
+      "message": "søn, man, tir, ons, tor, fre, lør"
+   },
+   "daysLeft": {
+      "message": "$1 dager igjen"
+   },
+   "daysRemaining": {
+      "message": "Vis dager igjen i stedet for tidspunktet for hendelsen"
+   },
+   "daysRemainingToolTip": {
+      "message": "Hvis arrangementet er dager unna, vil vise dager venstre ex. 2d"
+   },
+   "debug": {
+      "message": "Feilsøk"
+   },
+   "delete": {
+      "message": "Slett"
+   },
+   "deleteAll": {
+      "message": "Slett alt"
+   },
+   "deleteRemindersFromPopup": {
+      "message": "Slett hendelser fra påminnelsesvinduet"
+   },
+   "detectTime": {
+      "message": "Oppdag tid"
+   },
+   "developingMore": {
+      "message": "og jeg jobber med flere av dine forslag..."
+   },
+   "developingMoreSuggestions": {
+      "message": "og jeg jobber med flere av din $1"
+   },
+   "developingMoreSuggestions_suggestions": {
+      "message": "forslag"
+   },
+   "dimPastEvents": {
+      "message": "Grå ut siste dager"
+   },
+   "ding": {
+      "message": "Ding"
+   },
+   "disableAll": {
+      "message": "Deaktiver alle"
+   },
+   "disableInterruptiveAlerts": {
+      "message": "Arbeidsudyktig Google kalenderen interruptive vekker"
+   },
+   "disableInterruptiveAlertsMoreInfo": {
+      "message": "Visste du også deaktivere Google kalenderen varsler?"
+   },
+   "discoverMyApps": {
+      "message": "Oppdag mine apper"
+   },
+   "dismiss": {
+      "message": "Avvis"
+   },
+   "dismissAll": {
+      "message": "Ignorer alle"
+   },
+   "dismissAllInNotificationWindow": {
+      "message": "Forkaste alle hendelser i varslingsvindu"
+   },
+   "dismissesEvents": {
+      "message": "Avviser hendelser"
+   },
+   "doNotDisturb": {
+      "message": "Ikke forstyrr"
+   },
+   "doNotDisturbForTodayToolTip": {
+      "message": "Gjør ikke forstyrr til i morgen 7 am"
+   },
+   "doNotDisturbIndefinitelyToolTip": {
+      "message": "Aktiver ikke forstyrr før du slår den av"
+   },
+   "doNotDisturbToolTip": {
+      "message": "Slår av lyden, stemme og skrivebordsvarsler fra denne filtypen"
+   },
+   "doNotNotifyMeOfUpdates": {
+      "message": "Ikke varsle meg om oppdateringer"
+   },
+   "doNotShowNotificationsForAlldayEvents": {
+      "message": "Ikke vis meldinger for heldagshendelser"
+   },
+   "doNotShowNotificationsForRepeatingEvents": {
+      "message": "Ikke vis varsler for gjentatte hendelser"
+   },
+   "doNotShowPastNotifications": {
+      "message": "Ikke vis varsler om hendelser i fortiden"
+   },
+   "doNotShowPastNotificationsTitle": {
+      "message": "Bruk dette alternativet bare hvis du absolutt får påminnelsene fra en andre enhet/datamaskin slik at når du åpner nettleseren eller gjenoppta fra hjelp du ikke får forbi varsler. Hvis du velger dette alternativet og det er ikke tilfelle deretter du vil savne påminnelser!"
+   },
+   "donationRequired": {
+      "message": "Bidraget som kreves"
+   },
+   "done": {
+      "message": "Ferdig"
+   },
+   "dontSend": {
+      "message": "Ikke send"
+   },
+   "duplicate": {
+      "message": "Duplikat"
+   },
+   "edit": {
+      "message": "Rediger"
+   },
+   "editEventDetails": {
+      "message": "Rediger hendelsen"
+   },
+   "email": {
+      "message": "Epost:"
+   },
+   "enable": {
+      "message": "Aktiverer"
+   },
+   "enterAnAmount": {
+      "message": "Du må angi et beløp!"
+   },
+   "event": {
+      "message": "Hendelse"
+   },
+   "eventAdded": {
+      "message": "Arrangementet lagt til"
+   },
+   "eventColor": {
+      "message": "Farge på Hendelse"
+   },
+   "eventDeleted": {
+      "message": "Hendelsen slettet"
+   },
+   "eventDescription": {
+      "message": "Beskrivelse"
+   },
+   "eventUpdated": {
+      "message": "Arrangementet ditt ble oppdatert"
+   },
+   "ex": {
+      "message": "f.eks"
+   },
+   "example": {
+      "message": "eksempel"
+   },
+   "excludeFromNotificationsUse": {
+      "message": "For å ekskludere fra varsler bruk Varsels-fanen"
+   },
+   "excludeHiddenCalendarsFromButton": {
+      "message": "Ekskludere skjulte kalendere fra knappeikon"
+   },
+   "excludeHiddenCalendarsFromButtonToolTip": {
+      "message": "IKKE vise hendelser fra kalendere som valgt/ikke vises på websiden din Google Kalender, altså synkronisere synlig kalendere/hendelser med det du ser i Google Kalender siden"
+   },
+   "excludeRecurringEventsButtonIcon": {
+      "message": "Utelate gjentagende hendelser fra knappeikon"
+   },
+   "excludeRecurringEventsButtonIconTooltip": {
+      "message": "Hendelser angir gjentas vises ikke i knappeikonet"
+   },
+   "excluded": {
+      "message": "Ekskludert"
+   },
+   "extensionUpdated": {
+      "message": "Utvidelsen er oppdatert!"
+   },
+   "extraFeatures": {
+      "message": "Tilleggsfunksjoner"
+   },
+   "extraFeaturesPopup1": {
+      "message": "Disse nedtonede alternativene er ekstra funksjoner som jeg tilbringer mye tid på å utvikle."
+   },
+   "extraFeaturesPopup2": {
+      "message": "For å låse opp disse funksjonene, bidra med et beløp for å støtte arbeidet mitt."
+   },
+   "failureWithPayPalPurchase": {
+      "message": "Avbrutt eller mislykket med transaksjon! Prøv $1 i stedet?"
+   },
+   "feedback": {
+      "message": "Tilbakemelding"
+   },
+   "forever": {
+      "message": "For alltid"
+   },
+   "general": {
+      "message": "Generelt"
+   },
+   "goToToday": {
+      "message": "Gå til dagen i dag"
+   },
+   "going": {
+      "message": "Kommer"
+   },
+   "googleAccount": {
+      "message": "Google-konto"
+   },
+   "googleAccountsSignIn": {
+      "message": "Google-kontoer pålogging"
+   },
+   "grantAccess": {
+      "message": "Gi tilgang"
+   },
+   "grantAccessAgain": {
+      "message": "Gi tilgang igjen"
+   },
+   "grantedTo": {
+      "message": "Gitt til"
+   },
+   "groupNotifications": {
+      "message": "Gruppere alle hendelser i en melding"
+   },
+   "guests": {
+      "message": "Gjester"
+   },
+   "h": {
+      "message": "t"
+   },
+   "help": {
+      "message": "Hjelp"
+   },
+   "hideAfter": {
+      "message": "Skjul etter"
+   },
+   "hideButton": {
+      "message": "Skjul knapp"
+   },
+   "hideColonInTime": {
+      "message": "Skjule kolon i 24-timers tid"
+   },
+   "hideColonInTimeToolTip": {
+      "message": "dvs. Siden har jeg begrenset plass til å vise tid dvs. 10:00, dette alternativet vil vise 1000 i stedet"
+   },
+   "hideDelete": {
+      "message": "Skjul Slett"
+   },
+   "hideMorningAndNightHours": {
+      "message": "Skjul morgen- og kveldstimer i dag/uke visninger"
+   },
+   "hideMorningHoursBefore": {
+      "message": "Skjule morgentimer før"
+   },
+   "highlightWeekends": {
+      "message": "Marker helger"
+   },
+   "hours": {
+      "message": "timer"
+   },
+   "hoursAgo": {
+      "message": "$1 timer siden"
+   },
+   "hoursLeft": {
+      "message": "$1 timer igjen"
+   },
+   "hoursRemaining": {
+      "message": "Vis antall timer igjen i stedet for tidspunktet for hendelsen"
+   },
+   "hoursRemainingTitle": {
+      "message": "Hvis avtalen er mindre enn 24 timer unna, så vil antall timer igjen bli vist. F.eks. 4t "
+   },
+   "iconClassic": {
+      "message": "Klassisk ikon"
+   },
+   "iconDefault": {
+      "message": "Standardikon"
+   },
+   "iconDefault2WithDate": {
+      "message": "Standardikonet med gjeldende dato"
+   },
+   "iconDefault2WithDateInverted": {
+      "message": "Standardikonet med gjeldende dato invertert"
+   },
+   "iconMonochrome": {
+      "message": "Monokrom klassisk"
+   },
+   "iconMonochrome2": {
+      "message": "Svart-hvitt-ikonet"
+   },
+   "iconMonochrome2WithDate": {
+      "message": "Svart/hvitt ikon med gjeldende dato"
+   },
+   "iconNew": {
+      "message": "Nytt ikon"
+   },
+   "iconNew2": {
+      "message": "Mørk-ikonet"
+   },
+   "iconNew2WithDate": {
+      "message": "Mørk ikon med gjeldende dato"
+   },
+   "iconNewWithDate": {
+      "message": "Nytt ikon med gjeldende dato"
+   },
+   "iconTooltip": {
+      "message": "Ikonet for å bruke for popup-knappen"
+   },
+   "includesExtraFeaturesForX": {
+      "message": "Inkluderer ekstra funksjoner for $1"
+   },
+   "indefinitely": {
+      "message": "På ubestemt tid"
+   },
+   "individualNotifications": {
+      "message": "Vis hver hendelse i en enkelt melding"
+   },
+   "joinVideoCall": {
+      "message": "Bli med videoanrop"
+   },
+   "justStartTyping": {
+      "message": "Quick tips: bare begynn å skrive i stedet!"
+   },
+   "language": {
+      "message": "Språk"
+   },
+   "languageToolTip": {
+      "message": "Skifter språket som utfoldelse og stemme varsel. Merk: Du kan se mange språk samtidig fordi disse er reglene: det vil vise hva jeg har oversatt til språket du velger her, hvis jeg ikke har oversatt noen ord som det søkes etter det i språket i nettleseren din, hvis jeg ikke har oversatt de vises det på engelsk. Merk: Hvis du vil endre kalenderen språk innsiden oppspretningsinformasjonen for 'gamle ser'-bruke Google Kalender."
+   },
+   "licenseOnlyValidFor": {
+      "message": "Lisensen vil bare gjelde for brukere som logger på Google kalenderen med en"
+   },
+   "list": {
+      "message": "Liste"
+   },
+   "loadOptions": {
+      "message": "Innlastingsalternativene"
+   },
+   "loading": {
+      "message": "Laster inn..."
+   },
+   "local": {
+      "message": "Lokal"
+   },
+   "longerSnoozeTimes": {
+      "message": "Lengre snooze ganger og alternativer"
+   },
+   "m": {
+      "message": "m"
+   },
+   "makeThisAMonthlyContribution": {
+      "message": "Gjør dette til et månedlig bidrag"
+   },
+   "makeThisAMonthlyContributionTooltip": {
+      "message": "Bidra til å opprettholde min brukerstøtte og oppdateringer"
+   },
+   "map": {
+      "message": "Kart"
+   },
+   "maxDaysAhead": {
+      "message": "Antall dager å se fremover"
+   },
+   "maxDaysAheadTitle": {
+      "message": "Maksimalt antall dager for å vise en nedtelling på ikonet"
+   },
+   "maybe": {
+      "message": "Kanskje"
+   },
+   "min": {
+      "message": "min"
+   },
+   "minimumAmount": {
+      "message": "Du må donere minst $1"
+   },
+   "minutes": {
+      "message": "minutter"
+   },
+   "minutesAgo": {
+      "message": "$1 min siden"
+   },
+   "minutesLeft": {
+      "message": "$1 minutter igjen"
+   },
+   "month": {
+      "message": "Måned"
+   },
+   "monthly": {
+      "message": "Månedlig"
+   },
+   "monthlyPaymentBonus": {
+      "message": "Månedlig betalings bonus"
+   },
+   "monthsArray": {
+      "message": "januar, februar, mars, april, mai, juni, juli, august, september, oktober, november, desember"
+   },
+   "monthsArrayShort": {
+      "message": "jan, feb, mar, april, mai, jun, jul, aug, sep, okt, nov, des"
+   },
+   "more": {
+      "message": "mer"
+   },
+   "moreInfo": {
+      "message": "Mer info"
+   },
+   "moreSnoozeTimes": {
+      "message": "Snooze ganger..."
+   },
+   "morning": {
+      "message": "morgen"
+   },
+   "multipleUserLicense": {
+      "message": "Få en flere brukerlisens for organisasjonen"
+   },
+   "multipleUserLicenseFor": {
+      "message": "Flere brukerlisenser for $1"
+   },
+   "native": {
+      "message": "Opprinnelig"
+   },
+   "never": {
+      "message": "Aldri"
+   },
+   "next": {
+      "message": "Neste"
+   },
+   "night": {
+      "message": "natt"
+   },
+   "no": {
+      "message": "Nei"
+   },
+   "noTitle": {
+      "message": "Ingen tittel"
+   },
+   "none": {
+      "message": "Ingen"
+   },
+   "normal": {
+      "message": "Normal"
+   },
+   "notLoggedIn": {
+      "message": "Ikke pålogget"
+   },
+   "nothingPlanned": {
+      "message": "Ingenting er planlagt."
+   },
+   "notification": {
+      "message": "Varsel"
+   },
+   "notificationButton": {
+      "message": "Varslings knapp"
+   },
+   "notificationButton1": {
+      "message": "Varsling-knappen "
+   },
+   "notificationButton2": {
+      "message": "Varsling-knappen "
+   },
+   "notificationSound": {
+      "message": "Lydvarsel"
+   },
+   "notificationSoundSelectionToolTip": {
+      "message": "Velg forskjellige varslingslyder"
+   },
+   "notificationTextToSpeech": {
+      "message": "Talemelding"
+   },
+   "notificationTextToSpeechTitle": {
+      "message": "Tittelen på arrangementet vil bli lest høyt med tekst til tale. Flott når datamaskinen er i naborommet!"
+   },
+   "notifications": {
+      "message": "Varsler"
+   },
+   "notificationsForCalendars": {
+      "message": "Varsler for kalendere"
+   },
+   "notificationsGuideToolTip": {
+      "message": "Lyder, stemmer, Desktop varsler"
+   },
+   "off": {
+      "message": "Av"
+   },
+   "ok": {
+      "message": "OK"
+   },
+   "omniboxDefault": {
+      "message": "7 pm middag"
+   },
+   "omniboxDefaultTom": {
+      "message": "8 am stå opp"
+   },
+   "onetime": {
+      "message": "Engangsavgift"
+   },
+   "onlyNonPrimary": {
+      "message": "Bare ikke-primære kalendere"
+   },
+   "onlyThisEvent": {
+      "message": "Bare denne hendelsen"
+   },
+   "open": {
+      "message": "Åpne"
+   },
+   "openCalendar": {
+      "message": "Åpne deltakerens kalender"
+   },
+   "openCheckerPlusDetached": {
+      "message": "Åpne Checker Plus frittstående"
+   },
+   "openCheckerPlusTab": {
+      "message": "Åpne Checker Plus i en fane"
+   },
+   "openExistingCalendarTab": {
+      "message": "Åpne eksisterende kalender-fanen"
+   },
+   "openGoogleCalendar": {
+      "message": "Åpne Google Kalender"
+   },
+   "openPopupPreview": {
+      "message": "Åpne Checker Plus popup-vindu"
+   },
+   "openPopupPreviewToolTip": {
+      "message": "-Raskt vise og utføre handlinger på uleste e-poster bare fra en etikett du overvåke -Highly passelig -optimalisert for flere kontoer. prøve den 'Mer info' linken ovenfor"
+   },
+   "opensMoreSnoozeTimes": {
+      "message": "Åpner snooze ganger"
+   },
+   "option": {
+      "message": "Alternativ"
+   },
+   "options": {
+      "message": "Alternativer"
+   },
+   "or": {
+      "message": "eller"
+   },
+   "otherAmount": {
+      "message": "Annet beløp"
+   },
+   "otherPlans": {
+      "message": "Andre planer"
+   },
+   "otherPlansDescription": {
+      "message": "Priser på utdanning, årlig..."
+   },
+   "pendingNotifications": {
+      "message": "Ventende varsler"
+   },
+   "pendingNotificationsIntervalToolTip": {
+      "message": "Hvis du har ikke ta noe på din ventende påminnelser, vil en påminnelse animere med dette intervallet i verktøylinjen. Merk: Bare første purring skal spille en lydvarsling (hvis aktivert ovenfor)"
+   },
+   "permissionIsRequired": {
+      "message": "Tillatelse er nødvendig"
+   },
+   "pitch": {
+      "message": "Pitch"
+   },
+   "popout": {
+      "message": "Popout"
+   },
+   "popup": {
+      "message": "Pop-up"
+   },
+   "popupWindow": {
+      "message": "Popup-vindu"
+   },
+   "popupWindowNotificationToolTip": {
+      "message": "Dukker opp i midten av skjermen akkurat som Outlook påminnelser og forblir der til avvist"
+   },
+   "previous": {
+      "message": "Forrige"
+   },
+   "processing": {
+      "message": "Behandler"
+   },
+   "quickAdd": {
+      "message": "Hurtigtillegg"
+   },
+   "quickAddDefaultText": {
+      "message": "f.eks middag kl. 7 hos Pål"
+   },
+   "quickAddDefaultTextMultipleDays": {
+      "message": "f.eks besøker NYC"
+   },
+   "quickAddDefaultTextMultipleHours": {
+      "message": "f.eks frokost hos Trine"
+   },
+   "quickAddTitle": {
+      "message": "f.eks fotball om 20 min"
+   },
+   "quotaDetails": {
+      "message": "Kvotedetaljer"
+   },
+   "quotaExtraFeature": {
+      "message": "Dette er en ekstra funksjon, fordi kvoten som er pålagt meg av Google Kalender."
+   },
+   "rate": {
+      "message": "Rate"
+   },
+   "rateTitle": {
+      "message": "Hastigheten på tale: ord per minutt"
+   },
+   "recommended": {
+      "message": "Anbefalt"
+   },
+   "recurringEvent": {
+      "message": "Regelmessig hendelse"
+   },
+   "recurringEventPrompt": {
+      "message": "Ønsker du å bare endre denne hendelsen eller alle hendelser i serien?"
+   },
+   "reducedDonationAd_notification": {
+      "message": "Gode nyheter lenge bruker! Ekstra er bare $1 Klikk Skjul/se dette."
+   },
+   "reducedDonationAd_popup": {
+      "message": "Gode nyheter lenge bruker! Du kan få nyest $1 for bare $2"
+   },
+   "refresh": {
+      "message": "Oppdater"
+   },
+   "removeShareLinks": {
+      "message": "Skjule del"
+   },
+   "removeShareLinksTooltip": {
+      "message": "Fjerner Facebook, Twitter linker etc."
+   },
+   "reschedule": {
+      "message": "Planlegge"
+   },
+   "revokeAccess": {
+      "message": "Oppheve tilgang"
+   },
+   "richNotification": {
+      "message": "Rik varsling"
+   },
+   "richNotificationToolTip": {
+      "message": "Praktisk populær, men ikke påtrengende siden de vil forsvinne i et par sekunder på egne hvis ingen handlinger utføres. Tenk på dem som varsler på smarttelefonen. De gir relevant informasjon, men du kan velge å ignorere ytterligere tiltak før senere."
+   },
+   "rightClickDateFormat": {
+      "message": "dddd mmm d"
+   },
+   "runInBackground": {
+      "message": "Kjør i bakgrunnen når Google Chrome er lukket"
+   },
+   "runInBackgroundToolTip": {
+      "message": "Fortsette å motta varsler når leseren er lukket! Jeg anbefaler dette bare for avanserte brukere."
+   },
+   "runInBackgroundWarning1": {
+      "message": "Les nøye om $1"
+   },
+   "runInBackgroundWarning1b": {
+      "message": "bakgrunn apps"
+   },
+   "runInBackgroundWarning2": {
+      "message": "Hvis du deaktiverte bakgrunn apps i Chrome du kan reaktivere dem ved å lese det $1"
+   },
+   "runInBackgroundWarning2b": {
+      "message": "siste klikkbare delen"
+   },
+   "runInBackgroundWarning3": {
+      "message": "Du må kanskje bruke det $1 fra Gmail påloggingssiden"
+   },
+   "runInBackgroundWarning3b": {
+      "message": "Forbli pålogget"
+   },
+   "save": {
+      "message": "Lagre"
+   },
+   "saveOptions": {
+      "message": "Lagringsalternativer"
+   },
+   "saving": {
+      "message": "Lagrer..."
+   },
+   "schedule": {
+      "message": "Tidsplan"
+   },
+   "search": {
+      "message": "Søk"
+   },
+   "seeUpdates": {
+      "message": "Se oppdateringer"
+   },
+   "send": {
+      "message": "Send"
+   },
+   "sendUpdateAboutCancelingEvent": {
+      "message": "Vil du oppdatere gjestene om at du avlyser denne hendelsen?"
+   },
+   "sendUpdateToExistingGuests": {
+      "message": "Ønsker du å sende oppdateringer til eksisterende gjester?"
+   },
+   "sendUpdates": {
+      "message": "Sende oppdateringer"
+   },
+   "setDateTime": {
+      "message": "Angi dato/klokkeslett"
+   },
+   "share": {
+      "message": "Del"
+   },
+   "shareIntro": {
+      "message": "Prøv ut denne utrolige Chrome-utvidelsen"
+   },
+   "showButtonTooltip": {
+      "message": "Vis verktøytips når hovering over knappeikonet"
+   },
+   "showButtonTooltipTooltip": {
+      "message": "Vise neste hendelser når hovering over knappeikonet"
+   },
+   "showCalendarNames": {
+      "message": "Vis kalendernavn"
+   },
+   "showConsoleMessages": {
+      "message": "Loggmeldingene i Javascript-konsoll"
+   },
+   "showConsoleMessagesTitle": {
+      "message": "Ment for feilsøking bare og kan sakte ned forlengelsen litt!"
+   },
+   "showContextMenuItem": {
+      "message": "Vis hurtigmeny element på Høyreklikk"
+   },
+   "showContextMenuItemTooltip": {
+      "message": "Legger til et menyelement når du høyreklikker i enhver webside eller e-webside for å raskt legge det til i kalenderen"
+   },
+   "showDayOnBadge": {
+      "message": "Vis gjeldende ukedag på knappeikon"
+   },
+   "showDayOnBadgeExceptWhenDaysLeft": {
+      "message": "Bortsett fra når neste hendelse er dager unna"
+   },
+   "showDayOnBadgeExceptWhenHoursLeft": {
+      "message": "Bortsett fra når neste hendelse er timer unna"
+   },
+   "showDayOnBadgeExceptWhenMinutesLeft": {
+      "message": "Bortsett fra når neste hendelse er minutter"
+   },
+   "showDayOnBadgeTooltip": {
+      "message": "I stedet for nedtelling til neste hendelse visningen gjeldende dag i uken som 'Tir' etc. Merk: Du kan også angi unntak!"
+   },
+   "showDesktopNotifications": {
+      "message": "Skrivebordsvarsler"
+   },
+   "showEventTimeOnBadge": {
+      "message": "Vis tid av hendelsen på knappeikon"
+   },
+   "showEventTimeOnBadgeTooltip": {
+      "message": "Vise tid til neste hendelse på ikonet"
+   },
+   "showLocationOrSource": {
+      "message": "Vis plassering eller kilde- eller bli med videoanrop"
+   },
+   "showMinutesLeftInBadge": {
+      "message": "Vis minutter igjen i stedet for tidspunktet for hendelsen"
+   },
+   "showMinutesLeftInBadgeTitle": {
+      "message": "Hvis hendelsen er nær vis antall minutter igjen"
+   },
+   "showPendingNotificationsEvery": {
+      "message": "Vis ventende meldinger påminnelse hver"
+   },
+   "showTimeSpecificEventsBeforeAllDay": {
+      "message": "Vis tid bestemte hendelser før heldagshendelser"
+   },
+   "showTimeSpecificEventsBeforeAllDayTooltip": {
+      "message": "Hvis det i morgen har du hele dagen og en 10 am hendelse vises 10 am i stedet for 1 d"
+   },
+   "showWeekNumbers": {
+      "message": "Vis ukenumre"
+   },
+   "signIn": {
+      "message": "logg inn"
+   },
+   "signInAsUserOfOrg": {
+      "message": "Du må $1 med organisasjonens e-post"
+   },
+   "signInAsUserOfOrg2": {
+      "message": "Logg av og Logg på kalenderen"
+   },
+   "skin": {
+      "message": "Skinn"
+   },
+   "skins": {
+      "message": "Skinn"
+   },
+   "slotDuration": {
+      "message": "Spor varighet"
+   },
+   "slotDurationToolTip": {
+      "message": "Tidsintervallet brukes når du oppretter eller endre hendelsene i en kalender"
+   },
+   "small": {
+      "message": "Liten"
+   },
+   "snooze": {
+      "message": "Slumre"
+   },
+   "snoozeAll": {
+      "message": "Pause alle"
+   },
+   "snoozedEvents": {
+      "message": "Vise pause hendelser"
+   },
+   "snoozedEventsToolTip": {
+      "message": "Vise pause hendelser i kalenderen"
+   },
+   "snoozingChangesEventTime": {
+      "message": "Slumring flytter arrangementet til et nytt tidspunkt"
+   },
+   "somedayAt": {
+      "message": "$1 ved"
+   },
+   "sound": {
+      "message": "Lyd"
+   },
+   "source": {
+      "message": "Kilde"
+   },
+   "speechEngine": {
+      "message": "Motor"
+   },
+   "startWeekViewToday": {
+      "message": "Start arbeidsuken med dagens"
+   },
+   "successful": {
+      "message": "Vellykket"
+   },
+   "syncDND": {
+      "message": "Synkronisere DND innstillingen til alle Jasons utvidelser"
+   },
+   "testDescription": {
+      "message": "Test beskrivelsen"
+   },
+   "testEvent": {
+      "message": "Prøv hendelse"
+   },
+   "testIt": {
+      "message": "Prøv den ut!"
+   },
+   "textNotification": {
+      "message": "Tekst varsling"
+   },
+   "textNotificationToolTip": {
+      "message": "Ingen handlingsknapper som slumre osv. Kompatibel med OS X anmeldelse Center og knurre"
+   },
+   "thankYouForYourContribution": {
+      "message": "Funksjonene er nå ulåst. Takk for ditt bidrag!"
+   },
+   "theresAProblem": {
+      "message": "Det er et problem"
+   },
+   "time": {
+      "message": "Tid"
+   },
+   "to": {
+      "message": "til"
+   },
+   "today": {
+      "message": "I dag"
+   },
+   "todayAt": {
+      "message": "I dag klokken"
+   },
+   "tom": {
+      "message": "Tom"
+   },
+   "tomorrow": {
+      "message": "I morgen"
+   },
+   "tomorrowAt": {
+      "message": "I morgen klokken"
+   },
+   "transparent": {
+      "message": "Gjennomsiktig"
+   },
+   "tryAgain": {
+      "message": "Vær så snill og prøv på nytt"
+   },
+   "tryAgainLater": {
+      "message": "Prøv igjen senere"
+   },
+   "turnOff": {
+      "message": "slå av"
+   },
+   "undo": {
+      "message": "Angre"
+   },
+   "unlimited": {
+      "message": "Ubegrenset"
+   },
+   "unlockOtherExtensions": {
+      "message": "Lås opp de andre utvidelsene ved å åpne deres bidragsside og bruk Allerede Bidratt-linken ovenfor."
+   },
+   "update": {
+      "message": "Oppdatering"
+   },
+   "useChromeSignIn": {
+      "message": "Bruk Chrome pålogging"
+   },
+   "useDetailsFromCurrentPage": {
+      "message": "Bruk detaljer fra gjeldende side"
+   },
+   "useTheXToChangeViews": {
+      "message": "Bruk $1 menyikonet for å bytte kalendervisning"
+   },
+   "useTheXToCloseForAFewMinutes": {
+      "message": "Bruk $1 for å ignorere vinduet i 5 minutter"
+   },
+   "useTheXorXToDismissEvents": {
+      "message": "Bruk $1 eller $2 for å avvise hendelser"
+   },
+   "usingCalendarsFromMultipleAccounts": {
+      "message": "Bruke kalendere fra flere kontoer?"
+   },
+   "videoCall": {
+      "message": "Videoanrop"
+   },
+   "view": {
+      "message": "Vis"
+   },
+   "visibleCalendars": {
+      "message": "Synlig kalendere"
+   },
+   "voiceNotificationOnlyIfIdle": {
+      "message": "Hvis du er borte fra datamaskinen for minst"
+   },
+   "voiceNotificationOnlyIfIdleTooltip": {
+      "message": "Bruk dette alternativet hvis du bare vil høre stemmen når du ikke bruker datamaskinen eller det er inaktivt"
+   },
+   "voiceTest": {
+      "message": "Testmelding"
+   },
+   "volume": {
+      "message": "Volum"
+   },
+   "week": {
+      "message": "Uke"
+   },
+   "weekNumberCalculation": {
+      "message": "Uketall beregning"
+   },
+   "weeks": {
+      "message": "uker"
+   },
+   "weeksInMonth": {
+      "message": "Uker i måneden"
+   },
+   "welcome": {
+      "message": "Velkommen"
+   },
+   "what": {
+      "message": "Hva"
+   },
+   "when": {
+      "message": "Når"
+   },
+   "where": {
+      "message": "Hvor"
+   },
+   "who": {
+      "message": "Hvem"
+   },
+   "wide": {
+      "message": "Bredt"
+   },
+   "widget": {
+      "message": "Widget"
+   },
+   "yes": {
+      "message": "Ja"
+   },
+   "yesterday": {
+      "message": "I går"
+   }
+}

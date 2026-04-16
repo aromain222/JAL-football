@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "F",
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Jerald",
+    "height": 602,
+    "id": 204962,
+    "jersey_number": "N0",
+    "last_name": "James",
+    "position": "ED",
+    "speed": null,
+    "team": {
+      "abbreviation": "TOWSON",
+      "city": "Towson",
+      "id": 317,
+      "nickname": "Tigers",
+      "primary_color": "#3c3c3c",
+      "secondary_color": "#ffbb00",
+      "slug": "towson-tigers"
+    },
+    "weight": 223
+  }
+}

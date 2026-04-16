@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RS",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "David",
+      "height": 603,
+      "id": 170019,
+      "jersey_number": "D8",
+      "last_name": "Ojiegbe",
+      "position": "ED",
+      "speed": null,
+      "team": {
+        "abbreviation": "NORFOL",
+        "city": "Norfolk State",
+        "id": 244,
+        "nickname": "Spartans",
+        "primary_color": "#007a53",
+        "secondary_color": "#f3d03e",
+        "slug": "norfolk-state-spartans"
+      },
+      "weight": 245
+    }
+  ]
+}

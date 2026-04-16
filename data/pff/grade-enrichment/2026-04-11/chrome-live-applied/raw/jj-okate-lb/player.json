@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RJ",
+      "current_eligible_year": 2027,
+      "dob": null,
+      "draft": null,
+      "first_name": "JJ",
+      "height": 603,
+      "id": 193137,
+      "jersey_number": "D42",
+      "last_name": "Okate",
+      "position": "LB",
+      "speed": null,
+      "team": {
+        "abbreviation": "CHARLO",
+        "city": "Charlotte",
+        "id": 136,
+        "nickname": "49ers",
+        "primary_color": "#005f31",
+        "secondary_color": "#949431",
+        "slug": "charlotte-49ers"
+      },
+      "weight": 215
+    }
+  ]
+}

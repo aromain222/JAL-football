@@ -1,0 +1,28 @@
+{
+  "candidate_count": 1,
+  "match_reason": "exact-name+position",
+  "resolved_player": {
+    "college": null,
+    "current_class": null,
+    "current_eligible_year": 2029,
+    "dob": null,
+    "draft": null,
+    "first_name": "Micah",
+    "height": 602,
+    "id": 200028,
+    "jersey_number": "22",
+    "last_name": "Matthews",
+    "position": "WR",
+    "speed": null,
+    "team": {
+      "abbreviation": "JMADIS",
+      "city": "James Madison",
+      "id": 197,
+      "nickname": "Dukes",
+      "primary_color": "#450084",
+      "secondary_color": "#b5a36a",
+      "slug": "james-madison-dukes"
+    },
+    "weight": 200
+  }
+}

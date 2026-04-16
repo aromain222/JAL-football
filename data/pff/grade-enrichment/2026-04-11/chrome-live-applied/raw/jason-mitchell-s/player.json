@@ -1,0 +1,28 @@
+{
+  "players": [
+    {
+      "college": null,
+      "current_class": "RF",
+      "current_eligible_year": 2029,
+      "dob": null,
+      "draft": null,
+      "first_name": "Jason",
+      "height": 603,
+      "id": 188819,
+      "jersey_number": "D17",
+      "last_name": "Mitchell",
+      "position": "S",
+      "speed": null,
+      "team": {
+        "abbreviation": "WESTMI",
+        "city": "Western Michigan",
+        "id": 347,
+        "nickname": "Broncos",
+        "primary_color": "#7e3e09",
+        "secondary_color": "#b59966",
+        "slug": "western-michigan-broncos"
+      },
+      "weight": 180
+    }
+  ]
+}

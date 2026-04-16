@@ -1,0 +1,28 @@
+{
+  "candidate_count": 2,
+  "match_reason": "partial-name",
+  "resolved_player": {
+    "college": null,
+    "current_class": "S",
+    "current_eligible_year": 2028,
+    "dob": null,
+    "draft": null,
+    "first_name": "Roger",
+    "height": 510,
+    "id": 198069,
+    "jersey_number": "D5",
+    "last_name": "Jones Jr.",
+    "position": "S",
+    "speed": null,
+    "team": {
+      "abbreviation": "AIRFOR",
+      "city": "Air Force",
+      "id": 101,
+      "nickname": "Falcons",
+      "primary_color": "#0061aa",
+      "secondary_color": "#ffffff",
+      "slug": "air-force-falcons"
+    },
+    "weight": 184
+  }
+}
