@@ -72,23 +72,6 @@ function sumCols(row: Row, ...keys: string[]): number | null {
 }
 
 // ---------------------------------------------------------------------------
-// Fetch all rows from a position table (handles slash in table name via RPC)
-// ---------------------------------------------------------------------------
-async function fetchTable(tableName: string): Promise<Row[]> {
-  // Supabase JS client can't handle "/" in table names — use raw SQL via rpc
-  const { data, error } = await supabase.rpc("exec_sql_select" as never, {
-    sql: `SELECT * FROM "${tableName}"`,
-  } as never);
-  if (error) {
-    // Fallback: try direct .from() for normal names
-    const { data: d2, error: e2 } = await supabase.from(tableName as never).select("*");
-    if (e2) { console.error(`  Failed to fetch "${tableName}":`, e2.message); return []; }
-    return (d2 ?? []) as Row[];
-  }
-  return (data ?? []) as Row[];
-}
-
-// ---------------------------------------------------------------------------
 // Build player lookup map (normalized name → uuid)
 // ---------------------------------------------------------------------------
 async function buildPlayerMap(): Promise<Map<string, string>> {
@@ -366,19 +349,23 @@ async function main() {
   for (const { name, build } of TABLES) {
     process.stdout.write(`Processing "${name}" ... `);
 
-    // Fetch rows — handle DL/Edge via direct SQL workaround
     let rows: Row[] = [];
-    if (name === "DL/Edge") {
-      // Use raw select with escaped table name — Supabase REST may reject slash
-      // Try direct .from() first; if it fails the table may not exist
-      const { data, error } = await (supabase as unknown as { from: (t: string) => { select: (s: string) => Promise<{ data: unknown; error: { message: string } | null }> } })
-        .from("DL/Edge")
-        .select("*");
-      if (error) {
-        console.log(`⚠ skipped (${error.message})`);
+    if (name.includes("/")) {
+      // Supabase REST splits on "/" — use raw fetch with URL-encoded table name
+      const encoded = encodeURIComponent(name);
+      const res = await fetch(`${supabaseUrl}/rest/v1/${encoded}?select=*`, {
+        headers: {
+          apikey: serviceRoleKey!,
+          Authorization: `Bearer ${serviceRoleKey}`,
+          Accept: "application/json",
+        },
+      });
+      if (!res.ok) {
+        const msg = await res.text().catch(() => res.statusText);
+        console.log(`⚠ skipped (${msg})`);
         continue;
       }
-      rows = (data ?? []) as Row[];
+      rows = (await res.json()) as Row[];
     } else {
       const { data, error } = await supabase.from(name as never).select("*");
       if (error) {
