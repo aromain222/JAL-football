@@ -704,6 +704,10 @@ export async function getPlayersFromSupabaseForAI(filters: {
   return players;
 }
 
+function normalizePffName(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim();
+}
+
 export async function getPffStatsForPlayer(
   player: Player
 ): Promise<Record<string, unknown> | null> {
@@ -723,7 +727,7 @@ export async function getPffStatsForPlayer(
   const preferredById = choosePreferredPffRow((data ?? []) as Array<Record<string, unknown>>);
   if (preferredById) return preferredById;
 
-  // Fallback: name match (player_id may be null for recently imported records)
+  // Fallback: exact case-insensitive name match
   const fullName = `${player.first_name} ${player.last_name}`;
   const { data: data2, error: error2 } = await supabase
     .from("player_pff_grades")
@@ -734,7 +738,26 @@ export async function getPffStatsForPlayer(
     logDataAccessIssue("pff-by-player-name", error2.message);
     return null;
   }
-  return choosePreferredPffRow((data2 ?? []) as Array<Record<string, unknown>>);
+  const preferredByName = choosePreferredPffRow((data2 ?? []) as Array<Record<string, unknown>>);
+  if (preferredByName) return preferredByName;
+
+  // Fallback 2: normalized name match (handles J.T. vs JT, De'Andre vs Deandre, Jr. suffixes, etc.)
+  const normFull = normalizePffName(fullName);
+  const lastNameAlpha = player.last_name.replace(/[^a-zA-Z]/g, "");
+  if (lastNameAlpha.length >= 3) {
+    const { data: data3 } = await supabase
+      .from("player_pff_grades")
+      .select("*")
+      .ilike("player_name", `%${lastNameAlpha}%`)
+      .order("season", { ascending: false });
+
+    const normalMatched = ((data3 ?? []) as Array<Record<string, unknown>>).filter(
+      (row) => normalizePffName(String(row.player_name ?? "")) === normFull
+    );
+    return choosePreferredPffRow(normalMatched);
+  }
+
+  return null;
 }
 
 export async function getBatchPffStatsForPlayers(
@@ -769,7 +792,7 @@ export async function getBatchPffStatsForPlayers(
     if (preferred) result[pid] = preferred;
   }
 
-  // Batch 2: name match for players not yet resolved in PFF data
+  // Batch 2: exact name match for players not yet resolved in PFF data
   const unmatched = players.filter((p) => !result[p.id]);
   if (unmatched.length) {
     const names = unmatched.map((p) => `${p.first_name} ${p.last_name}`);
@@ -798,6 +821,31 @@ export async function getBatchPffStatsForPlayers(
       if (preferred) {
         result[player.id] = preferred;
       }
+    }
+  }
+
+  // Batch 3: normalized name match — handles apostrophes, periods, Jr. suffixes, etc.
+  const stillUnmatched = players.filter((p) => !result[p.id]);
+  if (stillUnmatched.length) {
+    const { data: unlinked } = await supabase
+      .from("player_pff_grades")
+      .select("*")
+      .is("player_id", null)
+      .order("season", { ascending: false });
+
+    const normMap = new Map<string, Array<Record<string, unknown>>>();
+    for (const row of (unlinked ?? []) as Array<Record<string, unknown>>) {
+      const norm = normalizePffName(String(row.player_name ?? ""));
+      if (!norm) continue;
+      const list = normMap.get(norm) ?? [];
+      list.push(row);
+      normMap.set(norm, list);
+    }
+
+    for (const player of stillUnmatched) {
+      const norm = normalizePffName(`${player.first_name} ${player.last_name}`);
+      const preferred = choosePreferredPffRow(normMap.get(norm) ?? []);
+      if (preferred) result[player.id] = preferred;
     }
   }
 
