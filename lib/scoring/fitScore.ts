@@ -251,8 +251,10 @@ function calculateProductionScore(
 
   if (
     template.production.secondaryStat &&
+    secondaryValue !== null &&
     template.production.secondaryGood !== undefined &&
-    template.production.secondaryElite !== undefined
+    template.production.secondaryElite !== undefined &&
+    secondaryValue !== null
   ) {
     score += weightedStatScore(
       secondaryValue,
@@ -337,13 +339,14 @@ function buildExplanation(input: {
     input.player.position === input.need.position ? "Exact position match." : "Position mismatch penalty applied."
   );
 
-  const strongest = [
+  const strongestCandidates: Array<[string, number]> = [
     ["measurables", input.measurableScore],
     ["production", input.productionScore],
     ["athletic profile", input.athleticScore],
     ["experience", input.experienceScore],
     ["eligibility", input.eligibilityScore]
-  ].sort((a, b) => b[1] - a[1])[0];
+  ];
+  const strongest = strongestCandidates.sort((a, b) => b[1] - a[1])[0];
 
   parts.push(`Strongest area: ${strongest[0]} (${strongest[1]}).`);
 
@@ -364,7 +367,8 @@ function buildExplanation(input: {
   return parts.join(" ");
 }
 
-function weightedStatScore(value: number, good: number, elite: number, weight: number) {
+function weightedStatScore(value: number | null, good: number, elite: number, weight: number) {
+  if (value === null || value === undefined) return NEUTRAL_SCORE * weight;
   return benchmarkBandScore(value, good, elite) * weight;
 }
 

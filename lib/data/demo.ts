@@ -6,22 +6,23 @@ import {
   Team,
   TeamNeed
 } from "@/lib/types";
+import previewWorkspace from "@/data/preview-workspace.json";
 
-export const demoTeam: Team = {
+const baseDemoTeam: Team = {
   id: "8d3b3d8f-0f82-4717-9db7-7c8804dafd11",
   name: "JAL Football",
   conference: "Big 12",
   logo_url: null
 };
 
-export const demoProfile: Profile = {
+const baseDemoProfile: Profile = {
   id: "f0f769e4-0ece-44ca-b2c5-2480e8f5f7c1",
-  team_id: demoTeam.id,
+  team_id: baseDemoTeam.id,
   full_name: "Avery Romain",
   role: "Personnel Director"
 };
 
-export const demoPlayers: Player[] = [
+const baseDemoPlayers: Player[] = [
   {
     id: "f90320ae-6054-4b15-84a1-7fd4dbe6f94e",
     first_name: "Malik",
@@ -212,8 +213,38 @@ export const demoPlayers: Player[] = [
   }
 ];
 
-export const demoNeeds: TeamNeed[] = [];
+const previewSnapshot = previewWorkspace as {
+  team?: Team | null;
+  profile?: Profile | null;
+  players?: Player[];
+  needs?: TeamNeed[];
+  reviews?: PlayerReview[];
+  shortlists?: ShortlistItem[];
+};
 
-export const demoReviews: PlayerReview[] = [];
+export const demoTeam: Team = previewSnapshot.team ?? baseDemoTeam;
 
-export const demoShortlists: ShortlistItem[] = [];
+export const demoProfile: Profile = {
+  ...baseDemoProfile,
+  team_id: demoTeam.id
+};
+
+export const demoPlayers: Player[] =
+  previewSnapshot.players && previewSnapshot.players.length > 0
+    ? previewSnapshot.players
+    : baseDemoPlayers;
+
+export const demoNeeds: TeamNeed[] =
+  previewSnapshot.needs && previewSnapshot.needs.length > 0
+    ? previewSnapshot.needs
+    : [];
+
+export const demoReviews: PlayerReview[] =
+  previewSnapshot.reviews && previewSnapshot.reviews.length > 0
+    ? previewSnapshot.reviews
+    : [];
+
+export const demoShortlists: ShortlistItem[] =
+  previewSnapshot.shortlists && previewSnapshot.shortlists.length > 0
+    ? previewSnapshot.shortlists
+    : [];

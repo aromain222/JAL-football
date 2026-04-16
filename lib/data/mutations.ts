@@ -1,4 +1,4 @@
-import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
+import { createSupabaseDataClient, hasSupabaseEnv } from "@/lib/supabase/server";
 import { TeamNeed, TeamNeedInsertInput } from "@/lib/types";
 
 export async function insertTeamNeed(params: {
@@ -37,7 +37,7 @@ export async function insertTeamNeed(params: {
     return row;
   }
 
-  const supabase = createSupabaseServerClient();
+  const supabase = createSupabaseDataClient();
   const { data, error } = await supabase
     .from("team_needs" as never)
     .insert({

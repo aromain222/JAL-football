@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
 import {
   addDemoPlayerTag,
   addDemoNeed,
@@ -9,56 +10,61 @@ import {
   updateDemoShortlistStage
 } from "@/lib/data/demo-store";
 import { insertTeamNeed } from "@/lib/data/mutations";
-import { createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
-import { getViewerContext } from "@/lib/data/queries";
+import { createSupabaseDataClient, createSupabaseServerClient, hasSupabaseEnv } from "@/lib/supabase/server";
+import { getViewerContext, getPlayerQuickViewData, getPlayers, getBatchPffStatsForPlayers } from "@/lib/data/queries";
 import type { PlayerMeasurement, Profile, Team } from "@/lib/types";
 import { needSchema, reviewSchema, shortlistStageSchema } from "@/lib/validation";
 import { z } from "zod";
+import { normalizeWorkspaceRole } from "@/lib/workspace-role";
+
+function normalizeString(value?: string) {
+  return value && value !== "ALL" ? value : undefined;
+}
+
+function normalizeNumber(value?: string) {
+  if (!value || value === "ALL") return undefined;
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : undefined;
+}
+
+async function requireWorkspaceWriteContext() {
+  if (!hasSupabaseEnv()) {
+    return getViewerContext();
+  }
+
+  const supabase = createSupabaseServerClient();
+  const {
+    data: { user }
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    throw new Error("Sign in to make changes.");
+  }
+
+  return getViewerContext();
+}
+
+export async function setWorkspaceRoleAction(role: string) {
+  const normalizedRole = normalizeWorkspaceRole(role);
+  if (!normalizedRole) {
+    throw new Error("Invalid workspace role.");
+  }
+
+  cookies().set("workspace-role", normalizedRole, {
+    path: "/",
+    sameSite: "lax",
+    httpOnly: false
+  });
+
+  revalidatePath("/", "layout");
+}
 
 export async function createNeedAction(input: z.infer<typeof needSchema>) {
   const parsed = needSchema.parse(input);
-  const supabase = hasSupabaseEnv() ? createSupabaseServerClient() : null;
+  const { profile: viewerProfile, team: viewerTeam } = await requireWorkspaceWriteContext();
 
-  let viewerProfile = null as Awaited<ReturnType<typeof getViewerContext>>["profile"] | null;
-  let viewerTeam = null as Awaited<ReturnType<typeof getViewerContext>>["team"] | null;
-
-  if (supabase) {
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error("Sign in again before creating a need.");
-    }
-
-    const { data: profileRaw, error: profileError } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-    const profile = profileRaw as Profile | null;
-
-    if (profileError || !profile) {
-      throw new Error("Workspace access is not set up for this account.");
-    }
-
-    const { data: teamRaw, error: teamError } = await supabase
-      .from("teams")
-      .select("*")
-      .eq("id", profile.team_id)
-      .single();
-    const team = teamRaw as Team | null;
-
-    if (teamError || !team) {
-      throw new Error("Your team record could not be found.");
-    }
-
-    viewerProfile = profile;
-    viewerTeam = team;
-  } else {
-    const { profile, team } = await getViewerContext();
-    viewerProfile = profile;
-    viewerTeam = team;
+  if (!viewerProfile || !viewerTeam) {
+    throw new Error("Workspace context is not configured.");
   }
 
   const needId = crypto.randomUUID();
@@ -99,7 +105,7 @@ export async function createNeedAction(input: z.infer<typeof needSchema>) {
 }
 
 export async function submitReviewAction(formData: FormData) {
-  const { profile } = await getViewerContext();
+  const { profile } = await requireWorkspaceWriteContext();
 
   const parsed = reviewSchema.parse({
     needId: formData.get("needId"),
@@ -110,7 +116,7 @@ export async function submitReviewAction(formData: FormData) {
   });
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
     await supabase.from("player_reviews" as never).upsert(
       {
         need_id: parsed.needId,
@@ -124,13 +130,15 @@ export async function submitReviewAction(formData: FormData) {
     );
 
     if (parsed.decision === "right" || parsed.decision === "save") {
+      const now = new Date().toISOString();
       await supabase.from("shortlists" as never).upsert(
         {
           need_id: parsed.needId,
           player_id: parsed.playerId,
           created_by: profile.id,
           stage: parsed.decision === "right" ? "assistant" : "final_watch",
-          note: parsed.note || null
+          note: parsed.note || null,
+          updated_at: now
         } as never,
         { onConflict: "need_id,player_id" }
       );
@@ -158,6 +166,7 @@ export async function submitReviewAction(formData: FormData) {
     });
 
     if (parsed.decision === "right" || parsed.decision === "save") {
+      const now = new Date().toISOString();
       addOrUpdateDemoShortlist({
         id: crypto.randomUUID(),
         need_id: parsed.needId,
@@ -166,7 +175,8 @@ export async function submitReviewAction(formData: FormData) {
         stage: parsed.decision === "right" ? "assistant" : "final_watch",
         priority_rank: null,
         note: parsed.note || null,
-        created_at: new Date().toISOString()
+        created_at: now,
+        updated_at: now
       });
     }
 
@@ -187,26 +197,28 @@ export async function updateShortlistStageAction(formData: FormData) {
   });
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    await requireWorkspaceWriteContext();
+    const supabase = createSupabaseDataClient();
     await supabase
       .from("shortlists" as never)
-      .update({ stage: parsed.stage } as never)
+      .update({ stage: parsed.stage, updated_at: new Date().toISOString() } as never)
       .eq("id", parsed.shortlistId);
   } else {
     updateDemoShortlistStage(parsed.shortlistId, parsed.stage);
   }
 
   revalidatePath("/shortlist");
+  revalidatePath("/dashboard");
 }
 
 export async function addPlayerToShortlistAction(input: {
   playerId: string;
   needId: string;
 }) {
-  const { profile } = await getViewerContext();
+  const { profile } = await requireWorkspaceWriteContext();
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
 
     await supabase.from("player_reviews" as never).upsert(
       {
@@ -226,11 +238,13 @@ export async function addPlayerToShortlistAction(input: {
         player_id: input.playerId,
         created_by: profile.id,
         stage: "assistant",
-        note: "Added from player profile."
+        note: "Added from player profile.",
+        updated_at: new Date().toISOString()
       } as never,
       { onConflict: "need_id,player_id" }
     );
   } else {
+    const now = new Date().toISOString();
     addOrUpdateDemoReview({
       id: crypto.randomUUID(),
       need_id: input.needId,
@@ -239,7 +253,7 @@ export async function addPlayerToShortlistAction(input: {
       decision: "right",
       fit_score: 80,
       note: "Added from player profile.",
-      created_at: new Date().toISOString()
+      created_at: now
     });
 
     addOrUpdateDemoShortlist({
@@ -250,22 +264,24 @@ export async function addPlayerToShortlistAction(input: {
       stage: "assistant",
       priority_rank: null,
       note: "Added from player profile.",
-      created_at: new Date().toISOString()
+      created_at: now,
+      updated_at: now
     });
   }
 
   revalidatePath(`/players/${input.playerId}`);
   revalidatePath("/shortlist");
+  revalidatePath("/dashboard");
 }
 
 export async function markPlayerNeedsFilmAction(input: {
   playerId: string;
   needId: string;
 }) {
-  const { profile } = await getViewerContext();
+  const { profile } = await requireWorkspaceWriteContext();
 
   if (hasSupabaseEnv()) {
-    const supabase = createSupabaseServerClient();
+    const supabase = createSupabaseDataClient();
 
     await supabase.from("player_reviews" as never).upsert(
       {
@@ -326,13 +342,8 @@ export async function saveMeasurablesFrom247WriteUpAction(input: {
     return { ok: true, message: "Demo mode: measurables not persisted." };
   }
 
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  if (!user) {
-    return { ok: false, message: "Sign in to save measurables." };
-  }
+  await requireWorkspaceWriteContext();
+  const supabase = createSupabaseDataClient();
 
   const { data: existingRaw } = await supabase
     .from("player_measurements")
@@ -374,11 +385,8 @@ export async function upsertPlayerIdentityLinkAction(input: {
     return { ok: false, message: "Demo mode: identity links not persisted." };
   }
 
-  const supabase = createSupabaseServerClient();
-  const {
-    data: { user }
-  } = await supabase.auth.getUser();
-  if (!user) return { ok: false, message: "Sign in to save." };
+  await requireWorkspaceWriteContext();
+  const supabase = createSupabaseDataClient();
 
   const row = {
     player_id: input.playerId,
@@ -397,6 +405,91 @@ export async function upsertPlayerIdentityLinkAction(input: {
   revalidatePath("/identity");
   revalidatePath(`/players/${input.playerId}`);
   return { ok: true, message: "Saved identity links." };
+}
+
+export async function getPlayerQuickDataAction(playerId: string) {
+  return getPlayerQuickViewData(playerId);
+}
+
+export async function deleteNeedAction(needId: string) {
+  if (!hasSupabaseEnv()) {
+    revalidatePath("/needs");
+    return;
+  }
+
+  const { team } = await requireWorkspaceWriteContext();
+  const teamId = team?.id;
+  if (!teamId) throw new Error("Team not found.");
+
+  const supabase = createSupabaseDataClient();
+
+  await supabase
+    .from("team_needs" as never)
+    .delete()
+    .eq("id", needId)
+    .eq("team_id", teamId);
+
+  revalidatePath("/needs");
+}
+
+export async function aiPlayerSearchAction(input: {
+  query: string;
+  boardFilters?: import("@/lib/ai/player-search").AiBoardFilters;
+}): Promise<{
+  criteria: import("@/lib/ai/player-search").AiSearchCriteria;
+  results: Array<
+    import("@/lib/ai/player-search").AiPlayerSearchResult & {
+      player: import("@/lib/types").Player;
+    }
+  >;
+}> {
+  const { extractSearchCriteria, filterPlayersByAiCriteria, searchPlayersByAiCriteria } = await import("@/lib/ai/player-search");
+  const query = input.query.trim();
+  if (!query) {
+    throw new Error("Search query is required.");
+  }
+
+  // Phase 1: extract structured criteria from the natural language query
+  const criteria = await extractSearchCriteria(query);
+
+  // Phase 2: scope the AI search within the currently active board filters
+  const boardFilters = input.boardFilters ?? {};
+  const scopedPlayers = (await getPlayers({
+    position: normalizeString(boardFilters.position),
+    search: normalizeString(boardFilters.search),
+    heightMin: normalizeNumber(boardFilters.heightMin),
+    heightMax: normalizeNumber(boardFilters.heightMax),
+    weightMin: normalizeNumber(boardFilters.weightMin),
+    weightMax: normalizeNumber(boardFilters.weightMax),
+    armLengthMin: normalizeNumber(boardFilters.armLengthMin),
+    fortyMax: normalizeNumber(boardFilters.fortyMax),
+    classYear: normalizeString(boardFilters.classYear),
+    yearsRemaining: normalizeNumber(boardFilters.yearsRemaining),
+    school: normalizeString(boardFilters.school),
+    conference: normalizeString(boardFilters.conference),
+    archetype: normalizeString(boardFilters.archetype)
+  })) as import("@/lib/types").Player[];
+
+  // Phase 3: apply AI-derived hard filters inside the board-scoped pool
+  const players = filterPlayersByAiCriteria(criteria, scopedPlayers);
+
+  // Phase 4: batch-fetch PFF stats
+  const pffStatsMap = await getBatchPffStatsForPlayers(players);
+
+  // Phase 5: score + rank, return top 15
+  const ranked = searchPlayersByAiCriteria(criteria, players, pffStatsMap);
+  const playerById = new Map(players.map((player) => [player.id, player]));
+
+  return {
+    criteria,
+    results: ranked.slice(0, 15).map((result) => ({
+      ...result,
+      player: {
+        ...playerById.get(result.playerId)!,
+        pffStats: (pffStatsMap[result.playerId] as import("@/lib/types").Player["pffStats"]) ?? null,
+      }
+    }))
+  };
 }
 
 export async function addPlayerSourceNoteAction(formData: FormData) {

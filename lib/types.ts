@@ -101,6 +101,7 @@ export interface Player {
   measurements?: PlayerMeasurement | null;
   latest_stats?: PlayerStat | null;
   tags?: string[];
+  pffStats?: PlayerPffGrade | null;
 }
 
 export interface PlayerSourceNote {
@@ -201,6 +202,7 @@ export interface ShortlistItem {
   priority_rank: number | null;
   note: string | null;
   created_at: string;
+  updated_at: string;
 }
 
 export interface DashboardMetrics {
@@ -232,4 +234,116 @@ export interface ShortlistBoardItem extends ShortlistItem {
   need: TeamNeed | null;
   fitScore: number | null;
   latestNote: string | null;
+}
+
+import type { SchemeProfile } from "@/lib/scheme/registry";
+export type { SchemeProfile };
+
+export interface PlayerPffGrade {
+  id?: string;
+  pff_player_id?: number;
+  player_name?: string;
+  team_name?: string | null;
+  position?: string | null;
+  season?: number;
+  player_id?: string | null;
+  grades_overall?: number | null;
+  grades_offense?: number | null;
+  grades_defense?: number | null;
+  grades_special_teams?: number | null;
+  snaps_offense?: number | null;
+  snaps_defense?: number | null;
+  snaps_special_teams?: number | null;
+  snaps_slot?: number | null;
+  snaps_wide_left?: number | null;
+  snaps_wide_right?: number | null;
+  snaps_inline_te?: number | null;
+  snaps_backfield?: number | null;
+  snaps_at_left_tackle?: number | null;
+  snaps_at_left_guard?: number | null;
+  snaps_at_center?: number | null;
+  snaps_at_right_guard?: number | null;
+  snaps_at_right_tackle?: number | null;
+  snaps_at_left_end?: number | null;
+  snaps_at_right_end?: number | null;
+  snaps_interior_dl?: number | null;
+  snaps_in_box_lb?: number | null;
+  snaps_off_ball_lb?: number | null;
+  snaps_free_safety?: number | null;
+  snaps_strong_safety?: number | null;
+  snaps_slot_cb?: number | null;
+  snaps_outside_cb?: number | null;
+  snaps_in_box_db?: number | null;
+  snaps_deep_safety?: number | null;
+  grades_pass?: number | null;
+  grades_run_qb?: number | null;
+  stats_completions?: number | null;
+  stats_attempts?: number | null;
+  stats_passing_yards?: number | null;
+  stats_passing_tds?: number | null;
+  stats_interceptions?: number | null;
+  stats_big_time_throws?: number | null;
+  stats_turnover_worthy_plays?: number | null;
+  stats_adjusted_completion_pct?: number | null;
+  stats_yards_per_attempt?: number | null;
+  grades_pass_route?: number | null;
+  stats_targets?: number | null;
+  stats_receptions?: number | null;
+  stats_receiving_yards?: number | null;
+  stats_yac?: number | null;
+  stats_catch_rate?: number | null;
+  stats_yards_per_route_run?: number | null;
+  grades_run_rb?: number | null;
+  stats_carries?: number | null;
+  stats_rushing_yards?: number | null;
+  stats_yards_after_contact_per_carry?: number | null;
+  stats_broken_tackles?: number | null;
+  stats_elusive_rating?: number | null;
+  grades_pass_block_rb?: number | null;
+  grades_run_block_rb?: number | null;
+  grades_pass_block?: number | null;
+  grades_run_block?: number | null;
+  stats_pass_block_snaps?: number | null;
+  stats_pressures_allowed?: number | null;
+  stats_sacks_allowed?: number | null;
+  stats_hits_allowed?: number | null;
+  stats_hurries_allowed?: number | null;
+  grades_pass_rush?: number | null;
+  grades_run_defense_dl?: number | null;
+  stats_pressures?: number | null;
+  stats_sacks?: number | null;
+  stats_hits?: number | null;
+  stats_hurries?: number | null;
+  stats_run_stops?: number | null;
+  grades_coverage_lb?: number | null;
+  grades_tackle?: number | null;
+  grades_run_defense_lb?: number | null;
+  grades_pass_rush_lb?: number | null;
+  stats_tackles?: number | null;
+  stats_stops_lb?: number | null;
+  stats_forced_fumbles?: number | null;
+  grades_coverage_db?: number | null;
+  grades_man_coverage?: number | null;
+  grades_zone_coverage?: number | null;
+  grades_tackle_db?: number | null;
+  stats_targets_allowed?: number | null;
+  stats_receptions_allowed?: number | null;
+  stats_yards_allowed?: number | null;
+  stats_interceptions_def?: number | null;
+  stats_pass_breakups?: number | null;
+}
+
+export interface PlayerSchemeContext {
+  latestPffSeason: PlayerPffGrade | null;
+  featuredStats: FeaturedStat[];
+  fitTrait: string;
+  schemeFitSummary: string | null;
+  schemeDelta: number;
+  resolvedOriginScheme: SchemeProfile | null;
+  resolvedDestinationScheme: SchemeProfile | null;
+}
+
+export interface FeaturedStat {
+  label: string;
+  value: string;
 }

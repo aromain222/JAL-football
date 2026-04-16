@@ -1,13 +1,12 @@
 import Link from "next/link";
-import { ArrowRight, Clock3, Eye, Film, Layers3, Radar, Target } from "lucide-react";
-import { SectionHeader } from "@/components/section-header";
+import { ArrowRight, Clock3, Film, Layers3 } from "lucide-react";
 import { StatCard } from "@/components/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getPlayerPrimaryProduction } from "@/lib/football";
-import { Player } from "@/lib/types";
-import { formatDate, formatNumber } from "@/lib/utils";
+import { scoutingDisplay } from "@/lib/football-ui";
+import { cn, formatDate, formatNumber } from "@/lib/utils";
 import {
   getDashboardMetrics,
   getNeeds,
@@ -36,39 +35,29 @@ export default async function DashboardPage() {
 
   const recentShortlisted = shortlistBoard
     .slice()
-    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .sort((a, b) => (b.updated_at ?? b.created_at).localeCompare(a.updated_at ?? a.created_at))
     .slice(0, 4);
 
-  const topCandidatesByNeed = (
-    await Promise.all(
-      needs
-        .filter((need) => need.status === "active")
-        .slice(0, 3)
-        .map(async (need) => {
-          const candidates = (await getPlayers({
-            needId: need.id,
-            position: need.position,
-            heightMin: need.min_height_in ?? undefined,
-            heightMax: need.max_height_in ?? undefined,
-            weightMin: need.min_weight_lbs ?? undefined,
-            weightMax: need.max_weight_lbs ?? undefined,
-            armLengthMin: need.min_arm_length_in ?? undefined,
-            fortyMax: need.max_forty_time ?? undefined,
-            yearsRemainingMin: need.min_years_remaining ?? undefined,
-            minFit: 70
-          })) as Array<{
-            player: Pick<Player, "id" | "first_name" | "last_name" | "current_school" | "position" | "latest_stats">;
-            fitScore: number;
-            fitSummary: string;
-          }>;
+  function buildShortlistActivity(item: (typeof recentShortlisted)[number]) {
+    const activityAt = item.updated_at ?? item.created_at;
+    const movedLater = activityAt !== item.created_at;
+    const detail = item.player
+      ? movedLater
+        ? `${item.player.first_name} ${item.player.last_name} moved to ${item.stage.replace("_", " ")}.`
+        : `${item.player.first_name} ${item.player.last_name} moved into shortlist.`
+      : movedLater
+        ? `Player moved to ${item.stage.replace("_", " ")}.`
+        : "Player moved into shortlist.";
 
-          return {
-            need,
-            candidates: candidates.slice(0, 2)
-          };
-        })
-    )
-  ).filter((entry) => entry.candidates.length > 0);
+    return {
+      id: item.id,
+      type: "shortlist" as const,
+      created_at: activityAt,
+      label: item.stage,
+      detail,
+      meta: item.need?.title ?? "Shortlist update"
+    };
+  }
 
   const activityFeed = [
     ...recentReviews.map((review) => ({
@@ -79,46 +68,56 @@ export default async function DashboardPage() {
       detail: review.note ?? "Review logged without note.",
       meta: `Fit ${review.fit_score}`
     })),
-    ...recentShortlisted.map((item) => ({
-      id: item.id,
-      type: "shortlist" as const,
-      created_at: item.created_at,
-      label: item.stage,
-      detail:
-        item.player
-          ? `${item.player.first_name} ${item.player.last_name} moved into shortlist.`
-          : "Player moved into shortlist.",
-      meta: item.need?.title ?? "Shortlist update"
-    }))
+    ...recentShortlisted.map(buildShortlistActivity)
   ]
     .sort((a, b) => b.created_at.localeCompare(a.created_at))
     .slice(0, 6);
 
   return (
     <div className="grid gap-6">
-      <Card className="overflow-hidden border-none bg-[linear-gradient(145deg,#07111d_0%,#0f2740_52%,#0e7490_100%)] text-white shadow-[0_35px_80px_rgba(8,15,33,0.32)]">
-        <CardContent className="grid gap-8 p-8 lg:grid-cols-[1.1fr_0.9fr]">
-          <SectionHeader
-            eyebrow="Control Room"
-            title="Transfer board status"
-            description="Track roster needs, move quickly through first-pass eval, and keep the internal board moving toward coordinator and head coach review."
-            cta={{ label: "Create new need", href: "/needs/new" }}
-          />
-          <div className="grid gap-4 sm:grid-cols-2">
-            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Portal pipeline</p>
-              <div className="mt-4 text-4xl font-semibold">{formatNumber(metrics.totalPlayers)}</div>
-              <p className="mt-2 text-sm text-slate-300">Imported players live in the internal eval board.</p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-white/10 p-5 backdrop-blur">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-300">Shortlisted now</p>
-              <div className="mt-4 text-4xl font-semibold">{metrics.shortlistedPlayers}</div>
-              <p className="mt-2 text-sm text-slate-300">Players currently held in staff review stages.</p>
+      <section className="scouting-panel relative isolate">
+        <div className="field-grid-lines absolute inset-0 opacity-40" />
+        <div className="absolute inset-y-0 left-[12%] w-px bg-white/10" />
+        <div className="absolute inset-y-0 right-[18%] w-px bg-white/10" />
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(180deg,transparent,rgba(5,12,10,0.42))]" />
+        <div className="relative grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.9fr)] lg:px-8 lg:py-8">
+          <div>
+            <p className="field-label scouting-kicker">Control Room</p>
+            <h1 className={`${scoutingDisplay.className} mt-3 text-[3.2rem] uppercase leading-[0.88] tracking-[0.04em] text-[#f5efe0] sm:text-[4.4rem]`}>
+              Transfer Board Status
+            </h1>
+            <p className="scouting-support mt-4 max-w-2xl text-sm leading-6 sm:text-[15px]">
+              Track roster needs, move quickly through first-pass eval, and keep the internal board moving toward coordinator and head coach review.
+            </p>
+            <div className="mt-6">
+              <Button asChild className="scouting-cta">
+                <Link href="/needs/new">
+                  Create new need
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          <div className="grid gap-3 self-end sm:grid-cols-2">
+            <div className="scouting-hero-stat">
+              <p className="field-label text-[var(--scout-teal)]">Portal Pipeline</p>
+              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
+                {formatNumber(metrics.totalPlayers)}
+              </div>
+              <p className="mt-2 text-sm text-white/70">Imported players live in the internal eval board.</p>
+            </div>
+            <div className="scouting-hero-stat">
+              <p className="field-label text-[var(--scout-teal)]">Shortlisted Now</p>
+              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
+                {metrics.shortlistedPlayers}
+              </div>
+              <p className="mt-2 text-sm text-white/70">Players currently held in staff review stages.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
+      {/* Stat cards row */}
       <div className="grid gap-4 lg:grid-cols-5">
         <StatCard label="Active needs" value={String(metrics.activeNeeds)} hint="Open recruiting priorities" />
         <StatCard label="Total players" value={String(metrics.totalPlayers)} hint="Searchable transfer board" />
@@ -128,7 +127,8 @@ export default async function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <Card>
+        {/* Active needs */}
+        <Card className="scouting-surface overflow-hidden">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Active needs</CardTitle>
@@ -138,18 +138,25 @@ export default async function DashboardPage() {
               <Link href="/needs">All needs</Link>
             </Button>
           </CardHeader>
-          <CardContent className="grid gap-4">
+          <CardContent className="grid gap-3">
             {needs.map((need) => (
-              <div key={need.id} className="flex flex-col gap-4 rounded-3xl border bg-slate-50 p-5 lg:flex-row lg:items-center lg:justify-between">
+              <div
+                key={need.id}
+                className={cn(
+                  "flex flex-col gap-3 rounded-[24px] border bg-white/[0.86] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)] transition hover:-translate-y-0.5 hover:shadow-[0_18px_36px_rgba(15,23,42,0.09)] lg:flex-row lg:items-center lg:justify-between",
+                  need.priority === "critical"
+                    ? "border-l-4 border-l-rose-400"
+                    : "border-l-4 border-l-cyan-400"
+                )}
+              >
                 <div>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={need.priority === "critical" ? "destructive" : "accent"}>{need.priority}</Badge>
-                    <Badge>{need.position}</Badge>
-                  </div>
-                  <h3 className="mt-3 text-xl font-semibold">{need.title}</h3>
-                  <p className="mt-1 text-sm text-slate-600">{need.notes}</p>
+                  <p className="field-label text-[#52695d]">
+                    {need.priority === "critical" ? "Critical need" : "Live need"} • {need.position}
+                  </p>
+                  <h3 className="mt-2 text-lg font-semibold text-slate-950">{need.title}</h3>
+                  <p className="mt-1 text-sm text-slate-500">{need.notes}</p>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex shrink-0 gap-3">
                   <Button asChild variant="outline">
                     <Link href={`/needs/${need.id}`}>View</Link>
                   </Button>
@@ -165,29 +172,60 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        {/* Activity feed — timeline style */}
+        <Card className="scouting-surface overflow-hidden">
           <CardHeader>
             <CardTitle>Recent activity</CardTitle>
+            <p className="text-sm text-slate-600">Latest reviews and shortlist movements.</p>
           </CardHeader>
-          <CardContent className="grid gap-3">
+          <CardContent>
             {activityFeed.length ? (
-              activityFeed.map((item) => (
-                <div key={item.id} className="rounded-3xl border bg-slate-50 p-4">
-                  <div className="flex items-center justify-between">
-                    <Badge variant={item.type === "shortlist" ? "accent" : item.label === "right" ? "success" : item.label === "needs_film" ? "warning" : "default"}>
-                      {item.label}
-                    </Badge>
-                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-500">
-                      <Clock3 className="h-3.5 w-3.5" />
-                      {formatDate(item.created_at)}
+              <div className="relative grid gap-0">
+                {/* Vertical connector line */}
+                <div className="absolute bottom-5 left-[19px] top-5 w-px bg-slate-200" />
+                {activityFeed.map((item) => {
+                  const isShortlist = item.type === "shortlist";
+                  const isPositive = item.label === "right";
+                  return (
+                    <div key={item.id} className="relative flex gap-4 pb-4 last:pb-0">
+                      {/* Dot */}
+                      <div
+                        className={cn(
+                          "relative z-10 mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-white shadow-sm",
+                          isShortlist ? "bg-cyan-100" : isPositive ? "bg-emerald-100" : "bg-slate-100"
+                        )}
+                      >
+                        <div
+                          className={cn(
+                            "h-2.5 w-2.5 rounded-full",
+                            isShortlist ? "bg-cyan-500" : isPositive ? "bg-emerald-500" : "bg-slate-400"
+                          )}
+                        />
+                      </div>
+                      {/* Card */}
+                      <div className="flex-1 rounded-[24px] border border-[#d8ddd7] bg-white/[0.88] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
+                        <div className="flex items-center justify-between">
+                          <Badge
+                            variant={
+                              isShortlist ? "accent" : isPositive ? "success" : item.label === "needs_film" ? "warning" : "default"
+                            }
+                          >
+                            {item.label}
+                          </Badge>
+                          <div className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.2em] text-slate-400">
+                            <Clock3 className="h-3 w-3" />
+                            {formatDate(item.created_at)}
+                          </div>
+                        </div>
+                        <p className="mt-2.5 text-sm font-medium text-slate-900">{item.detail}</p>
+                        <p className="mt-1 text-sm text-slate-500">{item.meta}</p>
+                      </div>
                     </div>
-                  </div>
-                  <p className="mt-3 text-sm font-medium text-slate-900">{item.detail}</p>
-                  <p className="mt-2 text-sm text-slate-600">{item.meta}</p>
-                </div>
-              ))
+                  );
+                })}
+              </div>
             ) : (
-              <div className="rounded-3xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
+              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
                 No recent reviews yet.
               </div>
             )}
@@ -195,70 +233,9 @@ export default async function DashboardPage() {
         </Card>
       </div>
 
+      {/* Recently shortlisted + Film queue */}
       <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <Card>
-          <CardHeader className="flex-row items-center justify-between">
-            <div>
-              <CardTitle>Top matching candidates</CardTitle>
-              <p className="text-sm text-slate-600">Best current fits surfaced for each active need.</p>
-            </div>
-            <Button asChild variant="outline">
-              <Link href="/players">
-                Open board
-                <Target className="h-4 w-4" />
-              </Link>
-            </Button>
-          </CardHeader>
-          <CardContent className="grid gap-4">
-            {topCandidatesByNeed.length ? (
-              topCandidatesByNeed.map(({ need, candidates }) => (
-                <div key={need.id} className="rounded-3xl border bg-slate-50 p-5">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Badge>{need.position}</Badge>
-                    <Badge variant={need.priority === "critical" ? "destructive" : "accent"}>{need.priority}</Badge>
-                  </div>
-                  <h3 className="mt-3 text-xl font-semibold">{need.title}</h3>
-                  <div className="mt-4 grid gap-3">
-                    {candidates.map((candidate) => (
-                        <div key={candidate.player.id} className="rounded-2xl border bg-white px-4 py-3">
-                          <div className="flex items-center justify-between gap-3">
-                            <div>
-                              <p className="font-medium text-slate-950">
-                                {candidate.player.first_name} {candidate.player.last_name}
-                            </p>
-                            <p className="text-sm text-slate-600">
-                              {candidate.player.current_school} • {candidate.player.position}
-                            </p>
-                          </div>
-                          <Badge variant="success">{candidate.fitScore} fit</Badge>
-                          </div>
-                          <p className="mt-2 text-sm text-slate-600">{candidate.fitSummary}</p>
-                          <p className="mt-2 text-sm text-slate-700">{getPlayerPrimaryProduction(candidate.player)}</p>
-                          <div className="mt-3 flex gap-2">
-                            <Button asChild size="sm" variant="outline">
-                              <Link href={`/players/${candidate.player.id}`}>
-                              <Eye className="h-4 w-4" />
-                              Profile
-                            </Link>
-                          </Button>
-                          <Button asChild size="sm">
-                            <Link href={`/review/${need.id}`}>Review</Link>
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="rounded-3xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
-                No high-fit candidates surfaced yet for active needs.
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
+        <Card className="scouting-surface overflow-hidden">
           <CardHeader className="flex-row items-center justify-between">
             <div>
               <CardTitle>Recently shortlisted</CardTitle>
@@ -274,47 +251,50 @@ export default async function DashboardPage() {
           <CardContent className="grid gap-3">
             {recentShortlisted.length ? (
               recentShortlisted.map((item) => (
-                <div key={item.id} className="rounded-3xl border bg-slate-50 p-4">
+                <div key={item.id} className="rounded-[24px] border border-l-4 border-l-cyan-400 bg-white/[0.88] p-4 shadow-[0_12px_28px_rgba(15,23,42,0.06)]">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-medium text-slate-950">
+                      <p className="field-label text-[#52695d]">
+                        {item.need?.title ?? "Shortlist update"} • {formatDate(item.updated_at ?? item.created_at)}
+                      </p>
+                      <p className="font-semibold text-slate-950">
                         {item.player?.first_name} {item.player?.last_name}
                       </p>
-                      <p className="text-sm text-slate-600">
-                        {item.player?.current_school} • {item.need?.title}
+                      <p className="text-sm text-slate-500">
+                        {item.player?.current_school}
                       </p>
                     </div>
                     <Badge variant="accent">{item.stage}</Badge>
                   </div>
-                  <p className="mt-3 text-sm text-slate-700">{item.latestNote ?? "No shortlist note attached."}</p>
-                  <div className="mt-3 flex gap-2">
-                    {item.fitScore !== null ? <Badge variant="success">{item.fitScore} fit</Badge> : null}
-                    <Badge variant="default">{formatDate(item.created_at)}</Badge>
-                    {item.player ? <Badge variant="default">{getPlayerPrimaryProduction(item.player)}</Badge> : null}
-                  </div>
+                  <p className="mt-2.5 text-sm text-slate-600">{item.latestNote ?? "No shortlist note attached."}</p>
+                  <p className="mt-3 text-xs uppercase tracking-[0.2em] text-slate-500">
+                    {item.fitScore !== null ? `Fit ${item.fitScore}` : "Staff eval pending"}
+                    {item.player ? ` • ${getPlayerPrimaryProduction(item.player)}` : ""}
+                  </p>
                 </div>
               ))
             ) : (
-              <div className="rounded-3xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
+              <div className="rounded-2xl border border-dashed bg-slate-50 p-5 text-sm text-slate-500">
                 No shortlisted players yet.
               </div>
             )}
           </CardContent>
         </Card>
-      </div>
 
-      <Card className="border-amber-100 bg-white/95">
-        <CardHeader className="flex-row items-center justify-between">
-          <div>
-            <CardTitle>Needs Film Queue</CardTitle>
-            <p className="text-sm text-slate-600">Players flagged for deeper tape work before board promotion.</p>
-          </div>
-          <Badge variant="warning">
-            <Film className="mr-1 h-3 w-3" />
-            {playersNeedingFilm}
-          </Badge>
-        </CardHeader>
-      </Card>
+        {/* Film queue */}
+        <Card className="overflow-hidden border-[#e7d8b3] bg-[linear-gradient(180deg,rgba(255,252,245,0.98),rgba(250,246,236,0.95))]">
+          <CardHeader className="flex-row items-center justify-between">
+            <div>
+              <CardTitle>Needs Film Queue</CardTitle>
+              <p className="text-sm text-slate-600">Players flagged for deeper tape work before board promotion.</p>
+            </div>
+            <Badge variant="warning">
+              <Film className="mr-1 h-3 w-3" />
+              {playersNeedingFilm}
+            </Badge>
+          </CardHeader>
+        </Card>
+      </div>
     </div>
   );
 }

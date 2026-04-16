@@ -63,7 +63,7 @@ export default async function NeedDetailPage({
             </Button>
           </CardHeader>
           <CardContent className="grid gap-4 lg:grid-cols-2">
-            {(candidatePool as any[]).map((result) => (
+            {(candidatePool as any[]).filter((r) => r.player).map((result) => (
               <ScoredPlayerCard key={result.player.id} detailHref={`/players/${result.player.id}`} result={result} />
             ))}
           </CardContent>

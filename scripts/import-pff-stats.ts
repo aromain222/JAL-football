@@ -59,11 +59,15 @@ function findLatestPffDir(): string {
   }
   const subdirs = fs
     .readdirSync(base)
-    .filter((d) => fs.statSync(path.join(base, d)).isDirectory())
+    .filter((d) => {
+      const dirPath = path.join(base, d);
+      if (!fs.statSync(dirPath).isDirectory()) return false;
+      return fs.readdirSync(dirPath).some((file) => file.toLowerCase().endsWith(".csv"));
+    })
     .sort()
     .reverse();
   if (!subdirs.length) {
-    console.error("No subdirectories found in data/pff/. Run npm run pff:download first.");
+    console.error("No CSV-containing subdirectories found in data/pff/. Run npm run pff:download first.");
     process.exit(1);
   }
   return path.join(base, subdirs[0]);
