@@ -1,6 +1,0 @@
-2026/04/03-18:55:13.992 1839 Reusing MANIFEST /Users/averyromain/Library/Application Support/Google/Chrome/Default/Sync Data/LevelDB/MANIFEST-000001
-2026/04/03-18:55:13.998 1839 Recovering log #95
-2026/04/03-18:55:14.001 1839 Reusing old log /Users/averyromain/Library/Application Support/Google/Chrome/Default/Sync Data/LevelDB/000095.log 
-2026/04/06-20:29:59.406 17ec Level-0 table #99: started
-2026/04/06-20:29:59.426 17ec Level-0 table #99: 110653 bytes OK
-2026/04/06-20:29:59.433 17ec Delete type=0 #95
