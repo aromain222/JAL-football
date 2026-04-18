@@ -24,12 +24,7 @@ export default async function PlayersPage({
     needId?: string;
     position?: string;
     search?: string;
-    heightMin?: string;
-    heightMax?: string;
-    weightMin?: string;
-    weightMax?: string;
     armLengthMin?: string;
-    fortyMax?: string;
     classYear?: string;
     yearsRemaining?: string;
     school?: string;
@@ -43,12 +38,7 @@ export default async function PlayersPage({
     needId: normalizeString(searchParams?.needId),
     position: normalizeString(searchParams?.position),
     search: normalizeString(searchParams?.search),
-    heightMin: normalizeNumber(searchParams?.heightMin),
-    heightMax: normalizeNumber(searchParams?.heightMax),
-    weightMin: normalizeNumber(searchParams?.weightMin),
-    weightMax: normalizeNumber(searchParams?.weightMax),
     armLengthMin: normalizeNumber(searchParams?.armLengthMin),
-    fortyMax: normalizeNumber(searchParams?.fortyMax),
     classYear: normalizeString(searchParams?.classYear),
     yearsRemaining: normalizeNumber(searchParams?.yearsRemaining),
     school: normalizeString(searchParams?.school),
@@ -183,12 +173,7 @@ export default async function PlayersPage({
             search: searchParams?.search,
             needId: searchParams?.needId,
             position: searchParams?.position,
-            heightMin: searchParams?.heightMin,
-            heightMax: searchParams?.heightMax,
-            weightMin: searchParams?.weightMin,
-            weightMax: searchParams?.weightMax,
             armLengthMin: searchParams?.armLengthMin,
-            fortyMax: searchParams?.fortyMax,
             classYear: searchParams?.classYear,
             yearsRemaining: searchParams?.yearsRemaining,
             school: searchParams?.school,
