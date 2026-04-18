@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { getDemoState } from "@/lib/data/demo-store";
-import { getConferenceForSchool } from "@/lib/football";
+import { getConferenceForSchool, getEspnHeadshotUrl } from "@/lib/football";
 import { calculateFit } from "@/lib/scoring";
 import {
   DashboardMetrics,
@@ -520,7 +520,7 @@ async function getPlayersFromSupabase(filters: PlayerFilters = {}): Promise<Play
   const supabase = createSupabaseDataClient();
   let query = supabase
     .from("players")
-    .select("*, player_measurements(*), player_stats(*), player_tags(tag)")
+    .select("*, player_measurements(*), player_stats(*), player_tags(tag), player_identity_links(espn_url)")
     .order("last_name");
 
   if (filters.position) query = query.eq("position", filters.position);
@@ -645,7 +645,7 @@ export async function getPlayersFromSupabaseForAI(filters: {
   const supabase = createSupabaseDataClient();
   let query = supabase
     .from("players")
-    .select("*, player_measurements(*), player_stats(*), player_tags(tag)")
+    .select("*, player_measurements(*), player_stats(*), player_tags(tag), player_identity_links(espn_url)")
     .order("last_name");
 
   if (filters.positions && filters.positions.length > 0) {
