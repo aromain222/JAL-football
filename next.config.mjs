@@ -9,7 +9,9 @@ const deploymentOrigins = [process.env.APP_URL, process.env.NEXT_PUBLIC_APP_URL,
 const allowedOrigins = Array.from(new Set(["localhost:3000", ...deploymentOrigins]));
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: { serverActions: { allowedOrigins } },
+  experimental: {
+    serverActions: {}
+  },
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "ui-avatars.com" },
