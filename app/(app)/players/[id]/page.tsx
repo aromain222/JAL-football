@@ -18,6 +18,8 @@ import { PffStatsGrid } from "@/components/players/pff-stats-grid";
 import { AlignmentProfile } from "@/components/players/alignment-profile";
 import { FeaturedStats } from "@/components/players/featured-stats";
 import { getPffPrimaryGrade } from "@/lib/pff/summary";
+import { SchoolLogo } from "@/components/players/school-logo";
+import { getSchoolLogoUrl } from "@/lib/school-logos";
 
 export default async function PlayerDetailPage({
   params,
@@ -34,6 +36,7 @@ export default async function PlayerDetailPage({
   const productionMetrics = getPlayerProductionMetrics(player, 8);
   const pffPrimary = getPffPrimaryGrade(pffStats ?? null, player.position);
   const pffOverall = pffPrimary ? pffPrimary.value.toFixed(1) : null;
+  const schoolLogoUrl = getSchoolLogoUrl(player.current_school);
 
   return (
     <div className="grid gap-5">
@@ -58,10 +61,11 @@ export default async function PlayerDetailPage({
               <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
                 {player.first_name} {player.last_name}
               </h1>
-              <p className="mt-2 text-sm text-slate-300">
-                {player.current_school} &nbsp;·&nbsp; {player.class_year} &nbsp;·&nbsp;{" "}
-                {player.eligibility_remaining} yrs remaining
-              </p>
+            <div className="mt-2 flex items-center gap-2 text-sm text-slate-300">
+                <SchoolLogo school={player.current_school} logoUrl={schoolLogoUrl} size={18} className="opacity-80" />
+                <span>{player.current_school} &nbsp;·&nbsp; {player.class_year} &nbsp;·&nbsp;{" "}
+                {player.eligibility_remaining} yrs remaining</span>
+              </div>
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <Badge>{player.position}</Badge>
                 <Badge variant="accent">{player.status}</Badge>

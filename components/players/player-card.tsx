@@ -9,12 +9,16 @@ import {
   formatHeightInFeetInches,
   getPlayerDisplayConference,
   getPlayerKeyStats,
+  getPlayerPhotoUrl,
   getPlayerProductionMetrics
 } from "@/lib/football";
 import { Player, PlayerFitResult } from "@/lib/types";
 import { detectArchetype } from "@/lib/archetypes";
 import { scoutingDisplay } from "@/lib/football-ui";
 import { getPffPrimaryGrade } from "@/lib/pff/summary";
+import { PlayerPhoto } from "@/components/players/player-photo";
+import { SchoolLogo } from "@/components/players/school-logo";
+import { getSchoolLogoUrl } from "@/lib/school-logos";
 
 function getFitVariant(score?: number) {
   if (!score) return "default";
@@ -43,6 +47,8 @@ export function PlayerCard({
   const pffOverall = pffPrimary ? `${pffPrimary.label} ${pffPrimary.value.toFixed(1)}` : null;
   const pffSeason = player.pffStats?.season ?? null;
   const initials = `${player.first_name[0] ?? ""}${player.last_name[0] ?? ""}`.toUpperCase();
+  const photoUrl = getPlayerPhotoUrl(player);
+  const schoolLogoUrl = getSchoolLogoUrl(player.current_school);
   const heightWeightLabel = [
     formatHeightInFeetInches(player.measurements?.height_in),
     player.measurements?.weight_lbs ? `${player.measurements.weight_lbs} lbs` : "--"
@@ -69,9 +75,12 @@ export function PlayerCard({
         <div className="relative overflow-hidden border-b border-[#d5dcd7] bg-[linear-gradient(150deg,#0f2019_0%,#173126_55%,#214837_100%)] px-5 py-4 text-white ring-1 ring-inset ring-white/5">
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[length:90px_90px] opacity-40" />
           <div className="relative flex items-start gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-[radial-gradient(circle_at_30%_30%,rgba(211,178,108,0.35),rgba(255,255,255,0.06)_45%,rgba(0,0,0,0.28))] text-lg font-bold text-[#f0e4c0] shadow-inner">
-              {initials}
-            </div>
+            <PlayerPhoto
+              src={photoUrl}
+              alt={`${player.first_name} ${player.last_name}`}
+              initials={initials}
+              size={64}
+            />
             <div className="min-w-0">
               <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#d3b26c]">
                 {player.position}
@@ -80,7 +89,10 @@ export function PlayerCard({
               <h3 className={`${scoutingDisplay.className} mt-1 truncate text-[2rem] uppercase leading-none tracking-[0.04em] text-[#f4efe2]`}>
                 {player.first_name} {player.last_name}
               </h3>
-              <p className="mt-2 truncate text-sm text-[#d6e0d3]/78">{schoolLabel}</p>
+              <div className="mt-2 flex items-center gap-1.5 truncate">
+                <SchoolLogo school={player.current_school} logoUrl={schoolLogoUrl} size={16} className="shrink-0 opacity-90" />
+                <p className="truncate text-sm text-[#d6e0d3]/78">{schoolLabel}</p>
+              </div>
               <p className="mt-1 text-[11px] uppercase tracking-[0.22em] text-[#aebcb4]/72">
                 {player.class_year} • {player.eligibility_remaining} yrs left
               </p>
