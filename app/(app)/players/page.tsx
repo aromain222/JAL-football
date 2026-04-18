@@ -63,7 +63,6 @@ export default async function PlayersPage({
     filters.classYear,
     filters.yearsRemaining ? `${filters.yearsRemaining} year${filters.yearsRemaining === 1 ? "" : "s"}` : null,
     filters.armLengthMin ? `Arm ${filters.armLengthMin}+` : null,
-    filters.fortyMax ? `40 <= ${filters.fortyMax}` : null,
     filters.school ? `School: ${filters.school}` : null,
     filters.conference
   ].filter(Boolean) as string[];
