@@ -561,7 +561,7 @@ async function getPlayersFromSupabase(filters: PlayerFilters = {}): Promise<Play
       ...row,
       photo_url: row.photo_url ?? getEspnHeadshotUrl(espnUrl),
       conference: row.conference ?? getConferenceForSchool(row.current_school),
-      measurements: pickSingle(row.player_measuments),
+      measurements: pickSingle(row.player_measurements),
       latest_stats: Array.isArray(row.player_stats)
         ? row.player_stats.sort((a: any, b: any) => b.season - a.season)[0] ?? null
         : pickSingle(row.player_stats),
