@@ -29,6 +29,7 @@
     "set:x:handle": "tsx scripts/set-x-handle.ts",
     "report:missing-stats": "tsx scripts/report-missing-stats.ts",
     "resolve:urls": "tsx scripts/resolve-player-urls.ts",
+    "resolve:espn": "tsx scripts/resolve-espn-search.ts",
     "enrich:measurables": "tsx scripts/enrich-measurables.ts",
     "pff:download": "tsx scripts/pff-computer-use.ts",
     "pff:import": "tsx scripts/import-pff-stats.ts",
