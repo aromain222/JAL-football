@@ -70,7 +70,7 @@ export default async function IdentityQueuePage() {
                 </div>
                 <Badge variant="warning" className="flex shrink-0 items-center gap-1"><ShieldAlert className="h-3.5 w-3.5" />needs review</Badge>
               </div>
-              <form action={async (formData) => { "use server"; await upsertPlayerIdntityLinkAction({ playerId: p.id, espnUrl: String(formData.get("espnUrl") ?? ""), rosterUrl: String(formData.get("rosterUrl") ?? "") }); }} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
+              <form action={async (formData) => { "use server"; await upsertPlayerIdentityLinkAction({ playerId: p.id, espnUrl: String(formData.get("espnUrl") ?? ""), rosterUrl: String(formData.get("rosterUrl") ?? "") }); }} className="grid gap-2 sm:grid-cols-[1fr_1fr_auto]">
                 <div className="grid gap-1">
                   <label className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">ESPN URL</label>
                   <input name="espnUrl" className="h-9 rounded-xl border border-[#e4e8e5] px-3 text-[13px] focus:border-[#15542a] focus:outline-none" placeholder="https://www.espn.com/college-football/player/_/id/..." />
