@@ -64,7 +64,7 @@ export default async function PlayersPage({ searchParams }: { searchParams?: { p
 
       <div>
         <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Filters</p>
-        <PlayersFilterBar defaults={{ search: serchParams?.search, needId: searchParams?.needId, position: searchParams?.position, armLengthMin: searchParams?.armLengthMin, classYear: searchParams?.classYear, yearsRemaining: searchParams?.yearsRemaining, school: searchParams?.school, conference: searchParams?.conference, archetype: searchParams?.archetype }} />
+        <PlayersFilterBar defaults={{ search: searchParams?.search, needId: searchParams?.needId, position: searchParams?.position, armLengthMin: searchParams?.armLengthMin, classYear: searchParams?.classYear, yearsRemaining: searchParams?.yearsRemaining, school: searchParams?.school, conference: searchParams?.conference, archetype: searchParams?.archetype }} />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
