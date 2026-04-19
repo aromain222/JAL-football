@@ -48,6 +48,13 @@ export function getConferenceForSchool(school: string) {
   return schoolConferenceMap[school] ?? "FBS";
 }
 
+export function getEspnHeadshotUrl(espnUrl: string | null | undefined): string | null {
+  if (!espnUrl) return null;
+  const match = espnUrl.match(/\/id\/(\d+)/);
+  if (!match) return null;
+  return `https://a.espncdn.com/i/headshots/college-football/players/full/${match[1]}.png`;
+}
+
 export function getPlayerPhotoUrl(player: Pick<Player, "first_name" | "last_name" | "photo_url">) {
   if (player.photo_url) return player.photo_url;
   const name = encodeURIComponent(`${player.first_name} ${player.last_name}`);

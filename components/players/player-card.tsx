@@ -1,27 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowUpRight, Gauge } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { ArrowUpRight } from "lucide-react";
 import {
   formatHeightInFeetInches,
   getPlayerDisplayConference,
   getPlayerKeyStats,
-  getPlayerProductionMetrics
+  getPlayerPhotoUrl
 } from "@/lib/football";
 import { Player, PlayerFitResult } from "@/lib/types";
 import { detectArchetype } from "@/lib/archetypes";
-import { scoutingDisplay } from "@/lib/football-ui";
 import { getPffPrimaryGrade } from "@/lib/pff/summary";
+import { PlayerPhoto } from "@/components/players/player-photo";
+import { SchoolLogo } from "@/components/players/school-logo";
+import { getSchoolLogoUrl } from "@/lib/school-logos";
+import { cn } from "@/lib/utils";
 
-function getFitVariant(score?: number) {
-  if (!score) return "default";
-  if (score >= 85) return "success";
-  if (score >= 70) return "accent";
-  if (score >= 55) return "warning";
-  return "destructive";
+function FitBadge({ score }: { score: number }) {
+  const cls =
+    score >= 85
+      ? "bg-emerald-100 text-emerald-800 border-emerald-200"
+      : score >= 70
+        ? "bg-blue-100 text-blue-800 border-blue-200"
+        : score >= 55
+          ? "bg-amber-100 text-amber-800 border-amber-200"
+          : "bg-red-100 text-red-800 border-red-200";
+  return (
+    <span className={cn("rounded-full border px-2.5 py-0.5 text-[12px] font-semibold", cls)}>
+      {score}
+    </span>
+  );
 }
 
 export function PlayerCard({
@@ -36,160 +44,112 @@ export function PlayerCard({
   onQuickView?: (id: string) => void;
 }) {
   const keyStats = getPlayerKeyStats(player).slice(0, 3);
-  const productionMetrics = getPlayerProductionMetrics(player, 2);
   const conference = getPlayerDisplayConference(player);
   const archetype = detectArchetype(player.position, player.measurements?.height_in, player.measurements?.weight_lbs);
   const pffPrimary = getPffPrimaryGrade(player.pffStats ?? null, player.position);
-  const pffOverall = pffPrimary ? `${pffPrimary.label} ${pffPrimary.value.toFixed(1)}` : null;
-  const pffSeason = player.pffStats?.season ?? null;
   const initials = `${player.first_name[0] ?? ""}${player.last_name[0] ?? ""}`.toUpperCase();
-  const heightWeightLabel = [
-    formatHeightInFeetInches(player.measurements?.height_in),
-    player.measurements?.weight_lbs ? `${player.measurements.weight_lbs} lbs` : "--"
-  ].join(" / ");
-  const armFortyLabel =
-    player.measurements?.arm_length_in || player.measurements?.forty_time
-      ? `${player.measurements?.arm_length_in ? `${player.measurements.arm_length_in}" arm` : "--"} • ${
-          player.measurements?.forty_time ? `${player.measurements.forty_time}s 40` : "--"
-        }`
-      : null;
+  const photoUrl = getPlayerPhotoUrl(player);
+  const schoolLogoUrl = getSchoolLogoUrl(player.current_school);
+
   const schoolLabel =
-    player.previous_school && player.current_school === "Transfer Portal"
-      ? `${player.previous_school} -> Transfer Portal`
-      : player.previous_school
-        ? `${player.current_school} • from ${player.previous_school}`
-        : `${player.current_school} • ${conference}`;
+    player.previous_school && player.current_school !== "Transfer Portal"
+      ? `${player.current_school} · from ${player.previous_school}`
+      : player.current_school;
+
+  const meta = [player.class_year, conference].filter(Boolean).join(" · ");
 
   return (
-    <Card
-      className={`overflow-hidden border-[#17211c]/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(247,249,247,0.94))] transition hover:-translate-y-1 hover:border-[#24483a]/18 hover:shadow-[0_28px_70px_rgba(15,23,42,0.14)] ${onQuickView ? "cursor-pointer" : ""}`}
+    <div
+      className={cn(
+        "rounded-2xl border border-[#e4e8e5] bg-white p-4 transition-shadow hover:shadow-md",
+        onQuickView && "cursor-pointer"
+      )}
       onClick={onQuickView ? () => onQuickView(player.id) : undefined}
     >
-      <CardContent className="grid gap-0 p-0">
-        <div className="relative overflow-hidden border-b border-[#d5dcd7] bg-[linear-gradient(150deg,#0f2019_0%,#173126_55%,#214837_100%)] px-5 py-4 text-white ring-1 ring-inset ring-white/5">
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.06)_1px,transparent_1px)] bg-[length:90px_90px] opacity-40" />
-          <div className="relative flex items-start gap-4">
-            <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border border-white/15 bg-[radial-gradient(circle_at_30%_30%,rgba(211,178,108,0.35),rgba(255,255,255,0.06)_45%,rgba(0,0,0,0.28))] text-lg font-bold text-[#f0e4c0] shadow-inner">
-              {initials}
-            </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-[#d3b26c]">
-                {player.position}
-                {archetype ? <span className="ml-1.5 font-normal text-[#d6e0d3]/72">· {archetype}</span> : null}
-              </p>
-              <h3 className={`${scoutingDisplay.className} mt-1 truncate text-[2rem] uppercase leading-none tracking-[0.04em] text-[#f4efe2]`}>
-                {player.first_name} {player.last_name}
-              </h3>
-              <p className="mt-2 truncate text-sm text-[#d6e0d3]/78">{schoolLabel}</p>
-              <p className="mt-1 text-[11px] uppercase tracking-[0.22em] text-[#aebcb4]/72">
-                {player.class_year} • {player.eligibility_remaining} yrs left
-              </p>
-            </div>
-            <div className="ml-auto shrink-0">
-              <Badge className="border border-white/10" variant={getFitVariant(fitScore) as "default" | "success" | "accent" | "warning" | "destructive"}>
-                {fitScore ? `${fitScore} Fit` : player.status}
-              </Badge>
-            </div>
+      <div className="flex items-start gap-3">
+        <PlayerPhoto
+          src={photoUrl}
+          alt={`${player.first_name} ${player.last_name}`}
+          initials={initials}
+          size={48}
+        />
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">
+            {player.position}
+            {archetype ? <span className="font-normal"> · {archetype}</span> : null}
+          </p>
+          <h3 className="mt-0.5 truncate text-[22px] font-bold tracking-tight text-[#111827]">
+            {player.first_name} {player.last_name}
+          </h3>
+          <div className="mt-1 flex items-center gap-1.5 truncate">
+            <SchoolLogo school={player.current_school} logoUrl={schoolLogoUrl} size={14} className="shrink-0" />
+            <p className="truncate text-[12px] text-[#4b5563]">{schoolLabel}</p>
           </div>
+          <p className="mt-0.5 text-[12px] text-[#9ca3af]">{meta}</p>
         </div>
-
-        <div className="grid gap-3 p-4">
-          <div className="grid gap-3 rounded-[22px] border border-[#d9dfdb] bg-[linear-gradient(180deg,rgba(250,251,250,0.92),rgba(241,245,242,0.92))] px-4 py-3 lg:grid-cols-[1.25fr_0.85fr]">
-            <div className="grid gap-1">
-              <p className="field-label text-[#51685c]">Profile</p>
-              <div className="text-base font-semibold text-[#13251d]">{heightWeightLabel}</div>
-              {armFortyLabel ? <div className="text-sm text-slate-500">{armFortyLabel}</div> : null}
-            </div>
-            {player.latest_stats ? (
-              <div className="grid gap-1 lg:justify-items-end">
-                <p className="field-label text-[#51685c]">Latest season</p>
-                <span className="inline-flex items-center gap-1 text-sm font-medium text-[#274536]">
-                  <Gauge className="h-3.5 w-3.5" />
-                  {player.latest_stats.season}
-                </span>
-              </div>
-            ) : null}
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            {keyStats.map((stat) => (
-              <div
-                key={stat}
-                className="rounded-[18px] border border-[#dce3de] bg-white/[0.84] px-3 py-2.5 text-sm font-medium text-[#294838] transition hover:border-[#24483a]/20 hover:bg-white"
-              >
-                {stat}
-              </div>
-            ))}
-          </div>
-
-          {productionMetrics.length ? (
-          <div className="rounded-[22px] border border-[#d9dfdb] bg-[#f3f6f3] p-3">
-            <div className="mb-3 flex items-center justify-between gap-2">
-              <p className="field-label text-[#51685c]">Signals</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {productionMetrics.map((metric) => (
-                <div key={metric.label} className="rounded-full border border-[#dde3df] bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm">
-                  <span className="text-slate-400">{metric.label}:</span>{" "}
-                  <span className="font-medium">{metric.value}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          ) : null}
-
-          <div className="flex flex-wrap items-center gap-2">
-            {(player.tags ?? []).slice(0, 1).map((tag) => (
-              <Badge key={tag} className="border border-[#d8dfda] bg-white text-[#355546]" variant="default">
-                {tag}
-              </Badge>
-            ))}
-            {pffOverall ? (
-              <Badge className="bg-[#163627] text-[#d8f1e1]" variant="default">
-                PFF {pffOverall}
-                {pffSeason ? ` · ${pffSeason}` : ""}
-              </Badge>
-            ) : null}
-            {player.latest_stats && (player.latest_stats.starts ?? 0) > 0 ? (
-              <Badge className="gap-1 border border-[#d8dfda] bg-white text-[#355546]" variant="default">
-                <Gauge className="h-3 w-3" />
-                {player.latest_stats.starts ?? 0} starts
-              </Badge>
-            ) : null}
-          </div>
-
-          <div className="flex items-center justify-between gap-3 border-t border-[#e0e5e1] pt-2" onClick={(e) => e.stopPropagation()}>
-            <p className="line-clamp-2 text-sm leading-6 text-slate-500">
-              {player.notes ?? "No staff summary added yet."}
-            </p>
-            {onQuickView && detailHref ? (
-              <div className="flex shrink-0 items-center gap-1.5">
-                <Button size="sm" variant="outline" className="border-[#ccd5d0] bg-white/[0.84]" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
-                  Quick view
-                </Button>
-                <Button asChild size="sm" variant="ghost" className="px-2 text-[#284737]" onClick={(e) => e.stopPropagation()}>
-                  <Link href={detailHref} title="Open full profile">
-                    <ArrowUpRight className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
-            ) : onQuickView ? (
-              <Button size="sm" variant="outline" className="border-[#ccd5d0] bg-white/[0.84]" onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}>
-                Quick view
-                <ArrowUpRight className="h-4 w-4" />
-              </Button>
-            ) : detailHref ? (
-              <Button asChild size="sm" variant="outline" className="border-[#ccd5d0] bg-white/[0.84]">
-                <Link href={detailHref}>
-                  View
-                  <ArrowUpRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            ) : null}
-          </div>
+        <div className="shrink-0">
+          {fitScore !== undefined ? (
+            <FitBadge score={fitScore} />
+          ) : (
+            <span className="rounded-full border border-[#e4e8e5] px-2.5 py-0.5 text-[12px] text-[#9ca3af]">
+              {player.status}
+            </span>
+          )}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+
+      {keyStats.length > 0 && (
+        <div className="mt-3 flex flex-wrap gap-1.5">
+          {keyStats.map((stat) => (
+            <span
+              key={stat}
+              className="rounded-lg bg-[#f1f5f2] px-2.5 py-1 text-[12px] font-medium text-[#4b5563]"
+            >
+              {stat}
+            </span>
+          ))}
+        </div>
+      )}
+
+      <div className="mt-3 flex items-center gap-2 flex-wrap">
+        {player.measurements?.height_in || player.measurements?.weight_lbs ? (
+          <span className="text-[12px] text-[#9ca3af]">
+            {formatHeightInFeetInches(player.measurements?.height_in)}
+            {player.measurements?.weight_lbs ? ` / ${player.measurements.weight_lbs} lbs` : ""}
+          </span>
+        ) : null}
+        {pffPrimary ? (
+          <span className="rounded-full bg-[#fef3c7] px-2.5 py-0.5 text-[11px] font-semibold text-[#92400e]">
+            PFF {pffPrimary.label} {pffPrimary.value.toFixed(1)}
+            {player.pffStats?.season ? ` · ${player.pffStats.season}` : ""}
+          </span>
+        ) : null}
+      </div>
+
+      <div
+        className="mt-3 flex items-center justify-end gap-2 border-t border-[#f1f5f2] pt-3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {onQuickView && (
+          <button
+            type="button"
+            className="rounded-xl border border-[#e4e8e5] bg-white px-3 py-1.5 text-[12px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]"
+            onClick={(e) => { e.stopPropagation(); onQuickView(player.id); }}
+          >
+            Quick view
+          </button>
+        )}
+        {detailHref && (
+          <Link
+            href={detailHref}
+            className="flex items-center gap-1 rounded-xl border border-[#e4e8e5] bg-white px-3 py-1.5 text-[12px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
+        )}
+      </div>
+    </div>
   );
 }
 

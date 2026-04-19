@@ -1,7 +1,7 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { cookies } from "next/headers";
 import { getDemoState } from "@/lib/data/demo-store";
-import { getConferenceForSchool } from "@/lib/football";
+import { getConferenceForSchool, getEspnHeadshotUrl } from "@/lib/football";
 import { calculateFit } from "@/lib/scoring";
 import {
   DashboardMetrics,
@@ -520,7 +520,7 @@ async function getPlayersFromSupabase(filters: PlayerFilters = {}): Promise<Play
   const supabase = createSupabaseDataClient();
   let query = supabase
     .from("players")
-    .select("*, player_measurements(*), player_stats(*), player_tags(tag)")
+    .select("*, player_measurements(*), player_stats(*), player_tags(tag), player_identity_links(espn_url)")
     .order("last_name");
 
   if (filters.position) query = query.eq("position", filters.position);
@@ -554,15 +554,20 @@ async function getPlayersFromSupabase(filters: PlayerFilters = {}): Promise<Play
     return value ?? null;
   };
 
-  return data.map((row: any) => ({
-    ...row,
-    conference: row.conference ?? getConferenceForSchool(row.current_school),
-    measurements: pickSingle(row.player_measurements),
-    latest_stats: Array.isArray(row.player_stats)
-      ? row.player_stats.sort((a: any, b: any) => b.season - a.season)[0] ?? null
-      : pickSingle(row.player_stats),
-    tags: Array.isArray(row.player_tags) ? row.player_tags.map((item: any) => item.tag) : []
-  }));
+  return data.map((row: any) => {
+    const identityLink = pickSingle(row.player_identity_links) as { espn_url?: string | null } | null;
+    const espnUrl = identityLink?.espn_url ?? null;
+    return {
+      ...row,
+      photo_url: row.photo_url ?? getEspnHeadshotUrl(espnUrl),
+      conference: row.conference ?? getConferenceForSchool(row.current_school),
+      measurements: pickSingle(row.player_measurements),
+      latest_stats: Array.isArray(row.player_stats)
+        ? row.player_stats.sort((a: any, b: any) => b.season - a.season)[0] ?? null
+        : pickSingle(row.player_stats),
+      tags: Array.isArray(row.player_tags) ? row.player_tags.map((item: any) => item.tag) : []
+    };
+  });
 }
 
 export async function getPlayerById(id: string) {
@@ -645,7 +650,7 @@ export async function getPlayersFromSupabaseForAI(filters: {
   const supabase = createSupabaseDataClient();
   let query = supabase
     .from("players")
-    .select("*, player_measurements(*), player_stats(*), player_tags(tag)")
+    .select("*, player_measurements(*), player_stats(*), player_tags(tag), player_identity_links(espn_url)")
     .order("last_name");
 
   if (filters.positions && filters.positions.length > 0) {

@@ -6,7 +6,7 @@ import {
   Team,
   TeamNeed
 } from "@/lib/types";
-import previewWorkspace from "@/data/preview-workspace.json";
+import previewWorkspace from "@/lib/data/preview-workspace.json";
 
 const baseDemoTeam: Team = {
   id: "8d3b3d8f-0f82-4717-9db7-7c8804dafd11",

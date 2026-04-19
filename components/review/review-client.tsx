@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useCallback, useEffect, useRef, useState, useTransition } from "react";
@@ -13,20 +12,17 @@ import {
   MoveLeft,
   MoveRight,
   ShieldCheck,
-  Timer,
   Zap
 } from "lucide-react";
 import { submitReviewAction } from "@/app/actions";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { PlayerPhoto } from "@/components/players/player-photo";
 import {
   formatHeightInFeetInches,
   getPlayerKeyStats,
   getPlayerPhotoUrl,
   getPlayerProductionMetrics
 } from "@/lib/football";
-import { scoutingDisplay } from "@/lib/football-ui";
 import { PlayerFitResult, ReviewDecision, TeamNeed } from "@/lib/types";
 
 interface ReviewClientProps {
@@ -56,7 +52,6 @@ export function ReviewClient({
 
   const current = cards[currentIndex];
   const reviewedSoFar = Math.min(optimisticReviewed, totalCount);
-  const progressLabel = `${reviewedSoFar} of ${totalCount} reviewed`;
   const progressWidth = totalCount ? Math.round((reviewedSoFar / totalCount) * 100) : 100;
 
   const handleDecision = useCallback(
@@ -141,32 +136,37 @@ export function ReviewClient({
 
   if (!current) {
     return (
-      <Card className="overflow-hidden scouting-surface">
-        <CardContent className="p-0">
-          <div className="scouting-dark-surface px-8 py-7 text-white">
-            <p className="text-xs uppercase tracking-[0.28em] text-[var(--scout-gold-soft)]">Queue cleared</p>
-            <h2 className="mt-3 text-4xl font-semibold">Board triage complete.</h2>
-            <p className="mt-3 max-w-2xl text-sm text-[#d7e0d3]/75">
-              Every matching player for {need.title} has been logged into the review trail. Move the best fits into shortlist management or reopen the need detail page.
-            </p>
+      <div className="rounded-2xl border border-[#e4e8e5] bg-white">
+        <div className="border-b border-[#e4e8e5] px-8 py-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Queue cleared</p>
+          <h2 className="mt-1 text-2xl font-bold text-[#111827]">Board triage complete</h2>
+          <p className="mt-1 text-sm text-[#4b5563]">
+            All matching players for {need.title} have been reviewed.
+          </p>
+        </div>
+        <div className="grid gap-4 p-8 lg:grid-cols-2">
+          <div className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-5">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Final tally</p>
+            <p className="mt-2 font-mono text-[32px] font-semibold text-[#111827]">{reviewedSoFar}</p>
+            <p className="mt-1 text-[12px] text-[#9ca3af]">Reviewed against this need profile.</p>
           </div>
-          <div className="grid gap-4 p-8 lg:grid-cols-2">
-            <div className="rounded-[28px] border bg-slate-50 p-6">
-              <p className="text-xs uppercase tracking-[0.28em] text-slate-500">Final tally</p>
-              <div className="mt-3 text-4xl font-semibold text-slate-950">{reviewedSoFar}</div>
-              <p className="mt-2 text-sm text-slate-600">Reviewed against the current need profile.</p>
-            </div>
-            <div className="grid gap-3">
-              <Button asChild size="lg" className="scouting-cta">
-                <Link href="/shortlist">Open shortlist board</Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link href={`/needs/${need.id}`}>Return to need detail</Link>
-              </Button>
-            </div>
+          <div className="grid gap-2 content-start">
+            <Link
+              href="/shortlist"
+              className="flex items-center justify-center gap-2 rounded-xl bg-[#15542a] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#1a6934]"
+            >
+              Open shortlist board
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link
+              href={`/needs/${need.id}`}
+              className="flex items-center justify-center gap-2 rounded-xl border border-[#e4e8e5] px-4 py-2.5 text-sm font-medium text-[#4b5563] hover:bg-[#f1f5f2]"
+            >
+              Return to need detail
+            </Link>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
@@ -174,205 +174,196 @@ export function ReviewClient({
   const productionMetrics = getPlayerProductionMetrics(current.player, 4);
   const swipeHint =
     dragX > 40
-      ? "Shortlist"
+      ? "→ Shortlist"
       : dragX < -40
-        ? "Pass"
-        : "Drag card or use controls";
+        ? "← Pass"
+        : "Drag or use buttons below";
+
+  const initials = `${current.player.first_name[0] ?? ""}${current.player.last_name[0] ?? ""}`.toUpperCase();
 
   return (
     <div className="grid gap-6">
-      <Card className="scouting-dark-surface overflow-hidden border-[#1a342b] text-white">
-        <CardContent className="grid gap-5 p-6 lg:grid-cols-[1fr_auto] lg:items-center">
-          <div>
-            <p className="field-label text-[var(--scout-teal)]">{need.position} Triage Deck</p>
-            <h2 className={`${scoutingDisplay.className} mt-2 text-[2.8rem] uppercase leading-[0.9] tracking-[0.04em] text-[#f5efe0]`}>
-              {need.title}
-            </h2>
-            <p className="mt-3 text-sm text-[#d7e0d3]/76">{progressLabel}</p>
-          </div>
-          <div className="min-w-[240px]">
-            <div className="flex items-center justify-between text-sm text-[#d7e0d3]/76">
-              <span>Progress</span>
-              <span>{progressWidth}%</span>
-            </div>
-            <div className="mt-3 h-2 rounded-full bg-white/10">
-              <div className="h-2 rounded-full bg-[#d3b26c] transition-all" style={{ width: `${progressWidth}%` }} />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      {/* Progress bar */}
+      <div className="rounded-2xl border border-[#e4e8e5] bg-white p-4">
+        <div className="flex items-center justify-between">
+          <p className="text-[13px] font-medium text-[#4b5563]">
+            {reviewedSoFar} of {totalCount} reviewed
+          </p>
+          <p className="text-[13px] font-mono font-semibold text-[#111827]">{progressWidth}%</p>
+        </div>
+        <div className="mt-2 h-1.5 rounded-full bg-[#f1f5f2]">
+          <div
+            className="h-1.5 rounded-full bg-[#15542a] transition-all"
+            style={{ width: `${progressWidth}%` }}
+          />
+        </div>
+      </div>
 
-      {error ? (
-        <div className="flex items-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
+      {error && (
+        <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] text-red-700">
           <CircleAlert className="h-4 w-4" />
           {error}
         </div>
-      ) : null}
+      )}
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
-        <div className="relative min-h-[640px]">
-          <div className="absolute inset-6 rounded-[32px] border border-[#d8ddd7] bg-white/35" />
-          <div className="absolute inset-3 rounded-[32px] border border-[#e5ebe6] bg-white/55" />
-          <Card
-            className="relative z-10 overflow-hidden border-[#d8ddd7] bg-[linear-gradient(180deg,rgba(255,255,255,0.98),rgba(245,247,245,0.95))] shadow-[0_28px_60px_rgba(15,23,42,0.14)] transition-transform"
-            style={{ transform: `translateX(${dragX}px) rotate(${dragX / 45}deg)` }}
+        {/* Player card */}
+        <div
+          className="rounded-2xl border border-[#e4e8e5] bg-white transition-transform"
+          style={{ transform: `translateX(${dragX}px) rotate(${dragX / 50}deg)` }}
+        >
+          {/* Draggable header */}
+          <div
+            className="select-none cursor-grab rounded-t-2xl border-b border-[#e4e8e5] bg-[#f8f9fa] px-5 py-5 active:cursor-grabbing"
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerCancel={handlePointerUp}
           >
-            <CardContent className="p-0">
-              <div
-                className="scouting-dark-surface select-none px-6 py-6 text-white"
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerUp}
+            <div className="flex items-start gap-4">
+              <PlayerPhoto
+                src={getPlayerPhotoUrl(current.player)}
+                alt={`${current.player.first_name} ${current.player.last_name}`}
+                initials={initials}
+                size={72}
+              />
+              <div className="flex-1 min-w-0">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">
+                  {current.player.position} · {current.player.class_year}
+                </p>
+                <h3 className="mt-0.5 text-[22px] font-bold tracking-tight text-[#111827]">
+                  {current.player.first_name} {current.player.last_name}
+                </h3>
+                <p className="mt-0.5 text-[13px] text-[#4b5563]">
+                  {current.player.current_school} · {current.player.eligibility_remaining} yr remaining
+                </p>
+              </div>
+              <span className="shrink-0 rounded-full bg-[#dcf0e3] px-3 py-1 text-[13px] font-semibold text-[#15542a]">
+                Fit {current.fitScore}
+              </span>
+            </div>
+            <p className="mt-3 text-center text-[12px] text-[#9ca3af]">{swipeHint}</p>
+          </div>
+
+          <div className="grid gap-5 p-5">
+            {/* Measurements */}
+            <div className="grid grid-cols-4 gap-2">
+              <ReviewMetric
+                label="H / W"
+                value={`${formatHeightInFeetInches(current.player.measurements?.height_in)} / ${current.player.measurements?.weight_lbs ?? "--"}`}
+              />
+              <ReviewMetric
+                label="Arm"
+                value={current.player.measurements?.arm_length_in ? `${current.player.measurements.arm_length_in}"` : "--"}
+              />
+              <ReviewMetric
+                label="Forty"
+                value={current.player.measurements?.forty_time ? `${current.player.measurements.forty_time}s` : "--"}
+              />
+              <ReviewMetric label="Yrs Left" value={String(current.player.eligibility_remaining)} />
+            </div>
+
+            <div className="grid gap-4 lg:grid-cols-[1fr_0.95fr]">
+              <div className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">
+                  <ShieldCheck className="h-3.5 w-3.5" />
+                  Fit Explanation
+                </div>
+                <p className="mt-2 text-[13px] text-[#4b5563]">{current.fitSummary}</p>
+                <div className="mt-3 grid gap-1.5">
+                  {current.matchReasons.map((reason) => (
+                    <div key={reason} className="rounded-lg bg-white px-3 py-2 text-[12px] text-[#4b5563] border border-[#e4e8e5]">
+                      {reason}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-[11px] text-[#9ca3af]">
+                  Production {current.productionScore} · Measurement {current.measurementScore}
+                </p>
+              </div>
+
+              <div className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">
+                  <Zap className="h-3.5 w-3.5" />
+                  Key Stats
+                </div>
+                <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
+                  {stats.map((stat) => (
+                    <div key={stat} className="rounded-lg border border-[#e4e8e5] bg-white px-3 py-2 text-[12px] font-medium text-[#111827]">
+                      {stat}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-[11px] text-[#9ca3af]">
+                  {current.player.latest_stats?.season ?? "No season logged"}
+                </p>
+              </div>
+            </div>
+
+            {productionMetrics.length > 0 && (
+              <div className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
+                <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">
+                  Latest Production · {current.player.latest_stats?.season ?? "—"}
+                </p>
+                <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+                  {productionMetrics.map((metric) => (
+                    <div key={metric.label} className="rounded-lg border border-[#e4e8e5] bg-white px-3 py-2">
+                      <p className="text-[11px] uppercase tracking-[0.08em] text-[#9ca3af]">{metric.label}</p>
+                      <p className="mt-0.5 text-[15px] font-semibold text-[#111827]">{metric.value}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Link
+                href={current.player.film_url ?? "#"}
+                target="_blank"
+                className="flex items-center justify-center gap-2 rounded-xl border border-[#e4e8e5] py-2 text-[13px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]"
               >
-                <div className="flex items-start gap-4">
-                  <div className="relative h-24 w-24 overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-                    <Image
-                      alt={`${current.player.first_name} ${current.player.last_name}`}
-                      className="object-cover"
-                      fill
-                      sizes="96px"
-                      src={getPlayerPhotoUrl(current.player)}
-                    />
-                  </div>
-                  <div className="flex-1">
-                    <p className="field-label text-[var(--scout-teal)]">
-                      {current.player.position} • {current.player.class_year} • Fit {current.fitScore}
-                    </p>
-                    <h3 className={`${scoutingDisplay.className} mt-3 text-[3.3rem] uppercase leading-[0.88] tracking-[0.03em] text-[#f5efe0]`}>
-                      {current.player.first_name} {current.player.last_name}
-                    </h3>
-                    <p className="mt-2 text-sm text-slate-300">
-                      {current.player.current_school} • {current.player.eligibility_remaining} years remaining
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-5 flex items-center justify-between text-xs uppercase tracking-[0.25em] text-slate-300">
-                  <span>{swipeHint}</span>
-                  <span>Swipe left / right</span>
-                </div>
-              </div>
-
-              <div className="grid gap-5 p-6">
-                <div className="grid gap-3 md:grid-cols-4">
-                  <ReviewMetric
-                    label="Height / Weight"
-                    value={`${formatHeightInFeetInches(current.player.measurements?.height_in)} / ${current.player.measurements?.weight_lbs ?? "--"}`}
-                  />
-                  <ReviewMetric label="Arm" value={current.player.measurements?.arm_length_in ? `${current.player.measurements.arm_length_in}"` : "--"} />
-                  <ReviewMetric label="Forty" value={current.player.measurements?.forty_time ? `${current.player.measurements.forty_time}s` : "--"} />
-                  <ReviewMetric label="Years Left" value={String(current.player.eligibility_remaining)} />
-                </div>
-
-                <div className="grid gap-4 lg:grid-cols-[1fr_0.95fr]">
-                  <div className="rounded-[28px] border bg-slate-50 p-5">
-                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-500">
-                      <ShieldCheck className="h-4 w-4" />
-                      Fit Explanation
-                    </div>
-                    <p className="mt-3 text-sm text-slate-700">{current.fitSummary}</p>
-                    <div className="mt-4 grid gap-2">
-                      {current.matchReasons.map((reason) => (
-                        <div key={reason} className="rounded-2xl bg-white px-4 py-3 text-sm text-slate-700">
-                          {reason}
-                        </div>
-                      ))}
-                    </div>
-                    <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">
-                      Production {current.productionScore} • Measurement {current.measurementScore}
-                    </p>
-                  </div>
-
-                  <div className="rounded-[28px] border bg-slate-50 p-5">
-                    <div className="flex items-center gap-2 text-xs uppercase tracking-[0.24em] text-slate-500">
-                      <Zap className="h-4 w-4" />
-                      Key Stats
-                    </div>
-                    <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                      {stats.map((stat) => (
-                        <div key={stat} className="rounded-2xl bg-white px-4 py-3 text-sm font-medium text-slate-800">
-                          {stat}
-                        </div>
-                      ))}
-                    </div>
-                    <p className="mt-4 text-xs uppercase tracking-[0.2em] text-slate-500">
-                      {current.player.latest_stats?.season ?? "No season logged"}
-                      {current.player.measurements?.forty_time ? ` • Forty ${current.player.measurements.forty_time}s` : ""}
-                      {(current.player.tags ?? []).length ? ` • ${(current.player.tags ?? []).slice(0, 2).join(" • ")}` : ""}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="rounded-[28px] border bg-slate-50 p-5">
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="text-xs uppercase tracking-[0.24em] text-slate-500">
-                      Latest Production
-                    </div>
-                    <div className="text-xs uppercase tracking-[0.2em] text-slate-500">
-                      {current.player.latest_stats?.season ?? "No season"}
-                    </div>
-                  </div>
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                    {productionMetrics.map((metric) => (
-                      <div key={metric.label} className="rounded-2xl bg-white px-4 py-3">
-                        <div className="text-[11px] uppercase tracking-[0.18em] text-slate-500">{metric.label}</div>
-                        <div className="mt-1 text-base font-semibold text-slate-900">{metric.value}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <Button asChild variant="outline">
-                    <Link href={current.player.film_url ?? "#"} target="_blank">
-                      <Film className="h-4 w-4" />
-                      Open film
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outline">
-                    <Link href={`/players/${current.player.id}`}>
-                      <Eye className="h-4 w-4" />
-                      Full player detail
-                    </Link>
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                <Film className="h-4 w-4" />
+                Open film
+              </Link>
+              <Link
+                href={`/players/${current.player.id}`}
+                className="flex items-center justify-center gap-2 rounded-xl border border-[#e4e8e5] py-2 text-[13px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]"
+              >
+                <Eye className="h-4 w-4" />
+                Full profile
+              </Link>
+            </div>
+          </div>
         </div>
 
-        <div className="grid gap-4">
-          <Card className="scouting-surface">
-            <CardContent className="p-5">
-              <p className="field-label text-[#52695d]">Decision Keys</p>
-              <div className="mt-3 grid gap-2 text-sm text-slate-700">
-                <p>Left arrow: pass</p>
-                <p>Right arrow: shortlist</p>
-                <p>S: save for later</p>
-                <p>F: needs film</p>
-              </div>
-            </CardContent>
-          </Card>
+        {/* Decision panel */}
+        <div className="grid gap-4 content-start">
+          <div className="rounded-2xl border border-[#e4e8e5] bg-white p-4">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Decision Keys</p>
+            <div className="grid gap-1 text-[13px] text-[#4b5563]">
+              <p>← Left arrow: pass</p>
+              <p>→ Right arrow: shortlist</p>
+              <p>S: save for later</p>
+              <p>F: needs film</p>
+            </div>
+          </div>
 
-          <Card className="scouting-surface">
-            <CardContent className="p-5">
-              <p className="field-label text-[#52695d]">Reviewer Note</p>
-              <Textarea
-                className="mt-4"
-                placeholder="Context for coordinator, concern to verify on film, or roster usage note..."
-                value={note}
-                onChange={(event) => setNote(event.target.value)}
-              />
-            </CardContent>
-          </Card>
+          <div className="rounded-2xl border border-[#e4e8e5] bg-white p-4">
+            <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Reviewer Note</p>
+            <Textarea
+              placeholder="Context for coordinator, concern to verify on film, or roster usage note..."
+              value={note}
+              onChange={(event) => setNote(event.target.value)}
+              className="border-[#e4e8e5]"
+            />
+          </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-2">
             <DecisionButton
               disabled={isPending}
               icon={<MoveLeft className="h-4 w-4" />}
               label="Pass"
-              meta="Left"
+              meta="←"
               variant="outline"
               onClick={() => void handleDecision("left")}
             />
@@ -392,15 +383,18 @@ export function ReviewClient({
               variant="outline"
               onClick={() => void handleDecision("needs_film")}
             />
-            <DecisionButton
+            <button
+              type="button"
               disabled={isPending}
-              icon={<MoveRight className="h-4 w-4" />}
-              label="Shortlist"
-              meta="Right"
-              variant="default"
-              className="scouting-cta border-0"
+              className="flex h-12 w-full items-center justify-between rounded-xl bg-[#15542a] px-4 text-sm font-medium text-white hover:bg-[#1a6934] disabled:opacity-50"
               onClick={() => void handleDecision("right")}
-            />
+            >
+              <span className="flex items-center gap-2">
+                <MoveRight className="h-4 w-4" />
+                Shortlist
+              </span>
+              <span className="text-[12px] opacity-70">→</span>
+            </button>
           </div>
         </div>
       </div>
@@ -410,9 +404,9 @@ export function ReviewClient({
 
 function ReviewMetric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-3xl border bg-white p-4">
-      <p className="text-xs uppercase tracking-[0.24em] text-slate-500">{label}</p>
-      <div className="mt-2 text-xl font-semibold text-slate-950">{value}</div>
+    <div className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">{label}</p>
+      <p className="mt-1 text-[15px] font-semibold text-[#111827]">{value}</p>
     </div>
   );
 }
@@ -423,8 +417,7 @@ function DecisionButton({
   meta,
   onClick,
   variant,
-  disabled,
-  className
+  disabled
 }: {
   icon: ReactNode;
   label: string;
@@ -432,15 +425,19 @@ function DecisionButton({
   onClick: () => void;
   variant: "default" | "outline" | "secondary";
   disabled: boolean;
-  className?: string;
 }) {
   return (
-    <Button className={`h-12 w-full justify-between ${className ?? ""}`} disabled={disabled} onClick={onClick} type="button" variant={variant}>
+    <button
+      type="button"
+      className="flex h-12 w-full items-center justify-between rounded-xl border border-[#e4e8e5] bg-white px-4 text-sm font-medium text-[#4b5563] hover:bg-[#f1f5f2] disabled:opacity-50"
+      disabled={disabled}
+      onClick={onClick}
+    >
       <span className="flex items-center gap-2">
         {icon}
         {label}
       </span>
-      <span className="text-xs uppercase tracking-[0.24em] opacity-80">{meta}</span>
-    </Button>
+      <span className="text-[12px] text-[#9ca3af]">{meta}</span>
+    </button>
   );
 }

@@ -1,8 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShortlistPlayerTile } from "@/components/shortlist/shortlist-player-tile";
-import { scoutingDisplay } from "@/lib/football-ui";
 import { ShortlistBoardItem, ShortlistStage } from "@/lib/types";
 
 export function ShortlistColumn({
@@ -19,14 +17,12 @@ export function ShortlistColumn({
   isEmpty?: boolean;
 }) {
   return (
-    <Card className={`scouting-surface h-full backdrop-blur ${isEmpty ? "min-h-[280px]" : "min-h-[420px]"}`}>
-      <CardHeader className="border-b border-[var(--scout-card-border-soft)] pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className={`${scoutingDisplay.className} scouting-title text-[1.7rem] uppercase leading-none tracking-[0.04em]`}>{title}</CardTitle>
-          <p className="text-xs uppercase tracking-[0.22em] text-slate-500">{items.length} players</p>
-        </div>
-      </CardHeader>
-      <CardContent className={`grid gap-3 p-4 ${isEmpty ? "content-start" : ""}`}>
+    <div className={`rounded-2xl border border-[#e4e8e5] bg-[#f8f9fa] ${isEmpty ? "min-h-[200px]" : "min-h-[360px]"}`}>
+      <div className="flex items-center justify-between border-b border-[#e4e8e5] px-4 py-3">
+        <h3 className="text-[13px] font-semibold text-[#111827]">{title}</h3>
+        <span className="text-[12px] font-mono text-[#9ca3af]">{items.length}</span>
+      </div>
+      <div className="grid gap-2 p-3">
         {items.length ? (
           items.map((item) => (
             <ShortlistPlayerTile
@@ -36,11 +32,11 @@ export function ShortlistColumn({
             />
           ))
         ) : (
-          <div className="rounded-3xl border border-dashed bg-slate-50 p-6 text-sm text-slate-500">
-            No players in {title.toLowerCase()}.
+          <div className="rounded-xl border border-dashed border-[#e4e8e5] p-6 text-center text-[12px] text-[#9ca3af]">
+            No players in {title.toLowerCase()}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

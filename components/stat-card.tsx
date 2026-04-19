@@ -1,6 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
-import { scoutingDisplay } from "@/lib/football-ui";
-
 interface StatCardProps {
   label: string;
   value: string;
@@ -9,17 +6,10 @@ interface StatCardProps {
 
 export function StatCard({ label, value, hint }: StatCardProps) {
   return (
-    <Card className="scouting-surface overflow-hidden">
-      <CardContent className="p-6">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.32em] scouting-pill-label">{label}</p>
-        <div className={`${scoutingDisplay.className} scouting-title mt-3 text-[3.4rem] uppercase leading-none tracking-[0.04em]`}>
-          {value}
-        </div>
-        <div className="mt-4 flex items-center gap-2">
-          <div className="h-1.5 w-1.5 rounded-full bg-[var(--scout-gold)]" />
-          <p className="text-sm text-slate-500">{hint}</p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">{label}</p>
+      <p className="mt-2 font-mono text-[28px] font-semibold text-[#111827]">{value}</p>
+      <p className="mt-1 text-[12px] text-[#9ca3af]">{hint}</p>
+    </div>
   );
 }

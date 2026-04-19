@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { ReviewClient } from "@/components/review/review-client";
 import { getNeedById, getReviewQueue, getReviewsByNeed } from "@/lib/data/queries";
-import { scoutingDisplay } from "@/lib/football-ui";
 
 export default async function ReviewPage({
   params
@@ -21,38 +20,20 @@ export default async function ReviewPage({
 
   return (
     <div className="grid gap-6">
-      <section className="scouting-panel relative isolate">
-        <div className="field-grid-lines absolute inset-0 opacity-40" />
-        <div className="absolute inset-y-0 left-[11%] w-px bg-white/10" />
-        <div className="absolute inset-y-0 right-[18%] w-px bg-white/10" />
-        <div className="relative grid gap-8 px-6 py-7 lg:grid-cols-[minmax(0,1.45fr)_minmax(280px,0.86fr)] lg:px-8 lg:py-8">
-          <div>
-            <p className="field-label scouting-kicker">Review Mode</p>
-            <h1 className={`${scoutingDisplay.className} mt-3 text-[3.2rem] uppercase leading-[0.9] tracking-[0.04em] text-[#f5efe0] sm:text-[4.2rem]`}>
-              {need.title}
-            </h1>
-            <p className="scouting-support mt-4 max-w-2xl text-sm leading-6 sm:text-[15px]">
-              Work the player queue fast, keep notes for the next evaluator, and only move true fits into shortlist stages.
-            </p>
-          </div>
-          <div className="grid gap-3 self-end sm:grid-cols-2">
-            <div className="scouting-hero-stat">
-              <p className="field-label text-[var(--scout-teal)]">Reviewed</p>
-              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
-                {reviewedCount}
-              </div>
-              <p className="mt-2 text-sm text-white/70">Logged against this need so far.</p>
-            </div>
-            <div className="scouting-hero-stat">
-              <p className="field-label text-[var(--scout-teal)]">Still In Queue</p>
-              <div className={`${scoutingDisplay.className} mt-2 text-[2.8rem] leading-none text-white`}>
-                {queue.length}
-              </div>
-              <p className="mt-2 text-sm text-white/70">{totalCount} total profiles in this triage run.</p>
-            </div>
-          </div>
+      <div className="border-b border-[#e4e8e5] pb-5">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Review Mode \u00b7 Step 2</p>
+        <h1 className="mt-1 text-2xl font-bold text-[#111827]">{need.title}</h1>
+        <div className="mt-2 flex items-center gap-4">
+          <span className="text-[13px] text-[#4b5563]">
+            <span className="font-mono font-semibold text-[#111827]">{reviewedCount}</span> reviewed
+          </span>
+          <span className="text-[13px] text-[#4b5563]">
+            <span className="font-mono font-semibold text-[#111827]">{queue.length}</span> remaining
+          </span>
+          <span className="text-[13px] text-[#9ca3af]">{totalCount} total</span>
         </div>
-      </section>
+      </div>
+
       <ReviewClient
         need={need}
         queue={queue}
