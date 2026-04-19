@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, LogOut } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -12,23 +11,23 @@ export function LogoutButton() {
 
   async function handleLogout() {
     setLoading(true);
-
-    if (
-      process.env.NEXT_PUBLIC_SUPABASE_URL &&
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-    ) {
+    if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       const supabase = createSupabaseBrowserClient();
       await supabase.auth.signOut();
     }
-
     router.push("/login");
     router.refresh();
   }
 
   return (
-    <Button type="button" className="scouting-cta w-full justify-between" onClick={handleLogout} disabled={loading}>
-      <span>{loading ? "Signing out" : "Log out"}</span>
+    <button
+      type="button"
+      onClick={handleLogout}
+      disabled={loading}
+      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-[13px] text-[#9ca3af] transition-colors hover:bg-[#f1f5f2] hover:text-[#4b5563]"
+    >
       {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
-    </Button>
+      {loading ? "Signing out…" : "Log out"}
+    </button>
   );
 }

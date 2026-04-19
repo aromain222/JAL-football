@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { setWorkspaceRoleAction } from "@/app/actions";
 import { WORKSPACE_ROLE_OPTIONS, WorkspaceRole } from "@/lib/workspace-role";
+import { cn } from "@/lib/utils";
 
-export function WorkspaceRoleSwitcher({
-  currentRole
-}: {
-  currentRole: WorkspaceRole;
-}) {
+export function WorkspaceRoleSwitcher({ currentRole }: { currentRole: WorkspaceRole }) {
   const router = useRouter();
   const [selectedRole, setSelectedRole] = useState<WorkspaceRole>(currentRole);
   const [isPending, startTransition] = useTransition();
@@ -18,7 +14,6 @@ export function WorkspaceRoleSwitcher({
   function handleRoleChange(nextRole: string) {
     if (nextRole === selectedRole) return;
     setSelectedRole(nextRole as WorkspaceRole);
-
     startTransition(async () => {
       await setWorkspaceRoleAction(nextRole);
       router.refresh();
@@ -26,34 +21,21 @@ export function WorkspaceRoleSwitcher({
   }
 
   return (
-    <div className="scouting-surface flex flex-col gap-3 rounded-[24px] px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-      <div className="min-w-0">
-        <p className="field-label scouting-pill-label flex items-center gap-2">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          Workspace Role
-        </p>
-        <p className="mt-1 text-sm text-slate-600">Switch the board context without leaving the app shell.</p>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {WORKSPACE_ROLE_OPTIONS.map((role) => {
-          const active = role === selectedRole;
-          return (
-            <button
-              key={role}
-              className={`rounded-full px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] transition ${
-                active
-                  ? "bg-[var(--scout-forest)] text-[#eef4ef]"
-                  : "border border-[var(--scout-card-border)] bg-white text-[#355546] hover:border-[#c7d0cb] hover:bg-[#f7f9f7]"
-              }`}
-              disabled={isPending}
-              onClick={() => handleRoleChange(role)}
-              type="button"
-            >
-              {role}
-            </button>
-          );
-        })}
-      </div>
+    <div className="flex flex-wrap gap-1">
+      {WORKSPACE_ROLE_OPTIONS.map((role) => (
+        <button
+          key={role}
+          type="button"
+          disabled={isPending}
+          onClick={() => handleRoleChange(role)}
+          className={cn(
+            "rounded-lg px-2.5 py-1.5 text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors",
+            role === selectedRole ? "bg-[#dcf0e3] text-[#15542a]" : "text-[#9ca3af] hover:bg-[#f1f5f2] hover:text-[#4b5563]"
+          )}
+        >
+          {role}
+        </button>
+      ))}
     </div>
   );
 }
