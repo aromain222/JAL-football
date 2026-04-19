@@ -4,10 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2, Shield } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 export function LoginForm() {
   const router = useRouter();
@@ -37,39 +33,19 @@ export function LoginForm() {
 
     const supabase = createSupabaseBrowserClient();
     if (mode === "signup") {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password
-      });
-
-      if (signUpError) {
-        setError(signUpError.message);
-        setLoading(false);
-        return;
-      }
-
+      const { data, error: signUpError } = await supabase.auth.signUp({ email, password });
+      if (signUpError) { setError(signUpError.message); setLoading(false); return; }
       if (!data.session) {
         setNotice("Account created. Check your email to verify, then sign in.");
         setLoading(false);
         return;
       }
     } else {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (signInError) {
-        setError(signInError.message);
-        setLoading(false);
-        return;
-      }
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) { setError(signInError.message); setLoading(false); return; }
     }
 
-    if (mode === "signup") {
-      setNotice("Account ready. Opening your workspace.");
-    }
-
+    if (mode === "signup") setNotice("Account ready. Opening your workspace.");
     router.push("/dashboard");
     router.refresh();
   }
@@ -81,77 +57,62 @@ export function LoginForm() {
       : "Create a coach login with just your email and password. The app will attach you to the current organization.";
 
   return (
-    <Card className="w-full border-white/70 bg-white/78 shadow-[0_24px_80px_rgba(15,23,42,0.10)] backdrop-blur-sm">
-      <CardHeader className="space-y-4">
-        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#11261a] text-[#f0d69a] shadow-inner">
-          <Shield className="h-7 w-7" />
+    <div className="w-full rounded-2xl border border-[#e4e8e5] bg-white p-6 shadow-sm">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#dcf0e3]">
+        <Shield className="h-6 w-6 text-[#15542a]" />
+      </div>
+
+      <div className="mb-5 inline-flex rounded-xl border border-[#e4e8e5] bg-[#f1f5f2] p-1">
+        <button
+          type="button"
+          className={`rounded-lg px-4 py-1.5 text-[13px] font-medium transition-colors ${
+            mode === "signin" ? "bg-white text-[#111827] shadow-sm" : "text-[#9ca3af]"
+          }`}
+          onClick={() => { setMode("signin"); setError(null); setNotice(null); }}
+        >
+          Log in
+        </button>
+        <button
+          type="button"
+          className={`rounded-lg px-4 py-1.5 text-[13px] font-medium transition-colors ${
+            mode === "signup" ? "bg-white text-[#111827] shadow-sm" : "text-[#9ca3af]"
+          }`}
+          onClick={() => { setMode("signup"); setError(null); setNotice(null); }}
+        >
+          Create account
+        </button>
+      </div>
+
+      <h2 className="text-[20px] font-bold text-[#111827]">{title}</h2>
+      <p className="mt-1 mb-5 text-[13px] leading-5 text-[#4b5563]">{description}</p>
+
+      <form className="grid gap-4" onSubmit={handleSubmit}>
+        <div className="grid gap-1.5">
+          <label htmlFor="email" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Email</label>
+          <input
+            id="email" name="email" type="email" placeholder="coach@redvalleyfb.com" required
+            className="h-10 rounded-xl border border-[#e4e8e5] px-3 text-[13px] text-[#111827] placeholder:text-[#9ca3af] focus:border-[#15542a] focus:outline-none"
+          />
         </div>
-        <div className="inline-flex rounded-full border border-[#d7dccc] bg-[#edf1e5] p-1 text-sm">
-          <button
-            type="button"
-            className={`rounded-full px-4 py-2 transition ${
-              mode === "signin"
-                ? "bg-[#183724] text-white shadow-[0_10px_24px_rgba(24,55,36,0.24)]"
-                : "text-slate-600"
-            }`}
-            onClick={() => {
-              setMode("signin");
-              setError(null);
-              setNotice(null);
-            }}
-          >
-            Log in
-          </button>
-          <button
-            type="button"
-            className={`rounded-full px-4 py-2 transition ${
-              mode === "signup"
-                ? "bg-[#183724] text-white shadow-[0_10px_24px_rgba(24,55,36,0.24)]"
-                : "text-slate-600"
-            }`}
-            onClick={() => {
-              setMode("signup");
-              setError(null);
-              setNotice(null);
-            }}
-          >
-            Create account
-          </button>
+        <div className="grid gap-1.5">
+          <label htmlFor="password" className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Password</label>
+          <input id="password" name="password" type="password" required
+            className="h-10 rounded-xl border border-[#e4e8e5] px-3 text-[13px] text-[#111827] focus:border-[#15542a] focus:outline-none"
+          />
         </div>
-        <div>
-          <CardTitle className="text-3xl">{title}</CardTitle>
-          <CardDescription className="mt-2 text-sm leading-6 text-slate-600">
-            {description}
-          </CardDescription>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <form className="grid gap-4" onSubmit={handleSubmit}>
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="coach@redvalleyfb.com"
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input id="password" name="password" type="password" required />
-          </div>
-          {error ? <p className="text-sm text-rose-600">{error}</p> : null}
-          {notice ? <p className="text-sm text-[#30543d]">{notice}</p> : null}
-          <Button type="submit" size="lg" disabled={loading} className="scouting-cta justify-between">
-            <span>{mode === "signin" ? "Open workspace" : "Create login"}</span>
-            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-          </Button>
-          <p className="text-xs text-slate-500">
-            Keep it simple: email and password only. Organization access is attached automatically for this workspace.
-          </p>
-        </form>
-      </CardContent>
-    </Card>
+        {error ? <p className="text-[13px] text-red-600">{error}</p> : null}
+        {notice ? <p className="text-[13px] text-[#15542a]">{notice}</p> : null}
+        <button
+          type="submit" disabled={loading}
+          className="flex items-center justify-between rounded-xl bg-[#15542a] px-4 py-2.5 text-[13px] font-medium text-white hover:bg-[#1a6934] disabled:opacity-60"
+        >
+          <span>{mode === "signin" ? "Open workspace" : "Create login"}</span>
+          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+        </button>
+        <p className="text-[12px] text-[#9ca3af]">
+          Email and password only. Organization access is attached automatically.
+        </p>
+      </form>
+    </div>
   );
 }

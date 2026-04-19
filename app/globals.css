@@ -21,6 +21,7 @@
   --gold: #b8952a;
   --gold-muted: #fef3c7;
 
+  /* Tailwind HSL vars kept for shadcn compat */
   --card: 0 0% 100%;
   --card-foreground: 220 39% 11%;
   --input: 214 28% 87%;

@@ -4,8 +4,6 @@ import { notFound } from "next/navigation";
 import { Film, Radar, Trophy } from "lucide-react";
 import { addPlayerToShortlistAction, markPlayerNeedsFilmAction } from "@/app/actions";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   formatHeightInFeetInches,
   getPlayerKeyStats,
@@ -36,37 +34,34 @@ export default async function PlayerDetailPage({
   const productionMetrics = getPlayerProductionMetrics(player, 8);
   const pffPrimary = getPffPrimaryGrade(pffStats ?? null, player.position);
   const pffOverall = pffPrimary ? pffPrimary.value.toFixed(1) : null;
-  const schoolLogoUrl = getSchoolLogoUrl(player.current_school);
 
   return (
     <div className="grid gap-5">
-      {/* ── Hero ─────────────────────────────────────────────────────── */}
-      <Card className="scouting-dark-surface overflow-hidden border-none text-white shadow-[0_35px_80px_rgba(8,15,20,0.32)]">
-        <CardContent className="grid gap-8 p-8 lg:grid-cols-[1.2fr_0.8fr]">
-          {/* Left: identity */}
+      {/* Hero */}
+      <div className="rounded-2xl border border-[#e4e8e5] bg-white p-6">
+        <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <div className="flex items-start gap-5">
-            <div className="relative h-28 w-28 shrink-0 overflow-hidden rounded-[28px] border border-white/10 bg-white/10 shadow-inner">
+            <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-2xl border border-[#e4e8e5] bg-[#f8f9fa]">
               <Image
                 alt={`${player.first_name} ${player.last_name}`}
                 className="object-cover"
                 fill
-                sizes="112px"
+                sizes="96px"
                 src={getPlayerPhotoUrl(player)}
               />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.36em] text-[var(--scout-gold)]">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">
                 {player.position}
               </p>
-              <h1 className="mt-2 text-4xl font-bold tracking-tight sm:text-5xl">
+              <h1 className="mt-0.5 text-[28px] font-bold tracking-tight text-[#111827]">
                 {player.first_name} {player.last_name}
               </h1>
-            <div className="mt-2 flex items-center gap-2 text-sm text-slate-300">
-                <SchoolLogo school={player.current_school} logoUrl={schoolLogoUrl} size={18} className="opacity-80" />
-                <span>{player.current_school} &nbsp;·&nbsp; {player.class_year} &nbsp;·&nbsp;{" "}
-                {player.eligibility_remaining} yrs remaining</span>
+              <div className="mt-1 flex items-center gap-2 text-[13px] text-[#4b5563]">
+                <SchoolLogo school={player.current_school} logoUrl={getSchoolLogoUrl(player.current_school)} size={16} />
+                <span>{player.current_school} · {player.class_year} · {player.eligibility_remaining} yrs remaining</span>
               </div>
-              <div className="mt-3 flex flex-wrap gap-1.5">
+              <div className="mt-2 flex flex-wrap gap-1.5">
                 <Badge>{player.position}</Badge>
                 <Badge variant="accent">{player.status}</Badge>
                 {currentShortlist ? <Badge variant="success">{currentShortlist.stage}</Badge> : null}
@@ -74,8 +69,7 @@ export default async function PlayerDetailPage({
             </div>
           </div>
 
-          {/* Right: metrics grid */}
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-2">
             <HeroMetric
               label="Height / Weight"
               value={`${formatHeightInFeetInches(player.measurements?.height_in)} / ${player.measurements?.weight_lbs ?? "--"} lbs`}
@@ -97,316 +91,208 @@ export default async function PlayerDetailPage({
               />
             )}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Featured Stats</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <FeaturedStats schemeContext={schemeContext} />
-        </CardContent>
-      </Card>
+      <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+        <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Featured Stats</p>
+        <FeaturedStats schemeContext={schemeContext} />
+      </div>
 
-      {/* ── Two-column grid ──────────────────────────────────────────── */}
       <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
-
-        {/* ── Left column ── */}
         <div className="grid gap-5">
-
-          {/* Key stats + latest note */}
           {(keyStats.length > 0 || reviews[0]?.note || player.notes) && (
-            <Card>
-              <CardContent className="grid gap-4 pt-6">
-                {keyStats.length > 0 && (
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {keyStats.map((stat) => (
-                      <div
-                        key={stat}
-                        className="rounded-2xl border border-slate-100 bg-white px-4 py-2.5 text-sm font-medium text-slate-700"
-                      >
-                        {stat}
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {(reviews[0]?.note || player.notes) && (
-                  <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                      Latest note
-                    </p>
-                    <p className="mt-2 border-l-2 border-[rgba(211,178,108,0.4)] pl-3 text-sm text-slate-700">
-                      {reviews[0]?.note ?? player.notes}
-                    </p>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+            <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Key Stats</p>
+              {keyStats.length > 0 && (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {keyStats.map((stat) => (
+                    <div key={stat} className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] px-4 py-2.5 text-[13px] font-medium text-[#4b5563]">
+                      {stat}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {(reviews[0]?.note || player.notes) && (
+                <div className="mt-3 rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Latest note</p>
+                  <p className="mt-2 border-l-2 border-[#b8952a]/40 pl-3 text-[13px] text-[#4b5563]">
+                    {reviews[0]?.note ?? player.notes}
+                  </p>
+                </div>
+              )}
+            </div>
           )}
 
-          {/* Production Stats */}
-          <Card>
-            <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>Production Stats</CardTitle>
+          <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Production Stats</p>
               {player.latest_stats?.season && (
-                <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[10px] font-semibold text-slate-500">
+                <span className="rounded-full bg-[#f1f5f2] px-2.5 py-1 text-[11px] font-semibold text-[#4b5563]">
                   {player.latest_stats.season}
                 </span>
               )}
-            </CardHeader>
-            <CardContent className="grid gap-4">
-              {!player.latest_stats ? (
-                <p className="text-sm text-slate-500">
-                  No stats yet. Run{" "}
-                  <code className="rounded bg-slate-100 px-1 text-xs">npm run enrich:stats</code> to
-                  backfill.
-                </p>
-              ) : (
-                <>
-                  <div className="rounded-2xl border border-slate-100 bg-white p-4">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                      Primary signal
-                    </p>
-                    <p className="mt-2 text-2xl font-bold text-slate-900">
-                      {getPlayerPrimaryProduction(player)}
-                    </p>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {productionMetrics.map((metric) => (
-                      <StatTile key={metric.label} label={metric.label} value={metric.value} />
-                    ))}
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+            {!player.latest_stats ? (
+              <p className="text-[13px] text-[#9ca3af]">
+                No stats yet. Run{" "}
+                <code className="rounded bg-[#f1f5f2] px-1 text-[12px]">npm run enrich:stats</code> to backfill.
+              </p>
+            ) : (
+              <>
+                <div className="mb-3 rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Primary signal</p>
+                  <p className="mt-2 text-[20px] font-bold text-[#111827]">{getPlayerPrimaryProduction(player)}</p>
+                </div>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {productionMetrics.map((metric) => (
+                    <StatTile key={metric.label} label={metric.label} value={metric.value} />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
 
-          {/* PFF Intelligence */}
-          <Card>
-            <CardHeader>
-              <CardTitle>PFF Intelligence</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-6">
+          <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+            <p className="mb-4 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">PFF Intelligence</p>
+            <div className="grid gap-6">
               <PffStatsGrid pffStats={pffStats ?? null} position={player.position} />
               <AlignmentProfile pffStats={pffStats ?? null} position={player.position} />
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Review History */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Review History</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3">
+          <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Review History</p>
+            <div className="grid gap-3">
               {reviews.length ? (
                 reviews.map((review) => (
-                  <div key={review.id} className="rounded-2xl border border-slate-100 bg-white p-4">
+                  <div key={review.id} className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
                     <div className="flex flex-wrap items-center gap-2">
-                      <Badge
-                        variant={
-                          review.decision === "right"
-                            ? "success"
-                            : review.decision === "needs_film"
-                            ? "warning"
-                            : "default"
-                        }
-                      >
+                      <Badge variant={review.decision === "right" ? "success" : review.decision === "needs_film" ? "warning" : "default"}>
                         {review.decision}
                       </Badge>
                       <Badge variant="accent">Fit {review.fit_score}</Badge>
                     </div>
-                    <p className="mt-3 border-l-2 border-slate-200 pl-3 text-sm text-slate-700">
+                    <p className="mt-3 border-l-2 border-[#e4e8e5] pl-3 text-[13px] text-[#4b5563]">
                       {review.note ?? "No note recorded."}
                     </p>
                   </div>
                 ))
               ) : (
-                <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
+                <div className="rounded-xl border border-dashed border-[#e4e8e5] p-5 text-[13px] text-[#9ca3af]">
                   No review history yet.
                 </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
 
-        {/* ── Right column ── */}
         <div className="grid gap-5 self-start">
-
-          {/* Quick Actions — only shown when there's a matching need */}
           {topNeed && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-2.5">
-                <form
-                  action={addPlayerToShortlistAction.bind(null, {
-                    playerId: player.id,
-                    needId: topNeed.id,
-                  })}
-                >
-                  <Button className="w-full justify-between" type="submit">
+            <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Quick Actions</p>
+              <div className="grid gap-2">
+                <form action={addPlayerToShortlistAction.bind(null, { playerId: player.id, needId: topNeed.id })}>
+                  <button type="submit" className="flex w-full items-center justify-between rounded-xl bg-[#15542a] px-4 py-2.5 text-[13px] font-medium text-white hover:bg-[#1a6934]">
                     Add to shortlist
                     <Trophy className="h-4 w-4" />
-                  </Button>
+                  </button>
                 </form>
-                <form
-                  action={markPlayerNeedsFilmAction.bind(null, {
-                    playerId: player.id,
-                    needId: topNeed.id,
-                  })}
-                >
-                  <Button className="w-full justify-between" type="submit" variant="secondary">
+                <form action={markPlayerNeedsFilmAction.bind(null, { playerId: player.id, needId: topNeed.id })}>
+                  <button type="submit" className="flex w-full items-center justify-between rounded-xl border border-[#e4e8e5] bg-white px-4 py-2.5 text-[13px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]">
                     Mark needs film
                     <Film className="h-4 w-4" />
-                  </Button>
+                  </button>
                 </form>
-                <Button asChild className="w-full justify-between" variant="outline">
-                  <Link href={`/review/${topNeed.id}`}>
-                    Open review mode
-                    <Radar className="h-4 w-4" />
-                  </Link>
-                </Button>
-              </CardContent>
-            </Card>
+                <Link href={`/review/${topNeed.id}`} className="flex items-center justify-between rounded-xl border border-[#e4e8e5] bg-white px-4 py-2.5 text-[13px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]">
+                  Open review mode
+                  <Radar className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
           )}
 
-          {/* Board Fit */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Board Fit</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-3">
+          <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Board Fit</p>
+            <div className="grid gap-3">
               {matchingNeeds.length ? (
                 matchingNeeds.map(({ need, fit, shortlist, latestReview }) => (
-                  <div key={need.id} className="rounded-2xl border border-slate-100 bg-white p-4">
+                  <div key={need.id} className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
-                          {need.position}
-                        </p>
-                        <h3 className="mt-0.5 truncate text-sm font-semibold text-slate-900">
-                          {need.title}
-                        </h3>
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">{need.position}</p>
+                        <h3 className="mt-0.5 truncate text-[13px] font-semibold text-[#111827]">{need.title}</h3>
                       </div>
-                      <span
-                        className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold tabular-nums ${
-                          fit.fitScore >= 85
-                            ? "bg-emerald-100 text-emerald-700"
-                            : fit.fitScore >= 72
-                            ? "bg-sky-100 text-sky-700"
-                            : "bg-amber-100 text-amber-700"
-                        }`}
-                      >
+                      <span className={`shrink-0 rounded-full px-2.5 py-1 text-[12px] font-bold tabular-nums ${fit.fitScore >= 85 ? "bg-emerald-100 text-emerald-700" : fit.fitScore >= 72 ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"}`}>
                         {fit.fitScore}
                       </span>
                     </div>
-
-                    {/* Fit bar */}
-                    <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className={`h-1.5 rounded-full transition-all ${
-                          fit.fitScore >= 85
-                            ? "bg-emerald-500"
-                            : fit.fitScore >= 72
-                            ? "bg-sky-500"
-                            : "bg-amber-400"
-                        }`}
-                        style={{ width: `${fit.fitScore}%` }}
-                      />
+                    <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-[#e4e8e5]">
+                      <div className={`h-1.5 rounded-full transition-all ${fit.fitScore >= 85 ? "bg-emerald-500" : fit.fitScore >= 72 ? "bg-blue-500" : "bg-amber-400"}`} style={{ width: `${fit.fitScore}%` }} />
                     </div>
-
-                    <p className="mt-2.5 text-xs text-slate-600">{fit.fitSummary}</p>
-
+                    <p className="mt-2.5 text-[12px] text-[#4b5563]">{fit.fitSummary}</p>
                     <div className="mt-2 flex flex-wrap gap-1.5">
-                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
-                        Prod {fit.productionScore}
-                      </span>
-                      <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-semibold text-slate-500">
-                        Measure {fit.measurementScore}
-                      </span>
+                      <span className="rounded-full bg-[#f1f5f2] px-2 py-0.5 text-[11px] font-semibold text-[#4b5563]">Prod {fit.productionScore}</span>
+                      <span className="rounded-full bg-[#f1f5f2] px-2 py-0.5 text-[11px] font-semibold text-[#4b5563]">Measure {fit.measurementScore}</span>
                       {shortlist && <Badge variant="success">{shortlist.stage}</Badge>}
                     </div>
-
                     {latestReview?.note && (
-                      <p className="mt-2.5 border-l-2 border-slate-200 pl-2.5 text-xs text-slate-500">
-                        {latestReview.note}
-                      </p>
+                      <p className="mt-2.5 border-l-2 border-[#e4e8e5] pl-2.5 text-[12px] text-[#9ca3af]">{latestReview.note}</p>
                     )}
-
                     <div className="mt-3 flex gap-2">
-                      <Button asChild size="sm" variant="outline">
-                        <Link href={`/needs/${need.id}`}>Need</Link>
-                      </Button>
-                      <Button asChild size="sm">
-                        <Link href={`/review/${need.id}`}>Review</Link>
-                      </Button>
+                      <Link href={`/needs/${need.id}`} className="rounded-xl border border-[#e4e8e5] px-3 py-1.5 text-[12px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]">Need</Link>
+                      <Link href={`/review/${need.id}`} className="rounded-xl bg-[#15542a] px-3 py-1.5 text-[12px] font-medium text-white hover:bg-[#1a6934]">Review</Link>
                     </div>
                   </div>
                 ))
               ) : (
-                  <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
-                    No active needs match this player&rsquo;s position.
-                  </div>
+                <div className="rounded-xl border border-dashed border-[#e4e8e5] p-5 text-[13px] text-[#9ca3af]">
+                  No active needs match this player&apos;s position.
+                </div>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
-          {/* Source Notes */}
           {sourceNotes.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Source Notes</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-2.5">
+            <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Source Notes</p>
+              <div className="grid gap-3">
                 {sourceNotes.map((note) => (
-                  <div key={note.id} className="rounded-2xl border border-slate-100 bg-white p-4">
+                  <div key={note.id} className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-4">
                     <div className="flex flex-wrap items-center gap-1.5">
                       <Badge variant="default">{note.note_type}</Badge>
                       {note.source_account && <Badge variant="accent">@{note.source_account}</Badge>}
                       {note.status_signal && <Badge variant="warning">{note.status_signal}</Badge>}
                       {note.confidence != null && <Badge variant="success">{note.confidence.toFixed(1)} conf</Badge>}
                     </div>
-                    {note.summary && <p className="mt-2.5 text-sm font-semibold text-slate-900">{note.summary}</p>}
-                    <p className="mt-1.5 border-l-2 border-[rgba(211,178,108,0.3)] pl-3 text-sm text-slate-600">{note.source_text}</p>
+                    {note.summary && <p className="mt-2.5 text-[13px] font-semibold text-[#111827]">{note.summary}</p>}
+                    <p className="mt-1.5 border-l-2 border-[#b8952a]/30 pl-3 text-[13px] text-[#4b5563]">{note.source_text}</p>
                     {(note.traits.length > 0 || note.source_url) && (
                       <div className="mt-2.5 flex flex-wrap gap-1.5">
                         {note.traits.map((trait) => <Badge key={trait} variant="default">{trait}</Badge>)}
                         {note.source_url && (
-                          <Button asChild size="sm" variant="outline">
-                            <Link href={note.source_url} target="_blank">Source</Link>
-                          </Button>
+                          <Link href={note.source_url} target="_blank" className="rounded-xl border border-[#e4e8e5] px-2.5 py-1 text-[12px] font-medium text-[#4b5563] hover:bg-[#f1f5f2]">Source</Link>
                         )}
                       </div>
                     )}
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
 
-          {/* Shortlist Status */}
           {shortlists.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Shortlist Status</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-2.5">
+            <div className="rounded-2xl border border-[#e4e8e5] bg-white p-5">
+              <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Shortlist Status</p>
+              <div className="grid gap-2">
                 {shortlists.map((item) => (
-                  <div
-                    key={item.id}
-                    className="flex items-center justify-between rounded-2xl border border-slate-100 bg-white px-4 py-3"
-                  >
-                    <span className="text-sm font-medium text-slate-700">
-                      Need {item.need_id.slice(0, 8)}
-                    </span>
+                  <div key={item.id} className="flex items-center justify-between rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] px-4 py-3">
+                    <span className="text-[13px] font-medium text-[#4b5563]">Need {item.need_id.slice(0, 8)}</span>
                     <Badge variant="success">{item.stage}</Badge>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           )}
         </div>
       </div>
@@ -414,25 +300,11 @@ export default async function PlayerDetailPage({
   );
 }
 
-/* ── Sub-components ──────────────────────────────────────────────── */
-
-function HeroMetric({
-  label,
-  value,
-  highlight = false,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
+function HeroMetric({ label, value, highlight = false }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="rounded-[22px] border border-white/10 bg-white/10 p-4 backdrop-blur">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-slate-300">{label}</p>
-      <div
-        className={`mt-2 text-2xl font-bold ${
-          highlight ? "text-[var(--scout-gold-soft)]" : "text-white"
-        }`}
-      >
+    <div className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">{label}</p>
+      <div className={`mt-1 font-mono text-[18px] font-semibold ${highlight ? "text-[#b8952a]" : "text-[#111827]"}`}>
         {value}
       </div>
     </div>
@@ -441,9 +313,9 @@ function HeroMetric({
 
 function StatTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-2xl border border-slate-100 bg-white p-3.5">
-      <p className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">{label}</p>
-      <div className="mt-2 text-xl font-bold text-slate-900">{value}</div>
+    <div className="rounded-xl border border-[#e4e8e5] bg-[#f8f9fa] p-3.5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">{label}</p>
+      <div className="mt-2 font-mono text-[18px] font-semibold text-[#111827]">{value}</div>
     </div>
   );
 }

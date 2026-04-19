@@ -30,11 +30,15 @@ export default async function AppLayout({
             <p className="mt-0.5 text-[11px] text-[#9ca3af]">{team.name}</p>
           </Link>
         </div>
-        <div className="px-3"><div className="h-px bg-[#e4e8e5]" /></div>
+        <div className="px-3">
+          <div className="h-px bg-[#e4e8e5]" />
+        </div>
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <AppSidebarNav items={navigation} />
         </div>
-        <div className="px-3"><div className="h-px bg-[#e4e8e5]" /></div>
+        <div className="px-3">
+          <div className="h-px bg-[#e4e8e5]" />
+        </div>
         <div className="px-4 py-4 grid gap-2">
           <WorkspaceRoleSwitcher currentRole={currentRole} />
           <LogoutButton />

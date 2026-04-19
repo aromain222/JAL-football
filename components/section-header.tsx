@@ -5,7 +5,10 @@ interface SectionHeaderProps {
   eyebrow: string;
   title: string;
   description: string;
-  cta?: { label: string; href: string };
+  cta?: {
+    label: string;
+    href: string;
+  };
 }
 
 export function SectionHeader({ eyebrow, title, description, cta }: SectionHeaderProps) {

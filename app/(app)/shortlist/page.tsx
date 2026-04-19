@@ -13,7 +13,9 @@ export default async function ShortlistPage({
   const needId =
     searchParams?.needId && searchParams.needId !== "ALL" ? searchParams.needId : undefined;
   const position =
-    searchParams?.position && searchParams.position !== "ALL" ? searchParams.position : undefined;
+    searchParams?.position && searchParams.position !== "ALL"
+      ? searchParams.position
+      : undefined;
 
   const [board, needs] = await Promise.all([
     getShortlistBoard({ needId, position }),
@@ -28,8 +30,8 @@ export default async function ShortlistPage({
         <div>
           <h1 className="text-2xl font-bold text-[#111827]">Shortlist</h1>
           <p className="mt-1 text-sm text-[#9ca3af]">
-            {board.length} player{board.length !== 1 ? "s" : ""} on the board ·{" "}
-            {activeFilters.length ? activeFilters.join(" · ") : "All needs · All positions"}
+            {board.length} player{board.length !== 1 ? "s" : ""} on the board{" "}
+            {activeFilters.length ? "\u00b7 " + activeFilters.join(" \u00b7 ") : "\u00b7 All needs \u00b7 All positions"}
           </p>
         </div>
       </div>
@@ -46,13 +48,13 @@ export default async function ShortlistPage({
           ))}
         </select>
         <select
-          className="h-10 rounded-xl border border-[e8e5] bg-white px-3 text-[13px] text-[#111827]"
+          className="h-10 rounded-xl border border-[#e4e8e5] bg-white px-3 text-[13px] text-[#111827]"
           defaultValue={searchParams?.position ?? "ALL"}
           name="position"
         >
           <option value="ALL">All positions</option>
-          {["EDGE", "DL", "LB", "CB", "WR", "RB", "OL", "QB", "TE", "S", "ST"].map((o) => (
-            <option key={o} value={o}>{o}</option>
+          {["EDGE", "DL", "LB", "CB", "WR", "RB", "OL", "QB", "TE", "S", "ST"].map((option) => (
+            <option key={option} value={option}>{option}</option>
           ))}
         </select>
         <button

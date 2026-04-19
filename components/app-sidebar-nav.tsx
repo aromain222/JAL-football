@@ -21,18 +21,22 @@ interface NavItem {
 
 export function AppSidebarNav({ items }: { items: readonly NavItem[] }) {
   const pathname = usePathname();
+
   return (
     <nav className="grid gap-0.5">
       {items.map((item) => {
         const Icon = iconMap[item.icon];
         const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
         return (
           <Link
             key={item.href}
             href={item.href}
             className={cn(
               "flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-colors",
-              isActive ? "bg-[#dcf0e3] text-[#15542a]" : "text-[#4b5563] hover:bg-[#f1f5f2] hover:text-[#111827]"
+              isActive
+                ? "bg-[#dcf0e3] text-[#15542a]"
+                : "text-[#4b5563] hover:bg-[#f1f5f2] hover:text-[#111827]"
             )}
           >
             <Icon className="h-4 w-4 shrink-0" />
