@@ -34,7 +34,12 @@ interface ReviewClientProps {
 
 const SWIPE_THRESHOLD = 120;
 
-export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewClientProps) {
+export function ReviewClient({
+  need,
+  queue,
+  reviewedCount,
+  totalCount
+}: ReviewClientProps) {
   const [cards, setCards] = useState(queue);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [note, setNote] = useState("");
@@ -97,6 +102,7 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
       if (event.key.toLowerCase() === "s") void handleDecision("save");
       if (event.key.toLowerCase() === "f") void handleDecision("needs_film");
     }
+
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [current, handleDecision, isPending]);
@@ -114,8 +120,17 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
   function handlePointerUp() {
     if (!isDragging) return;
     setIsDragging(false);
-    if (dragX <= -SWIPE_THRESHOLD) { void handleDecision("left"); return; }
-    if (dragX >= SWIPE_THRESHOLD) { void handleDecision("right"); return; }
+
+    if (dragX <= -SWIPE_THRESHOLD) {
+      void handleDecision("left");
+      return;
+    }
+
+    if (dragX >= SWIPE_THRESHOLD) {
+      void handleDecision("right");
+      return;
+    }
+
     setDragX(0);
   }
 
@@ -158,11 +173,17 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
   const stats = getPlayerKeyStats(current.player);
   const productionMetrics = getPlayerProductionMetrics(current.player, 4);
   const swipeHint =
-    dragX > 40 ? "→ Shortlist" : dragX < -40 ? "← Pass" : "Drag or use buttons below";
+    dragX > 40
+      ? "→ Shortlist"
+      : dragX < -40
+        ? "← Pass"
+        : "Drag or use buttons below";
+
   const initials = `${current.player.first_name[0] ?? ""}${current.player.last_name[0] ?? ""}`.toUpperCase();
 
   return (
-   v className="grid gap-6">
+    <div className="grid gap-6">
+      {/* Progress bar */}
       <div className="rounded-2xl border border-[#e4e8e5] bg-white p-4">
         <div className="flex items-center justify-between">
           <p className="text-[13px] font-medium text-[#4b5563]">
@@ -186,10 +207,12 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
       )}
 
       <div className="grid gap-6 xl:grid-cols-[1.2fr_0.8fr]">
+        {/* Player card */}
         <div
           className="rounded-2xl border border-[#e4e8e5] bg-white transition-transform"
           style={{ transform: `translateX(${dragX}px) rotate(${dragX / 50}deg)` }}
         >
+          {/* Draggable header */}
           <div
             className="select-none cursor-grab rounded-t-2xl border-b border-[#e4e8e5] bg-[#f8f9fa] px-5 py-5 active:cursor-grabbing"
             onPointerDown={handlePointerDown}
@@ -208,7 +231,7 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
                 <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">
                   {current.player.position} · {current.player.class_year}
                 </p>
-                <h3 classNae="mt-0.5 text-[22px] font-bold tracking-tight text-[#111827]">
+                <h3 className="mt-0.5 text-[22px] font-bold tracking-tight text-[#111827]">
                   {current.player.first_name} {current.player.last_name}
                 </h3>
                 <p className="mt-0.5 text-[13px] text-[#4b5563]">
@@ -223,13 +246,14 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
           </div>
 
           <div className="grid gap-5 p-5">
+            {/* Measurements */}
             <div className="grid grid-cols-4 gap-2">
               <ReviewMetric
                 label="H / W"
                 value={`${formatHeightInFeetInches(current.player.measurements?.height_in)} / ${current.player.measurements?.weight_lbs ?? "--"}`}
               />
               <ReviewMetric
-               label="Arm"
+                label="Arm"
                 value={current.player.measurements?.arm_length_in ? `${current.player.measurements.arm_length_in}"` : "--"}
               />
               <ReviewMetric
@@ -265,7 +289,7 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
                 </div>
                 <div className="mt-2 grid gap-1.5 sm:grid-cols-2">
                   {stats.map((stat) => (
-                    <div key={stat} className="rounded-lg border border-[#e4e8e5] bg-white px-3 py-2 text-[12px]font-medium text-[#111827]">
+                    <div key={stat} className="rounded-lg border border-[#e4e8e5] bg-white px-3 py-2 text-[12px] font-medium text-[#111827]">
                       {stat}
                     </div>
                   ))}
@@ -284,7 +308,7 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
                 <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
                   {productionMetrics.map((metric) => (
                     <div key={metric.label} className="rounded-lg border border-[#e4e8e5] bg-white px-3 py-2">
-                      <p className="text-[11px] uppercase tracking-[0.08em] text-[#9ca3af]">{metric.lab</p>
+                      <p className="text-[11px] uppercase tracking-[0.08em] text-[#9ca3af]">{metric.label}</p>
                       <p className="mt-0.5 text-[15px] font-semibold text-[#111827]">{metric.value}</p>
                     </div>
                   ))}
@@ -312,6 +336,7 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
           </div>
         </div>
 
+        {/* Decision panel */}
         <div className="grid gap-4 content-start">
           <div className="rounded-2xl border border-[#e4e8e5] bg-white p-4">
             <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.08em] text-[#9ca3af]">Decision Keys</p>
@@ -331,12 +356,33 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
               onChange={(event) => setNote(event.target.value)}
               className="border-[#e4e8e5]"
             />
-      </div>
+          </div>
 
           <div className="grid gap-2">
-            <DecisionButton disabled={isPending} icon={<MoveLeft className="h-4 w-4" />} label="Pass" meta="←" variant="outline" onClick={() => void handleDecision("left")} />
-            <DecisionButton disabled={isPending} icon={<Bookmark className="h-4 w-4" />} label="Save for later" meta="S" variant="outline" onClick={() => void handleDecision("save")} />
-            <DecisionButton disabled={isPending} icon={<Film className="h-4 w-4" />} label="Needs film" meta="F" variant="outline" onClick={() => void handleDecision("needs_film")} />
+            <DecisionButton
+              disabled={isPending}
+              icon={<MoveLeft className="h-4 w-4" />}
+              label="Pass"
+              meta="←"
+              variant="outline"
+              onClick={() => void handleDecision("left")}
+            />
+            <DecisionButton
+              disabled={isPending}
+              icon={<Bookmark className="h-4 w-4" />}
+              label="Save for later"
+              meta="S"
+              variant="outline"
+              onClick={() => void handleDecision("save")}
+            />
+            <DecisionButton
+              disabled={isPending}
+              icon={<Film className="h-4 w-4" />}
+              label="Needs film"
+              meta="F"
+              variant="outline"
+              onClick={() => void handleDecision("needs_film")}
+            />
             <button
               type="button"
               disabled={isPending}
@@ -344,7 +390,7 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: ReviewC
               onClick={() => void handleDecision("right")}
             >
               <span className="flex items-center gap-2">
-                <MoveRight className="h-4 w" />
+                <MoveRight className="h-4 w-4" />
                 Shortlist
               </span>
               <span className="text-[12px] opacity-70">→</span>
@@ -365,12 +411,26 @@ function ReviewMetric({ label, value }: { label: string; value: string }) {
   );
 }
 
-function DecisionButton({ icon, label, meta, onClick, variant, disabled }: { icon: ReactNode; label: string; meta: string; onClick: () => void; variant: "default" | "outline" | "secondary"; disabled: boolean }) {
+function DecisionButton({
+  icon,
+  label,
+  meta,
+  onClick,
+  variant,
+  disabled
+}: {
+  icon: ReactNode;
+  label: string;
+  meta: string;
+  onClick: () => void;
+  variant: "default" | "outline" | "secondary";
+  disabled: boolean;
+}) {
   return (
     <button
       type="button"
       className="flex h-12 w-full items-center justify-between rounded-xl border border-[#e4e8e5] bg-white px-4 text-sm font-medium text-[#4b5563] hover:bg-[#f1f5f2] disabled:opacity-50"
-      disabled=isabled}
+      disabled={disabled}
       onClick={onClick}
     >
       <span className="flex items-center gap-2">
