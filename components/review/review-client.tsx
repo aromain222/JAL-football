@@ -93,7 +93,7 @@ export function ReviewClient({ need, queue, reviewedCount, totalCount }: { need:
   return (
     <div className="grid gap-6">
       <div className="rounded-2xl border border-[#e4e8e5] bg-white p-4">
-        <div className="flex items-centertify-between">
+        <div className="flex items-center justify-between">
           <p className="text-[13px] font-medium text-[#4b5563]">{reviewedSoFar} of {totalCount} reviewed</p>
           <p className="font-mono text-[13px] font-semibold text-[#111827]">{progressWidth}%</p>
         </div>
