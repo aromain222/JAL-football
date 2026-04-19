@@ -78,7 +78,7 @@ export default async function NeedsPage() {
           <div className="rounded-2xl border border-dashed border-[#e4e8e5] p-12 text-center">
             <p className="text-[14px] font-medium text-[#111827]">No needs yet</p>
             <p className="mt-1 text-[12px] text-[#9ca3af]">
-              Define what you're looking for before reviewing players.
+              Define what you&apos;re looking for before reviewing players.
             </p>
             <Link
               href="/needs/new"
