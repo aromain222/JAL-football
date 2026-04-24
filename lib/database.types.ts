@@ -15,6 +15,7 @@ export interface Database {
           first_name: string;
           last_name: string;
           position: string;
+          position_group: string | null;
           transfer_year: number;
           current_school: string;
           conference: string | null;
@@ -33,12 +34,39 @@ export interface Database {
           contact_window: string | null;
           notes: string | null;
           sportradar_id: string | null;
+          portal_source: string | null;
+          portal_source_player_id: string | null;
+          portal_entry_updated_at: string | null;
+          portal_last_synced_at: string | null;
+          portal_removed_at: string | null;
+          active_in_portal: boolean;
+          first_seen_at: string;
+          last_seen_at: string;
+          pff_enrichment_status: string;
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database["public"]["Tables"]["players"]["Row"],
-          "created_at" | "updated_at"
+        Insert: {
+          first_name: string;
+          last_name: string;
+          position: string;
+          transfer_year: number;
+          current_school: string;
+          class_year: string;
+          eligibility_remaining: number;
+        } & Partial<
+          Omit<
+            Database["public"]["Tables"]["players"]["Row"],
+            | "first_name"
+            | "last_name"
+            | "position"
+            | "transfer_year"
+            | "current_school"
+            | "class_year"
+            | "eligibility_remaining"
+            | "created_at"
+            | "updated_at"
+          >
         >;
         Update: Partial<Database["public"]["Tables"]["players"]["Insert"]>;
       };
@@ -62,26 +90,115 @@ export interface Database {
           id: string;
           player_id: string;
           season: number;
+          season_type: string;
+          position_group: string | null;
           games_played: number | null;
           starts: number | null;
           offensive_snaps: number | null;
           defensive_snaps: number | null;
           special_teams_snaps: number | null;
+          passing_attempts: number | null;
+          passing_completions: number | null;
           passing_yards: number | null;
+          passing_tds: number | null;
+          interceptions_thrown: number | null;
+          rushing_attempts: number | null;
           rushing_yards: number | null;
+          rushing_tds: number | null;
+          receptions: number | null;
+          targets: number | null;
           receiving_yards: number | null;
+          receiving_tds: number | null;
           total_touchdowns: number | null;
           tackles: number | null;
+          tackles_for_loss: number | null;
           sacks: number | null;
+          forced_fumbles: number | null;
+          fumbles_recovered: number | null;
+          quarterback_hurries: number | null;
+          run_stops: number | null;
           interceptions: number | null;
           passes_defended: number | null;
+          snaps_slot: number | null;
+          snaps_box: number | null;
+          snaps_boundary: number | null;
+          snaps_inline: number | null;
+          snaps_wide: number | null;
+          snaps_pass_rush: number | null;
+          snaps_run_defense: number | null;
+          source: string | null;
+          source_player_id: string | null;
+          source_updated_at: string | null;
+          stat_profile_used: string | null;
+          alignment_data: Json;
+          raw_stats_json: Json;
+          pff_enrichment_status: string;
+          active_in_portal: boolean;
+          first_seen_at: string;
+          last_seen_at: string;
           created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          player_id: string;
+          season: number;
+        } & Partial<
+          Omit<
+            Database["public"]["Tables"]["player_stats"]["Row"],
+            "player_id" | "season" | "id" | "created_at" | "updated_at"
+          >
+        > & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["player_stats"]["Insert"]>;
+      };
+      portal_ingestion_queue: {
+        Row: {
+          id: string;
+          source: string;
+          external_player_id: string;
+          player_id: string | null;
+          transfer_year: number;
+          position_group: string | null;
+          pipeline_stage: string;
+          status: string;
+          priority: number;
+          attempt_count: number;
+          max_attempts: number;
+          next_attempt_at: string;
+          last_attempt_at: string | null;
+          started_at: string | null;
+          completed_at: string | null;
+          locked_at: string | null;
+          locked_by: string | null;
+          error_message: string | null;
+          payload_hash: string;
+          payload: Json;
+          normalized_payload: Json;
+          enrichment_payload: Json;
+          raw_stats_json: Json;
+          alignment_data: Json;
+          metadata: Json;
+          stat_profile_used: string | null;
+          pff_enrichment_status: string;
+          active_in_portal: boolean;
+          first_seen_at: string;
+          last_seen_at: string;
+          source_updated_at: string | null;
+          created_at: string;
+          updated_at: string;
         };
         Insert: Omit<
-          Database["public"]["Tables"]["player_stats"]["Row"],
-          "created_at"
-        >;
-        Update: Partial<Database["public"]["Tables"]["player_stats"]["Insert"]>;
+          Database["public"]["Tables"]["portal_ingestion_queue"]["Row"],
+          "id" | "created_at" | "updated_at"
+        > & {
+          id?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["portal_ingestion_queue"]["Insert"]>;
       };
       player_identity_links: {
         Row: {

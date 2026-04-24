@@ -84,6 +84,7 @@ async function main() {
       first_name: p.first_name,
       last_name: p.last_name,
       position,
+      position_group: position,
       transfer_year: transferYear,
       current_school: "Transfer Portal",
       conference: null,
@@ -101,7 +102,16 @@ async function main() {
       x_user_id: null,
       contact_window: null,
       notes: null,
-      sportradar_id: p.id
+      sportradar_id: p.id,
+      portal_source: "sportradar_transfer_portal",
+      portal_source_player_id: p.id,
+      portal_entry_updated_at: p.updated,
+      portal_last_synced_at: new Date().toISOString(),
+      portal_removed_at: null,
+      active_in_portal: true,
+      first_seen_at: new Date().toISOString(),
+      last_seen_at: new Date().toISOString(),
+      pff_enrichment_status: "pending"
     });
 
     if (p.height != null && p.height > 0 && p.weight != null && p.weight > 0) {

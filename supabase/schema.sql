@@ -17,6 +17,15 @@ begin
   if not exists (select 1 from pg_type where typname = 'shortlist_stage') then
     create type shortlist_stage as enum ('assistant', 'coordinator', 'head_coach', 'final_watch');
   end if;
+  if not exists (select 1 from pg_type where typname = 'portal_ingestion_stage') then
+    create type portal_ingestion_stage as enum ('normalize', 'enrich', 'sync');
+  end if;
+  if not exists (select 1 from pg_type where typname = 'portal_ingestion_status') then
+    create type portal_ingestion_status as enum ('pending', 'processing', 'complete', 'retry', 'failed', 'skipped');
+  end if;
+  if not exists (select 1 from pg_type where typname = 'portal_pff_enrichment_status') then
+    create type portal_pff_enrichment_status as enum ('pending', 'queued', 'in_progress', 'completed', 'not_found', 'failed', 'skipped');
+  end if;
 end $$;
 
 do $$
@@ -97,6 +106,21 @@ create table if not exists public.players (
   updated_at timestamptz not null default timezone('utc', now())
 );
 
+alter table public.players add column if not exists position_group position_group;
+alter table public.players add column if not exists portal_source text;
+alter table public.players add column if not exists portal_source_player_id text;
+alter table public.players add column if not exists portal_entry_updated_at timestamptz;
+alter table public.players add column if not exists portal_last_synced_at timestamptz;
+alter table public.players add column if not exists portal_removed_at timestamptz;
+alter table public.players add column if not exists active_in_portal boolean not null default false;
+alter table public.players add column if not exists first_seen_at timestamptz not null default timezone('utc', now());
+alter table public.players add column if not exists last_seen_at timestamptz not null default timezone('utc', now());
+alter table public.players add column if not exists pff_enrichment_status portal_pff_enrichment_status not null default 'pending';
+
+update public.players
+set position_group = position
+where position_group is null;
+
 create table if not exists public.player_measurements (
   player_id uuid primary key references public.players (id) on delete cascade,
   height_in integer,
@@ -137,6 +161,117 @@ create table if not exists public.player_stats (
   created_at timestamptz not null default timezone('utc', now()),
   constraint player_stats_player_season_key unique (player_id, season)
 );
+
+alter table public.player_stats add column if not exists updated_at timestamptz not null default timezone('utc', now());
+alter table public.player_stats add column if not exists position_group position_group;
+alter table public.player_stats add column if not exists season_type text not null default 'regular';
+alter table public.player_stats add column if not exists source text;
+alter table public.player_stats add column if not exists source_player_id text;
+alter table public.player_stats add column if not exists source_updated_at timestamptz;
+alter table public.player_stats add column if not exists stat_profile_used text;
+alter table public.player_stats add column if not exists alignment_data jsonb not null default '{}'::jsonb;
+alter table public.player_stats add column if not exists raw_stats_json jsonb not null default '{}'::jsonb;
+alter table public.player_stats add column if not exists pff_enrichment_status portal_pff_enrichment_status not null default 'pending';
+alter table public.player_stats add column if not exists active_in_portal boolean not null default false;
+alter table public.player_stats add column if not exists first_seen_at timestamptz not null default timezone('utc', now());
+alter table public.player_stats add column if not exists last_seen_at timestamptz not null default timezone('utc', now());
+alter table public.player_stats add column if not exists passing_attempts integer;
+alter table public.player_stats add column if not exists passing_completions integer;
+alter table public.player_stats add column if not exists passing_tds integer;
+alter table public.player_stats add column if not exists interceptions_thrown integer;
+alter table public.player_stats add column if not exists rushing_attempts integer;
+alter table public.player_stats add column if not exists rushing_tds integer;
+alter table public.player_stats add column if not exists receptions integer;
+alter table public.player_stats add column if not exists targets integer;
+alter table public.player_stats add column if not exists receiving_tds integer;
+alter table public.player_stats add column if not exists tackles_for_loss numeric(5,1);
+alter table public.player_stats add column if not exists forced_fumbles integer;
+alter table public.player_stats add column if not exists fumbles_recovered integer;
+alter table public.player_stats add column if not exists quarterback_hurries integer;
+alter table public.player_stats add column if not exists run_stops integer;
+alter table public.player_stats add column if not exists snaps_slot integer;
+alter table public.player_stats add column if not exists snaps_box integer;
+alter table public.player_stats add column if not exists snaps_boundary integer;
+alter table public.player_stats add column if not exists snaps_inline integer;
+alter table public.player_stats add column if not exists snaps_wide integer;
+alter table public.player_stats add column if not exists snaps_pass_rush integer;
+alter table public.player_stats add column if not exists snaps_run_defense integer;
+
+create table if not exists public.portal_ingestion_queue (
+  id uuid primary key default gen_random_uuid(),
+  source text not null,
+  external_player_id text not null,
+  player_id uuid references public.players (id) on delete set null,
+  transfer_year integer not null,
+  position_group position_group,
+  pipeline_stage portal_ingestion_stage not null default 'normalize',
+  status portal_ingestion_status not null default 'pending',
+  priority integer not null default 100,
+  attempt_count integer not null default 0,
+  max_attempts integer not null default 5,
+  next_attempt_at timestamptz not null default timezone('utc', now()),
+  last_attempt_at timestamptz,
+  started_at timestamptz,
+  completed_at timestamptz,
+  locked_at timestamptz,
+  locked_by text,
+  error_message text,
+  payload_hash text not null default '',
+  payload jsonb not null default '{}'::jsonb,
+  normalized_payload jsonb not null default '{}'::jsonb,
+  enrichment_payload jsonb not null default '{}'::jsonb,
+  raw_stats_json jsonb not null default '{}'::jsonb,
+  alignment_data jsonb not null default '{}'::jsonb,
+  metadata jsonb not null default '{}'::jsonb,
+  stat_profile_used text,
+  pff_enrichment_status portal_pff_enrichment_status not null default 'pending',
+  active_in_portal boolean not null default true,
+  first_seen_at timestamptz not null default timezone('utc', now()),
+  last_seen_at timestamptz not null default timezone('utc', now()),
+  source_updated_at timestamptz,
+  created_at timestamptz not null default timezone('utc', now()),
+  updated_at timestamptz not null default timezone('utc', now()),
+  constraint portal_ingestion_queue_source_external_key unique (source, external_player_id)
+);
+
+create or replace function public.claim_portal_ingestion_queue(
+  p_pipeline_stage portal_ingestion_stage,
+  p_batch_size integer default 25,
+  p_worker_id text default null,
+  p_statuses portal_ingestion_status[] default array['pending'::portal_ingestion_status, 'retry'::portal_ingestion_status]
+)
+returns setof public.portal_ingestion_queue
+language plpgsql
+as $$
+begin
+  return query
+  with candidate as (
+    select q.id
+    from public.portal_ingestion_queue q
+    where q.pipeline_stage = p_pipeline_stage
+      and q.status = any (p_statuses)
+      and q.next_attempt_at <= timezone('utc', now())
+      and (
+        q.locked_at is null
+        or q.locked_at <= timezone('utc', now()) - interval '15 minutes'
+      )
+    order by q.priority asc, q.last_seen_at desc, q.created_at asc
+    limit greatest(coalesce(p_batch_size, 25), 1)
+    for update skip locked
+  )
+  update public.portal_ingestion_queue q
+  set status = 'processing',
+      locked_at = timezone('utc', now()),
+      locked_by = coalesce(p_worker_id, 'unknown'),
+      last_attempt_at = timezone('utc', now()),
+      started_at = coalesce(q.started_at, timezone('utc', now())),
+      attempt_count = q.attempt_count + 1,
+      updated_at = timezone('utc', now())
+  from candidate
+  where q.id = candidate.id
+  returning q.*;
+end;
+$$;
 
 create table if not exists public.player_identity_links (
   player_id uuid primary key references public.players (id) on delete cascade,
@@ -263,8 +398,18 @@ create table if not exists public.player_tags (
 
 create index if not exists players_position_idx on public.players (position);
 create index if not exists players_name_idx on public.players (last_name, first_name);
+create index if not exists players_portal_active_seen_idx on public.players (active_in_portal, last_seen_at desc);
+create index if not exists players_portal_source_idx on public.players (portal_source, portal_source_player_id);
 create index if not exists team_needs_team_status_idx on public.team_needs (team_id, status);
 create index if not exists team_needs_team_position_priority_idx on public.team_needs (team_id, position, priority);
+create index if not exists player_stats_player_season_portal_idx on public.player_stats (player_id, season desc, active_in_portal);
+create index if not exists player_stats_position_group_season_idx on public.player_stats (position_group, season desc);
+create index if not exists portal_ingestion_queue_stage_status_attempt_idx
+on public.portal_ingestion_queue (pipeline_stage, status, next_attempt_at, priority);
+create index if not exists portal_ingestion_queue_player_idx
+on public.portal_ingestion_queue (player_id, transfer_year desc);
+create index if not exists portal_ingestion_queue_active_seen_idx
+on public.portal_ingestion_queue (active_in_portal, last_seen_at desc);
 create index if not exists player_reviews_need_created_idx on public.player_reviews (need_id, created_at desc);
 create index if not exists shortlists_stage_idx on public.shortlists (stage, need_id);
 create index if not exists player_tags_tag_idx on public.player_tags (tag);
@@ -281,9 +426,21 @@ before update on public.team_needs
 for each row
 execute function public.set_updated_at();
 
+drop trigger if exists set_player_stats_updated_at on public.player_stats;
+create trigger set_player_stats_updated_at
+before update on public.player_stats
+for each row
+execute function public.set_updated_at();
+
 drop trigger if exists set_shortlists_updated_at on public.shortlists;
 create trigger set_shortlists_updated_at
 before update on public.shortlists
+for each row
+execute function public.set_updated_at();
+
+drop trigger if exists set_portal_ingestion_queue_updated_at on public.portal_ingestion_queue;
+create trigger set_portal_ingestion_queue_updated_at
+before update on public.portal_ingestion_queue
 for each row
 execute function public.set_updated_at();
 
@@ -292,6 +449,7 @@ alter table public.profiles enable row level security;
 alter table public.players enable row level security;
 alter table public.player_measurements enable row level security;
 alter table public.player_stats enable row level security;
+alter table public.portal_ingestion_queue enable row level security;
 alter table public.player_identity_links enable row level security;
 alter table public.player_x_enrichments enable row level security;
 alter table public.player_source_notes enable row level security;
@@ -344,6 +502,18 @@ begin
     select 1 from pg_policies where schemaname = 'public' and tablename = 'player_stats' and policyname = 'Authenticated upsert stats'
   ) then
     create policy "Authenticated upsert stats" on public.player_stats for all to authenticated
+      using (true)
+      with check (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'portal_ingestion_queue' and policyname = 'Authenticated read portal ingestion queue'
+  ) then
+    create policy "Authenticated read portal ingestion queue" on public.portal_ingestion_queue for select to authenticated using (true);
+  end if;
+  if not exists (
+    select 1 from pg_policies where schemaname = 'public' and tablename = 'portal_ingestion_queue' and policyname = 'Authenticated manage portal ingestion queue'
+  ) then
+    create policy "Authenticated manage portal ingestion queue" on public.portal_ingestion_queue for all to authenticated
       using (true)
       with check (true);
   end if;

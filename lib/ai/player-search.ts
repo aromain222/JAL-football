@@ -39,6 +39,8 @@ export type AiTraitKey =
   | "run_support"
   | "coverage"
   | "pass_rush"
+  | "pass_blocking"
+  | "run_blocking"
   | "route_running"
   | "explosive"
   | "big_body"
@@ -48,9 +50,11 @@ export type AiTraitKey =
 
 export type PffCriterion = {
   column: string;
-  min_value: number;
+  target_value: number;
   weight: number;
   label: string;
+  preference: "high" | "low";
+  source?: "pff" | "production" | "alignment";
 };
 
 export type AiRoleCriterion = {
@@ -72,13 +76,24 @@ export type AiProductionPriority = {
   label: string;
 };
 
-export type AiSearchCriteria = {
-  positions: PositionGroup[];
+export type AiSearchFilters = {
+  active_in_portal: boolean;
   min_years_remaining?: number;
   min_weight_lbs?: number;
   max_weight_lbs?: number;
   min_height_in?: number;
   max_height_in?: number;
+};
+
+export type AiSearchCriteria = {
+  positions: PositionGroup[];
+  football_positions: string[];
+  min_years_remaining?: number;
+  min_weight_lbs?: number;
+  max_weight_lbs?: number;
+  min_height_in?: number;
+  max_height_in?: number;
+  filters: AiSearchFilters;
   roles: AiRoleCriterion[];
   traits: AiTraitCriterion[];
   pff_criteria: PffCriterion[];
@@ -132,6 +147,8 @@ TRAIT KEYS:
 - run_support
 - coverage
 - pass_rush
+- pass_blocking
+- run_blocking
 - route_running
 - explosive
 - big_body
@@ -200,6 +217,7 @@ PRODUCTION PRIORITY STATS:
 
 RULES:
 - Return only APP position groups, never DT/DE/NT/FS/SS as positions.
+- football_positions should contain football-native labels like G, IOL, C, OT, LT, RT, NT, 3T, X, Slot, Boundary when the query clearly implies them.
 - Use roles for alignment or deployment intent.
 - Use traits for play-style intent.
 - Only use min/max height or weight when the query gives an explicit measurable or a clearly hard requirement.
@@ -215,14 +233,23 @@ RULES:
 Return ONLY valid JSON:
 {
   "positions": ["QB"],
+  "football_positions": ["QB"],
   "min_years_remaining": null,
   "min_weight_lbs": null,
   "max_weight_lbs": null,
   "min_height_in": null,
   "max_height_in": null,
+  "filters": {
+    "active_in_portal": true,
+    "min_years_remaining": null,
+    "min_weight_lbs": null,
+    "max_weight_lbs": null,
+    "min_height_in": null,
+    "max_height_in": null
+  },
   "roles": [{ "key": "slot_cb", "strength": "required", "label": "Slot CB role" }],
   "traits": [{ "key": "run_support", "strength": "preferred", "label": "Run support" }],
-  "pff_criteria": [{ "column": "grades_tackle_db", "min_value": 60, "weight": 0.9, "label": "Tackling grade" }],
+  "pff_criteria": [{ "column": "grades_tackle_db", "target_value": 60, "weight": 0.9, "label": "Tackling grade", "preference": "high", "source": "pff" }],
   "production_priorities": [{ "stat": "tackles", "min_value": 35, "weight": 0.5, "label": "Tackle production" }],
   "body_type_hint": "big-bodied",
   "reasoning": "short explanation"
@@ -247,6 +274,8 @@ const traitSchema = z.enum([
   "run_support",
   "coverage",
   "pass_rush",
+  "pass_blocking",
+  "run_blocking",
   "route_running",
   "explosive",
   "big_body",
@@ -257,11 +286,22 @@ const traitSchema = z.enum([
 
 const criteriaSchema = z.object({
   positions: z.array(positionSchema).default([]),
+  football_positions: z.array(z.string().min(1)).default([]),
   min_years_remaining: z.number().nullable().optional(),
   min_weight_lbs: z.number().nullable().optional(),
   max_weight_lbs: z.number().nullable().optional(),
   min_height_in: z.number().nullable().optional(),
   max_height_in: z.number().nullable().optional(),
+  filters: z
+    .object({
+      active_in_portal: z.boolean().default(true),
+      min_years_remaining: z.number().nullable().optional(),
+      min_weight_lbs: z.number().nullable().optional(),
+      max_weight_lbs: z.number().nullable().optional(),
+      min_height_in: z.number().nullable().optional(),
+      max_height_in: z.number().nullable().optional(),
+    })
+    .default({ active_in_portal: true }),
   roles: z
     .array(
       z.object({
@@ -284,9 +324,11 @@ const criteriaSchema = z.object({
     .array(
       z.object({
         column: z.string().min(1),
-        min_value: z.number(),
+        target_value: z.number(),
         weight: z.number().min(0).max(1.5),
         label: z.string().min(1),
+        preference: z.enum(["high", "low"]).default("high"),
+        source: z.enum(["pff", "production", "alignment"]).optional(),
       })
     )
     .default([]),
@@ -410,6 +452,15 @@ function uniquePush<T>(items: T[], value: T) {
   if (!items.includes(value)) items.push(value);
 }
 
+function pushFootballPosition(positions: string[], ...values: string[]) {
+  for (const value of values) {
+    const trimmed = value.trim();
+    if (trimmed && !positions.includes(trimmed)) {
+      positions.push(trimmed);
+    }
+  }
+}
+
 function addRoleCriterion(
   roles: AiRoleCriterion[],
   role: AiRoleKey,
@@ -449,16 +500,20 @@ function addProductionPriority(
 function addPffCriterion(
   criteria: PffCriterion[],
   column: string,
-  minValue: number,
+  targetValue: number,
   weight: number,
-  label: string
+  label: string,
+  preference: "high" | "low" = "high",
+  source: "pff" | "production" | "alignment" = "pff"
 ) {
   if (criteria.some((item) => item.column === column)) return;
   criteria.push({
     column,
-    min_value: minValue,
+    target_value: targetValue,
     weight,
     label,
+    preference,
+    source,
   });
 }
 
@@ -573,6 +628,15 @@ function applyImplicitSizeHints(query: string, criteria: AiSearchCriteria): AiSe
     ...criteria,
     min_weight_lbs: criteria.min_weight_lbs ?? implicitWeightFloor,
     min_height_in: criteria.min_height_in ?? implicitHeightFloor,
+    filters: {
+      ...criteria.filters,
+      active_in_portal: true,
+      min_weight_lbs: criteria.filters.min_weight_lbs ?? criteria.min_weight_lbs ?? implicitWeightFloor,
+      max_weight_lbs: criteria.filters.max_weight_lbs ?? criteria.max_weight_lbs,
+      min_height_in: criteria.filters.min_height_in ?? criteria.min_height_in ?? implicitHeightFloor,
+      max_height_in: criteria.filters.max_height_in ?? criteria.max_height_in,
+      min_years_remaining: criteria.filters.min_years_remaining ?? criteria.min_years_remaining,
+    },
     body_type_hint: bodyTypeHint,
   };
 }
@@ -582,6 +646,7 @@ function buildHeuristicCriteria(query: string): AiSearchCriteria {
   const lower = text.toLowerCase();
 
   const positions: PositionGroup[] = [];
+  const footballPositions: string[] = [];
   const roles: AiRoleCriterion[] = [];
   const traits: AiTraitCriterion[] = [];
   const pffCriteria: PffCriterion[] = [];
@@ -594,20 +659,22 @@ function buildHeuristicCriteria(query: string): AiSearchCriteria {
 
   if (/(nose tackle|nose guard|interior defensive tackle|defensive tackle|interior dl)/.test(lower)) {
     uniquePush(positions, "DL");
+    pushFootballPosition(footballPositions, "NT", "IDL");
     addRoleCriterion(roles, "interior_dl", "required", "Interior DL role");
     addTraitCriterion(traits, "big_body", "preferred", "Big body");
     addTraitCriterion(traits, "run_support", "preferred", "Run support");
-    addPffCriterion(pffCriteria, "snaps_interior_dl", 60, 1.1, "Interior DL usage");
-    addPffCriterion(pffCriteria, "grades_run_defense_dl", 62, 0.9, "Run defense");
+    addPffCriterion(pffCriteria, "snaps_interior_dl", 60, 1.1, "Interior DL usage", "high", "alignment");
+    addPffCriterion(pffCriteria, "grades_run_defense_dl", 62, 0.9, "Run defense", "high", "pff");
     addProductionPriority(productionPriorities, "tackles_for_loss", 2, 0.5, "TFL");
     reasoningBits.push("interior DL usage");
   }
 
   if (/(edge|edge rusher|pass rusher|pass rushing|defensive end|speed rusher)/.test(lower)) {
     uniquePush(positions, "EDGE");
+    pushFootballPosition(footballPositions, "EDGE");
     addRoleCriterion(roles, "edge", "required", "Edge role");
     addTraitCriterion(traits, "pass_rush", "preferred", "Pass rush");
-    addPffCriterion(pffCriteria, "grades_pass_rush", 65, 0.95, "Pass rush");
+    addPffCriterion(pffCriteria, "grades_pass_rush", 65, 0.95, "Pass rush", "high", "pff");
     addProductionPriority(productionPriorities, "sacks", 3, 0.7, "Sacks");
     addProductionPriority(productionPriorities, "tackles_for_loss", 4, 0.55, "TFL");
     reasoningBits.push("edge pass-rush profile");
@@ -615,104 +682,174 @@ function buildHeuristicCriteria(query: string): AiSearchCriteria {
 
   if (/(slot corner|nickel|slot cb)/.test(lower)) {
     uniquePush(positions, "CB");
+    pushFootballPosition(footballPositions, "NB", "Slot");
     addRoleCriterion(roles, "slot_cb", "required", "Slot CB role");
-    addPffCriterion(pffCriteria, "snaps_slot_cb", 40, 1.1, "Slot usage");
-    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.85, "Coverage");
+    addPffCriterion(pffCriteria, "snaps_slot_cb", 40, 1.1, "Slot usage", "high", "alignment");
+    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.85, "Coverage", "high", "pff");
     reasoningBits.push("slot coverage reps");
   }
 
   if (/(boundary corner|outside corner|outside cb|boundary cb)/.test(lower)) {
     uniquePush(positions, "CB");
+    pushFootballPosition(footballPositions, "Boundary", "Outside");
     addRoleCriterion(roles, "outside_cb", "required", "Outside CB role");
-    addPffCriterion(pffCriteria, "snaps_outside_cb", 60, 1.05, "Outside CB usage");
-    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.85, "Coverage");
+    addPffCriterion(pffCriteria, "snaps_outside_cb", 60, 1.05, "Outside CB usage", "high", "alignment");
+    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.85, "Coverage", "high", "pff");
     reasoningBits.push("outside corner usage");
   }
 
   if (/(box safety)/.test(lower)) {
     uniquePush(positions, "S");
+    pushFootballPosition(footballPositions, "Box");
     addRoleCriterion(roles, "box_safety", "required", "Box safety role");
     addTraitCriterion(traits, "run_support", "preferred", "Run support");
     addTraitCriterion(traits, "tackling", "preferred", "Tackling");
-    addPffCriterion(pffCriteria, "snaps_in_box_db", 35, 1.0, "Box usage");
+    addPffCriterion(pffCriteria, "snaps_in_box_db", 35, 1.0, "Box usage", "high", "alignment");
     reasoningBits.push("box safety deployment");
   }
 
   if (/(free safety|deep safety)/.test(lower)) {
     uniquePush(positions, "S");
+    pushFootballPosition(footballPositions, "FS", "Deep");
     addRoleCriterion(roles, "free_safety", "required", "Free safety role");
     addTraitCriterion(traits, "coverage", "preferred", "Coverage");
-    addPffCriterion(pffCriteria, "snaps_free_safety", 35, 1.0, "Free safety usage");
+    addPffCriterion(pffCriteria, "snaps_free_safety", 35, 1.0, "Free safety usage", "high", "alignment");
     reasoningBits.push("free safety deployment");
   }
 
   if (/(strong safety)/.test(lower)) {
     uniquePush(positions, "S");
+    pushFootballPosition(footballPositions, "SS");
     addRoleCriterion(roles, "strong_safety", "required", "Strong safety role");
     addTraitCriterion(traits, "run_support", "preferred", "Run support");
-    addPffCriterion(pffCriteria, "snaps_strong_safety", 35, 1.0, "Strong safety usage");
+    addPffCriterion(pffCriteria, "snaps_strong_safety", 35, 1.0, "Strong safety usage", "high", "alignment");
     reasoningBits.push("strong safety deployment");
   }
 
   if (/(slot receiver|slot wr|slot wide receiver)/.test(lower)) {
     uniquePush(positions, "WR");
+    pushFootballPosition(footballPositions, "Slot");
     addRoleCriterion(roles, "slot_receiver", "required", "Slot WR role");
-    addPffCriterion(pffCriteria, "snaps_slot", 40, 1.0, "Slot usage");
+    addPffCriterion(pffCriteria, "snaps_slot", 40, 1.0, "Slot usage", "high", "alignment");
     reasoningBits.push("slot receiving usage");
   }
 
   if (/(boundary receiver|outside receiver|x receiver|x wr|tall x wr)/.test(lower)) {
     uniquePush(positions, "WR");
+    pushFootballPosition(footballPositions, "X", "Boundary");
     addRoleCriterion(roles, "boundary_receiver", "required", "Boundary WR role");
-    addPffCriterion(pffCriteria, "snaps_wide_left", 35, 0.8, "Boundary reps");
-    addPffCriterion(pffCriteria, "snaps_wide_right", 35, 0.8, "Boundary reps");
+    addPffCriterion(pffCriteria, "snaps_wide_left", 35, 0.8, "Boundary reps", "high", "alignment");
+    addPffCriterion(pffCriteria, "snaps_wide_right", 35, 0.8, "Boundary reps", "high", "alignment");
     reasoningBits.push("boundary receiving usage");
   }
 
   if (/(inline tight end|inline te|y tight end)/.test(lower)) {
     uniquePush(positions, "TE");
+    pushFootballPosition(footballPositions, "Y", "Inline");
     addRoleCriterion(roles, "inline_te", "required", "Inline TE role");
-    addPffCriterion(pffCriteria, "snaps_inline_te", 35, 1.0, "Inline TE usage");
+    addPffCriterion(pffCriteria, "snaps_inline_te", 35, 1.0, "Inline TE usage", "high", "alignment");
     reasoningBits.push("inline TE usage");
   }
 
   if (/(move tight end|flex tight end|move te)/.test(lower)) {
     uniquePush(positions, "TE");
+    pushFootballPosition(footballPositions, "Move");
     addRoleCriterion(roles, "move_te", "required", "Move TE role");
     reasoningBits.push("move TE alignment");
   }
 
   if (/(receiving back|backfield back|backfield rb)/.test(lower)) {
     uniquePush(positions, "RB");
+    pushFootballPosition(footballPositions, "Backfield");
     addRoleCriterion(roles, "backfield_rb", "required", "Backfield RB role");
     addTraitCriterion(traits, "receiving", "preferred", "Receiving");
     reasoningBits.push("backfield receiving profile");
   }
 
+  if (/(guard|left guard|right guard|\biol\b|interior offensive line)/.test(lower)) {
+    uniquePush(positions, "OL");
+    pushFootballPosition(footballPositions, "G", "IOL");
+    reasoningBits.push("guard/iol profile");
+  }
+
+  if (/(center|\bc\b)/.test(lower)) {
+    uniquePush(positions, "OL");
+    pushFootballPosition(footballPositions, "C", "IOL");
+    reasoningBits.push("center profile");
+  }
+
+  if (/(offensive tackle|left tackle|right tackle|\bot\b)/.test(lower)) {
+    uniquePush(positions, "OL");
+    pushFootballPosition(footballPositions, "OT");
+    reasoningBits.push("tackle profile");
+  }
+
   if (/(off-ball linebacker|off ball linebacker|linebacker|box linebacker)/.test(lower)) {
     uniquePush(positions, "LB");
+    pushFootballPosition(footballPositions, "LB");
     reasoningBits.push("linebacker profile");
   }
 
-  if (/(corner|cb)/.test(lower) && positions.length === 0) uniquePush(positions, "CB");
-  if (/(safety)/.test(lower) && positions.length === 0) uniquePush(positions, "S");
-  if (/(wide receiver|receiver| wr\b)/.test(lower) && positions.length === 0) uniquePush(positions, "WR");
-  if (/(running back| rb\b)/.test(lower) && positions.length === 0) uniquePush(positions, "RB");
-  if (/(tight end| te\b)/.test(lower) && positions.length === 0) uniquePush(positions, "TE");
-  if (/(quarterback| qb\b)/.test(lower) && positions.length === 0) uniquePush(positions, "QB");
-  if (/(offensive line|ol|tackle|guard|center)/.test(lower) && positions.length === 0) uniquePush(positions, "OL");
+  if (/(corner|cb)/.test(lower) && positions.length === 0) {
+    uniquePush(positions, "CB");
+    pushFootballPosition(footballPositions, "CB");
+  }
+  if (/(safety)/.test(lower) && positions.length === 0) {
+    uniquePush(positions, "S");
+    pushFootballPosition(footballPositions, "S");
+  }
+  if (/(wide receiver|receiver| wr\b)/.test(lower) && positions.length === 0) {
+    uniquePush(positions, "WR");
+    pushFootballPosition(footballPositions, "WR");
+  }
+  if (/(running back| rb\b)/.test(lower) && positions.length === 0) {
+    uniquePush(positions, "RB");
+    pushFootballPosition(footballPositions, "RB");
+  }
+  if (/(tight end| te\b)/.test(lower) && positions.length === 0) {
+    uniquePush(positions, "TE");
+    pushFootballPosition(footballPositions, "TE");
+  }
+  if (/(quarterback| qb\b)/.test(lower) && positions.length === 0) {
+    uniquePush(positions, "QB");
+    pushFootballPosition(footballPositions, "QB");
+  }
+  if (/(offensive line|ol|tackle|guard|center)/.test(lower) && positions.length === 0) {
+    uniquePush(positions, "OL");
+    pushFootballPosition(footballPositions, "OL");
+  }
+
+  if (/(pass[-\s]?pro|pass protection|pass protector|pass blocking|pass-blocking)/.test(lower)) {
+    addTraitCriterion(traits, "pass_blocking", "preferred", "Pass blocking");
+    addPffCriterion(pffCriteria, "grades_pass_block", 68, 1.0, "Pass block grade", "high", "pff");
+    addPffCriterion(pffCriteria, "stats_pressures_allowed", 8, 0.95, "Pressures allowed", "low", "pff");
+    addPffCriterion(pffCriteria, "stats_sacks_allowed", 2, 0.85, "Sacks allowed", "low", "pff");
+    addPffCriterion(pffCriteria, "stats_pass_block_snaps", 120, 0.7, "Pass-pro usage", "high", "alignment");
+    reasoningBits.push("pass protection weighting");
+  }
+
+  if (/(run blocking|run-blocking|mauler|road grader|move people in the run game)/.test(lower)) {
+    addTraitCriterion(traits, "run_blocking", "preferred", "Run blocking");
+    addPffCriterion(pffCriteria, "grades_run_block", 68, 0.95, "Run block grade", "high", "pff");
+    reasoningBits.push("run-block weighting");
+  }
 
   if (/(run support|good in the run|good against the run|run defense|stops the run)/.test(lower)) {
     addTraitCriterion(traits, "run_support", "preferred", "Run support");
-    addPffCriterion(pffCriteria, "grades_run_defense_lb", 62, 0.75, "Run defense");
-    addPffCriterion(pffCriteria, "grades_run_defense_dl", 62, 0.75, "Run defense");
+    addPffCriterion(pffCriteria, "grades_run_defense_lb", 62, 0.75, "Run defense", "high", "pff");
+    addPffCriterion(pffCriteria, "grades_run_defense_dl", 62, 0.75, "Run defense", "high", "pff");
+    addPffCriterion(pffCriteria, "grades_tackle_db", 64, 0.7, "Tackle grade", "high", "pff");
+    addPffCriterion(pffCriteria, "grades_tackle", 64, 0.7, "Tackle grade", "high", "pff");
+    addProductionPriority(productionPriorities, "tackles", 40, 0.55, "Tackles");
     reasoningBits.push("run-defense evidence");
   }
 
   if (/(coverage|cover|man cover|zone cover)/.test(lower)) {
     addTraitCriterion(traits, "coverage", "preferred", "Coverage");
-    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.75, "Coverage");
-    addPffCriterion(pffCriteria, "grades_coverage_lb", 62, 0.75, "Coverage");
+    addPffCriterion(pffCriteria, "grades_coverage_db", 62, 0.75, "Coverage", "high", "pff");
+    addPffCriterion(pffCriteria, "grades_coverage_lb", 62, 0.75, "Coverage", "high", "pff");
+    addPffCriterion(pffCriteria, "stats_targets_allowed", 25, 0.65, "Targets allowed", "low", "pff");
+    addPffCriterion(pffCriteria, "stats_yards_allowed", 275, 0.65, "Yards allowed", "low", "pff");
     reasoningBits.push("coverage evidence");
   }
 
@@ -773,11 +910,20 @@ function buildHeuristicCriteria(query: string): AiSearchCriteria {
 
   const criteria: AiSearchCriteria = {
     positions,
+    football_positions: footballPositions,
     min_years_remaining: yearsRemaining,
     min_weight_lbs: weightBounds.min,
     max_weight_lbs: weightBounds.max,
     min_height_in: heightBounds.min,
     max_height_in: heightBounds.max,
+    filters: {
+      active_in_portal: true,
+      min_years_remaining: yearsRemaining,
+      min_weight_lbs: weightBounds.min,
+      max_weight_lbs: weightBounds.max,
+      min_height_in: heightBounds.min,
+      max_height_in: heightBounds.max,
+    },
     roles,
     traits,
     pff_criteria: pffCriteria,
@@ -840,13 +986,28 @@ function positionFamily(players: Player[], criteria: AiSearchCriteria): Position
 }
 
 function normalizeCriteria(parsed: z.infer<typeof criteriaSchema>): AiSearchCriteria {
+  const filterYears = parsed.filters?.min_years_remaining ?? parsed.min_years_remaining ?? undefined;
+  const filterMinWeight = parsed.filters?.min_weight_lbs ?? parsed.min_weight_lbs ?? undefined;
+  const filterMaxWeight = parsed.filters?.max_weight_lbs ?? parsed.max_weight_lbs ?? undefined;
+  const filterMinHeight = parsed.filters?.min_height_in ?? parsed.min_height_in ?? undefined;
+  const filterMaxHeight = parsed.filters?.max_height_in ?? parsed.max_height_in ?? undefined;
+
   return {
     positions: parsed.positions ?? [],
-    min_years_remaining: parsed.min_years_remaining ?? undefined,
-    min_weight_lbs: parsed.min_weight_lbs ?? undefined,
-    max_weight_lbs: parsed.max_weight_lbs ?? undefined,
-    min_height_in: parsed.min_height_in ?? undefined,
-    max_height_in: parsed.max_height_in ?? undefined,
+    football_positions: parsed.football_positions ?? [],
+    min_years_remaining: filterYears,
+    min_weight_lbs: filterMinWeight,
+    max_weight_lbs: filterMaxWeight,
+    min_height_in: filterMinHeight,
+    max_height_in: filterMaxHeight,
+    filters: {
+      active_in_portal: parsed.filters?.active_in_portal ?? true,
+      min_years_remaining: filterYears,
+      min_weight_lbs: filterMinWeight,
+      max_weight_lbs: filterMaxWeight,
+      min_height_in: filterMinHeight,
+      max_height_in: filterMaxHeight,
+    },
     roles: parsed.roles ?? [],
     traits: parsed.traits ?? [],
     pff_criteria: parsed.pff_criteria ?? [],
@@ -1033,6 +1194,22 @@ function scoreTraitFit(
           ratioScore(getStatValue(player, "sacks"), 4)
         ) / 3
       );
+    case "pass_blocking":
+      return Math.round(
+        (
+          gradeToScore(toNumber(pffStats?.grades_pass_block ?? pffStats?.grades_pass_block_rb ?? null)) +
+          inverseMetricScore(toNumber(pffStats?.stats_pressures_allowed ?? pffStats?.stats_pressures_allowed_rb ?? null), 10, 4) +
+          inverseMetricScore(toNumber(pffStats?.stats_sacks_allowed ?? null), 2, 0)
+        ) / 3
+      );
+    case "run_blocking":
+      return Math.round(
+        (
+          gradeToScore(toNumber(pffStats?.grades_run_block ?? pffStats?.grades_run_block_rb ?? null)) +
+          ratioScore(toNumber(pffStats?.stats_pass_block_snaps), 120) +
+          ratioScore(getStatValue(player, "starts"), 6)
+        ) / 3
+      );
     case "route_running":
       return Math.round(
         (
@@ -1079,7 +1256,7 @@ function scoreTraitFit(
 }
 
 function scorePffCriteria(criteria: AiSearchCriteria, pffStats: Record<string, unknown> | null): number {
-  if (!pffStats) return 35;
+  if (!pffStats && criteria.pff_criteria.length > 0) return 35;
   if (criteria.pff_criteria.length === 0) {
     return gradeToScore(getPffPrimaryGrade(pffStats)?.value ?? null);
   }
@@ -1088,9 +1265,15 @@ function scorePffCriteria(criteria: AiSearchCriteria, pffStats: Record<string, u
   const weights: number[] = [];
 
   for (const criterion of criteria.pff_criteria) {
-    const value = toNumber(pffStats[criterion.column]);
+    const value = toNumber(pffStats?.[criterion.column]);
     if (value == null) continue;
-    weighted.push(ratioScore(value, criterion.min_value) * criterion.weight);
+    const score =
+      criterion.preference === "low"
+        ? inverseMetricScore(value, criterion.target_value, Math.max(0, criterion.target_value * 0.45))
+        : criterion.column.startsWith("grades_")
+          ? Math.max(gradeToScore(value), ratioScore(value, criterion.target_value))
+          : ratioScore(value, criterion.target_value);
+    weighted.push(score * criterion.weight);
     weights.push(criterion.weight);
   }
 
@@ -1372,6 +1555,12 @@ function preferredGradeEvidence(
       case "pass_rush":
         addCandidate("Pass rush", pffStats.grades_pass_rush ?? pffStats.grades_pass_rush_lb);
         break;
+      case "pass_blocking":
+        addCandidate("Pass Block", pffStats.grades_pass_block ?? pffStats.grades_pass_block_rb);
+        break;
+      case "run_blocking":
+        addCandidate("Run Block", pffStats.grades_run_block ?? pffStats.grades_run_block_rb);
+        break;
       case "route_running":
       case "receiving":
         addCandidate("Route grade", pffStats.grades_pass_route);
@@ -1429,6 +1618,36 @@ function preferredProductionEvidence(criteria: AiSearchCriteria, player: Player)
   return compactProductionBadge(criteria, player);
 }
 
+function preferredWeightedFieldEvidence(
+  criteria: AiSearchCriteria,
+  pffStats: Record<string, unknown> | null
+): string | null {
+  if (!pffStats || criteria.pff_criteria.length === 0) return null;
+
+  const candidates = criteria.pff_criteria
+    .map((criterion) => {
+      const value = toNumber(pffStats[criterion.column]);
+      if (value == null) return null;
+      const rendered = criterion.preference === "low" ? value.toFixed(Number.isInteger(value) ? 0 : 1) : value.toFixed(Number.isInteger(value) ? 0 : 1);
+      const score =
+        criterion.preference === "low"
+          ? inverseMetricScore(value, criterion.target_value, Math.max(0, criterion.target_value * 0.45))
+          : criterion.column.startsWith("grades_")
+            ? Math.max(gradeToScore(value), ratioScore(value, criterion.target_value))
+            : ratioScore(value, criterion.target_value);
+      return {
+        label: criterion.label,
+        value: rendered,
+        score: score * criterion.weight,
+      };
+    })
+    .filter(Boolean) as Array<{ label: string; value: string; score: number }>;
+
+  return candidates.sort((a, b) => b.score - a.score)[0]
+    ? `${candidates.sort((a, b) => b.score - a.score)[0]!.label} ${candidates.sort((a, b) => b.score - a.score)[0]!.value}`
+    : null;
+}
+
 function buildSearchExplanation(
   criteria: AiSearchCriteria,
   player: Player,
@@ -1452,6 +1671,7 @@ function buildSearchExplanation(
   }
 
   const evidenceParts = [
+    preferredWeightedFieldEvidence(criteria, pffStats),
     preferredGradeEvidence(criteria, player, pffStats),
     flashLine ? null : preferredProductionEvidence(criteria, player),
   ].filter(Boolean) as string[];
@@ -1493,6 +1713,14 @@ function buildFeaturedStats(
       case "pass_rush":
         pushFeaturedStat(featured, "Pass Rush", toNumber(pffStats?.grades_pass_rush ?? pffStats?.grades_pass_rush_lb)?.toFixed(1) ?? null, gradeToScore(toNumber(pffStats?.grades_pass_rush ?? pffStats?.grades_pass_rush_lb ?? null)));
         pushFeaturedStat(featured, "Sacks", getStatValue(player, "sacks") != null ? formatStatValue(getStatValue(player, "sacks")!) : null, ratioScore(getStatValue(player, "sacks"), 4));
+        break;
+      case "pass_blocking":
+        pushFeaturedStat(featured, "Pass Block", toNumber(pffStats?.grades_pass_block ?? pffStats?.grades_pass_block_rb)?.toFixed(1) ?? null, gradeToScore(toNumber(pffStats?.grades_pass_block ?? pffStats?.grades_pass_block_rb ?? null)));
+        pushFeaturedStat(featured, "Press Allowed", toNumber(pffStats?.stats_pressures_allowed ?? pffStats?.stats_pressures_allowed_rb) != null ? formatStatValue(toNumber(pffStats?.stats_pressures_allowed ?? pffStats?.stats_pressures_allowed_rb)!) : null, inverseMetricScore(toNumber(pffStats?.stats_pressures_allowed ?? pffStats?.stats_pressures_allowed_rb ?? null), 10, 4));
+        pushFeaturedStat(featured, "Sacks Allowed", toNumber(pffStats?.stats_sacks_allowed) != null ? formatStatValue(toNumber(pffStats?.stats_sacks_allowed)!) : null, inverseMetricScore(toNumber(pffStats?.stats_sacks_allowed ?? null), 2, 0));
+        break;
+      case "run_blocking":
+        pushFeaturedStat(featured, "Run Block", toNumber(pffStats?.grades_run_block ?? pffStats?.grades_run_block_rb)?.toFixed(1) ?? null, gradeToScore(toNumber(pffStats?.grades_run_block ?? pffStats?.grades_run_block_rb ?? null)));
         break;
       case "route_running":
         pushFeaturedStat(featured, "Route Grade", toNumber(pffStats?.grades_pass_route)?.toFixed(1) ?? null, gradeToScore(toNumber(pffStats?.grades_pass_route ?? null)));
@@ -1600,6 +1828,7 @@ function buildReasonBadges(
 
 export function filterPlayersByAiCriteria(criteria: AiSearchCriteria, players: Player[]): Player[] {
   return players.filter((player) => {
+    if (criteria.filters.active_in_portal && player.active_in_portal === false) return false;
     if (criteria.positions.length > 0 && !criteria.positions.includes(player.position)) return false;
     if (criteria.min_years_remaining != null && player.eligibility_remaining < criteria.min_years_remaining) return false;
     if (criteria.min_weight_lbs != null && player.measurements?.weight_lbs != null && player.measurements.weight_lbs < criteria.min_weight_lbs) return false;

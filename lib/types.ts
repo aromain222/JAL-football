@@ -82,6 +82,7 @@ export interface Player {
   first_name: string;
   last_name: string;
   position: PositionGroup;
+  position_group?: PositionGroup | null;
   transfer_year: number;
   current_school: string;
   previous_school: string | null;
@@ -98,6 +99,9 @@ export interface Player {
   contact_window: string | null;
   notes: string | null;
   conference?: string | null;
+  active_in_portal?: boolean;
+  first_seen_at?: string | null;
+  last_seen_at?: string | null;
   measurements?: PlayerMeasurement | null;
   latest_stats?: PlayerStat | null;
   tags?: string[];
