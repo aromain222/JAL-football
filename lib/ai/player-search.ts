@@ -33,7 +33,13 @@ export type AiRoleKey =
   | "boundary_receiver"
   | "inline_te"
   | "move_te"
-  | "backfield_rb";
+  | "backfield_rb"
+  // OL subroles — differentiate guard/tackle/center by snap alignment
+  | "pass_pro_guard"   // interior guard, pass-protection emphasis
+  | "run_block_guard"  // interior guard, run-game emphasis
+  | "left_tackle"      // blindside tackle
+  | "right_tackle"     // right tackle
+  | "center_anchor";   // center
 
 export type AiTraitKey =
   | "run_support"
@@ -46,7 +52,8 @@ export type AiTraitKey =
   | "big_body"
   | "receiving"
   | "tackling"
-  | "ball_skills";
+  | "ball_skills"
+  | "pass_block";  // OL pass protection: grades_pass_block up, pressures/sacks allowed down
 
 export type PffCriterion = {
   column: string;
@@ -142,6 +149,11 @@ IMPORTANT POSITION MAPPING:
 - inline tight end / Y tight end -> positions ["TE"], role "inline_te"
 - move tight end / flex tight end -> positions ["TE"], role "move_te"
 - backfield running back / receiving back -> positions ["RB"], role "backfield_rb"
+- pass blocking guard / interior OL / guard / IOL / G -> positions ["OL"], role "pass_pro_guard", trait "pass_block"
+- run blocking guard / mauler guard / power guard -> positions ["OL"], role "run_block_guard"
+- left tackle / blindside tackle / blind side -> positions ["OL"], role "left_tackle", trait "pass_block"
+- right tackle / RT -> positions ["OL"], role "right_tackle"
+- center / anchor / C -> positions ["OL"], role "center_anchor"
 
 TRAIT KEYS:
 - run_support
@@ -155,6 +167,7 @@ TRAIT KEYS:
 - receiving
 - tackling
 - ball_skills
+- pass_block   (OL: rewards grades_pass_block; penalizes stats_pressures_allowed and stats_sacks_allowed per snap)
 
 USE THESE REAL PFF FIELDS:
 - grades_pass
@@ -185,9 +198,20 @@ USE THESE REAL PFF FIELDS:
 - stats_pass_breakups
 - stats_interceptions_def
 - stats_passer_rating_allowed
+- stats_pass_block_snaps   (total OL pass-pro snaps — use to normalize pressure/sack rates)
+- stats_pressures_allowed  (OL: lower is better — use as negative-weight criterion)
+- stats_sacks_allowed      (OL: lower is better — use as negative-weight criterion)
+- stats_hits_allowed       (OL: lower is better)
 - snaps_interior_dl
 - snaps_at_left_end
 - snaps_at_right_end
+- snaps_at_left_guard      (OL guard alignment snaps)
+- snaps_at_right_guard     (OL guard alignment snaps)
+- snaps_at_center          (OL center alignment snaps)
+- snaps_at_left_tackle     (OL LT snaps)
+- snaps_at_right_tackle    (OL RT snaps)
+- snaps_in_box_lb          (LB box alignment)
+- snaps_off_ball_lb        (LB off-ball alignment)
 - snaps_slot_cb
 - snaps_outside_cb
 - snaps_in_box_db
@@ -228,6 +252,10 @@ RULES:
 - For "nose tackle" or "nose guard", use positions ["DL"], role "interior_dl", strongly consider traits "big_body" and "run_support", and set a meaningful min_weight_lbs floor unless the coach explicitly says otherwise.
 - For "slot corner", use positions ["CB"], role "slot_cb"; if the coach mentions run support, add traits "run_support" and "tackling".
 - For "off-ball linebacker" or "box linebacker", use positions ["LB"] and lean on traits like "run_support", "tackling", and "big_body" when the wording implies it.
+- For "pass blocking guard" or "interior OL / IOL", use positions ["OL"], role "pass_pro_guard", trait "pass_block", and add pff_criteria for grades_pass_block (min_value 62, weight 1.1) plus stats_pressures_allowed as a negative signal (min_value 8, weight -0.7 — lower pressures = better).
+- For "blindside tackle" or "left tackle", use positions ["OL"], role "left_tackle", trait "pass_block".
+- For "center", use positions ["OL"], role "center_anchor"; emphasize grades_pass_block and grades_run_block equally.
+- For "run blocking guard" or "mauler", use positions ["OL"], role "run_block_guard", add pff_criteria grades_run_block.
 - When the query asks for physicality, box play, run defense, or tackle volume, include both trait evidence and production priorities that reflect that ask.
 
 Return ONLY valid JSON:
@@ -269,6 +297,11 @@ const roleSchema = z.enum([
   "inline_te",
   "move_te",
   "backfield_rb",
+  "pass_pro_guard",
+  "run_block_guard",
+  "left_tackle",
+  "right_tackle",
+  "center_anchor",
 ]);
 const traitSchema = z.enum([
   "run_support",
@@ -282,6 +315,7 @@ const traitSchema = z.enum([
   "receiving",
   "tackling",
   "ball_skills",
+  "pass_block",
 ]);
 
 const criteriaSchema = z.object({
@@ -359,6 +393,11 @@ const ROLE_LABELS: Record<AiRoleKey, string> = {
   inline_te: "Inline TE",
   move_te: "Move TE",
   backfield_rb: "Backfield RB",
+  pass_pro_guard: "Pass Pro Guard",
+  run_block_guard: "Run Block Guard",
+  left_tackle: "Left Tackle",
+  right_tackle: "Right Tackle",
+  center_anchor: "Center",
 };
 
 const ROLE_SNAP_LABELS: Record<AiRoleKey, string> = {
@@ -374,6 +413,11 @@ const ROLE_SNAP_LABELS: Record<AiRoleKey, string> = {
   inline_te: "inline TE snaps",
   move_te: "move TE reps",
   backfield_rb: "backfield reps",
+  pass_pro_guard: "guard pass-pro snaps",
+  run_block_guard: "guard run-block snaps",
+  left_tackle: "left tackle snaps",
+  right_tackle: "right tackle snaps",
+  center_anchor: "center snaps",
 };
 
 const DEFAULT_PRODUCTION_PRIORITIES: Partial<Record<PositionGroup, AiProductionPriority[]>> = {
@@ -585,8 +629,11 @@ function inferImplicitHeightFloor(query: string, positions: PositionGroup[]): nu
       return 74;
     case "LB":
       return 73;
-    case "OL":
-      return 76;
+    case "OL": {
+      // Guards run shorter; tackles need the length
+      if (/tackle/.test(query)) return 77;
+      return 75;
+    }
     case "QB":
       return 74;
     case "RB":
@@ -612,6 +659,17 @@ function inferImplicitWeightFloor(
   if (hasInteriorDlRole || (positions.includes("DL") && /(interior defensive tackle|interior dl|defensive tackle)/.test(lower))) {
     if (/(big|massive|heavy)/.test(lower)) return 290;
     return 275;
+  }
+
+  const hasOlRole = roles.some((r) => ["pass_pro_guard", "run_block_guard", "left_tackle", "right_tackle", "center_anchor"].includes(r.key));
+  if (hasOlRole || (positions.includes("OL") && /(guard|tackle|center|ol\b|interior)/.test(lower))) {
+    const isGuard = roles.some((r) => r.key === "pass_pro_guard" || r.key === "run_block_guard") || /guard/.test(lower);
+    const isTackle = roles.some((r) => r.key === "left_tackle" || r.key === "right_tackle") || /tackle/.test(lower);
+    const isCenter = roles.some((r) => r.key === "center_anchor") || /center/.test(lower);
+    if (isTackle) return 290;
+    if (isCenter) return 285;
+    if (isGuard) return 295;
+    return 285;
   }
 
   return undefined;
@@ -790,49 +848,55 @@ function buildHeuristicCriteria(query: string): AiSearchCriteria {
     reasoningBits.push("linebacker profile");
   }
 
-  if (/(corner|cb)/.test(lower) && positions.length === 0) {
-    uniquePush(positions, "CB");
-    pushFootballPosition(footballPositions, "CB");
-  }
-  if (/(safety)/.test(lower) && positions.length === 0) {
-    uniquePush(positions, "S");
-    pushFootballPosition(footballPositions, "S");
-  }
-  if (/(wide receiver|receiver| wr\b)/.test(lower) && positions.length === 0) {
-    uniquePush(positions, "WR");
-    pushFootballPosition(footballPositions, "WR");
-  }
-  if (/(running back| rb\b)/.test(lower) && positions.length === 0) {
-    uniquePush(positions, "RB");
-    pushFootballPosition(footballPositions, "RB");
-  }
-  if (/(tight end| te\b)/.test(lower) && positions.length === 0) {
-    uniquePush(positions, "TE");
-    pushFootballPosition(footballPositions, "TE");
-  }
-  if (/(quarterback| qb\b)/.test(lower) && positions.length === 0) {
-    uniquePush(positions, "QB");
-    pushFootballPosition(footballPositions, "QB");
-  }
-  if (/(offensive line|ol|tackle|guard|center)/.test(lower) && positions.length === 0) {
+  // ── OL subroles ──────────────────────────────────────────────────────────
+  if (/(pass.?block(?:ing)?\s+guard|\biol\b|interior\s+(?:ol|offensive\s+line|guard)|guard.*pass.?block(?:ing)?|\bpass\s+pro\s+guard\b)/.test(lower)) {
     uniquePush(positions, "OL");
-    pushFootballPosition(footballPositions, "OL");
+    addRoleCriterion(roles, "pass_pro_guard", "required", "Pass-pro guard role");
+    addTraitCriterion(traits, "pass_block", "required", "Pass protection");
+    addPffCriterion(pffCriteria, "grades_pass_block", 62, 1.1, "Pass block grade");
+    addPffCriterion(pffCriteria, "snaps_at_left_guard", 60, 0.9, "Guard alignment");
+    reasoningBits.push("pass-blocking guard profile");
+  } else if (/(run.?block(?:ing)?\s+guard|power\s+guard|mauler\s+guard|pulling\s+guard)/.test(lower)) {
+    uniquePush(positions, "OL");
+    addRoleCriterion(roles, "run_block_guard", "required", "Run-block guard role");
+    addPffCriterion(pffCriteria, "grades_run_block", 62, 1.1, "Run block grade");
+    reasoningBits.push("run-blocking guard profile");
+  } else if (/(blind\s*side\s*tackle|left\s*tackle|\blt\b|pass.?protect(?:ing)?\s+tackle)/.test(lower)) {
+    uniquePush(positions, "OL");
+    addRoleCriterion(roles, "left_tackle", "required", "Left tackle role");
+    addTraitCriterion(traits, "pass_block", "preferred", "Pass protection");
+    addPffCriterion(pffCriteria, "grades_pass_block", 62, 1.0, "Pass block grade");
+    addPffCriterion(pffCriteria, "snaps_at_left_tackle", 80, 0.9, "LT alignment");
+    reasoningBits.push("blindside tackle / left tackle profile");
+  } else if (/(right\s*tackle|\brt\b)/.test(lower)) {
+    uniquePush(positions, "OL");
+    addRoleCriterion(roles, "right_tackle", "preferred", "Right tackle role");
+    addPffCriterion(pffCriteria, "grades_pass_block", 60, 0.9, "Pass block grade");
+    addPffCriterion(pffCriteria, "snaps_at_right_tackle", 80, 0.9, "RT alignment");
+    reasoningBits.push("right tackle profile");
+  } else if (/\bcenter\b/.test(lower) && !/(center field|safety|db|defensive)/.test(lower)) {
+    uniquePush(positions, "OL");
+    addRoleCriterion(roles, "center_anchor", "required", "Center role");
+    addPffCriterion(pffCriteria, "snaps_at_center", 80, 1.0, "Center alignment");
+    addPffCriterion(pffCriteria, "grades_pass_block", 60, 0.8, "Pass block");
+    addPffCriterion(pffCriteria, "grades_run_block", 60, 0.8, "Run block");
+    reasoningBits.push("center profile");
   }
 
-  if (/(pass[-\s]?pro|pass protection|pass protector|pass blocking|pass-blocking)/.test(lower)) {
-    addTraitCriterion(traits, "pass_blocking", "preferred", "Pass blocking");
-    addPffCriterion(pffCriteria, "grades_pass_block", 68, 1.0, "Pass block grade", "high", "pff");
-    addPffCriterion(pffCriteria, "stats_pressures_allowed", 8, 0.95, "Pressures allowed", "low", "pff");
-    addPffCriterion(pffCriteria, "stats_sacks_allowed", 2, 0.85, "Sacks allowed", "low", "pff");
-    addPffCriterion(pffCriteria, "stats_pass_block_snaps", 120, 0.7, "Pass-pro usage", "high", "alignment");
-    reasoningBits.push("pass protection weighting");
+  if (/(pass.?block(?:ing)?|pass\s+protect(?:ion|ing)?)/.test(lower) && positions.includes("OL")) {
+    addTraitCriterion(traits, "pass_block", "preferred", "Pass protection");
+    addPffCriterion(pffCriteria, "grades_pass_block", 62, 1.0, "Pass block grade");
+    reasoningBits.push("pass-protection emphasis");
   }
+  // ─────────────────────────────────────────────────────────────────────────
 
-  if (/(run blocking|run-blocking|mauler|road grader|move people in the run game)/.test(lower)) {
-    addTraitCriterion(traits, "run_blocking", "preferred", "Run blocking");
-    addPffCriterion(pffCriteria, "grades_run_block", 68, 0.95, "Run block grade", "high", "pff");
-    reasoningBits.push("run-block weighting");
-  }
+  if (/(corner|cb)/.test(lower) && positions.length === 0) uniquePush(positions, "CB");
+  if (/(safety)/.test(lower) && positions.length === 0) uniquePush(positions, "S");
+  if (/(wide receiver|receiver| wr\b)/.test(lower) && positions.length === 0) uniquePush(positions, "WR");
+  if (/(running back| rb\b)/.test(lower) && positions.length === 0) uniquePush(positions, "RB");
+  if (/(tight end| te\b)/.test(lower) && positions.length === 0) uniquePush(positions, "TE");
+  if (/(quarterback| qb\b)/.test(lower) && positions.length === 0) uniquePush(positions, "QB");
+  if (/(offensive line|\bol\b|offensive\s+lineman)/.test(lower) && positions.length === 0) uniquePush(positions, "OL");
 
   if (/(run support|good in the run|good against the run|run defense|stops the run)/.test(lower)) {
     addTraitCriterion(traits, "run_support", "preferred", "Run support");
@@ -1072,6 +1136,15 @@ function roleAlignmentValue(role: AiRoleKey, pffStats: Record<string, unknown> |
       return value("snaps_slot") + value("snaps_wide_left") + value("snaps_wide_right");
     case "backfield_rb":
       return value("snaps_backfield");
+    case "pass_pro_guard":
+    case "run_block_guard":
+      return value("snaps_at_left_guard") + value("snaps_at_right_guard");
+    case "left_tackle":
+      return value("snaps_at_left_tackle");
+    case "right_tackle":
+      return value("snaps_at_right_tackle");
+    case "center_anchor":
+      return value("snaps_at_center");
   }
 }
 
@@ -1082,6 +1155,11 @@ function roleAlignmentTarget(role: AiRoleKey): number {
     case "outside_cb":
     case "slot_receiver":
     case "boundary_receiver":
+    case "pass_pro_guard":
+    case "run_block_guard":
+    case "left_tackle":
+    case "right_tackle":
+    case "center_anchor":
       return 120;
     case "slot_cb":
     case "box_safety":
@@ -1100,6 +1178,11 @@ function roleAlignmentGate(role: AiRoleKey): number {
     case "edge":
     case "outside_cb":
     case "boundary_receiver":
+    case "pass_pro_guard":
+    case "run_block_guard":
+    case "left_tackle":
+    case "right_tackle":
+    case "center_anchor":
       return 60;
     case "slot_cb":
     case "slot_receiver":
@@ -1252,6 +1335,44 @@ function scoreTraitFit(
           ratioScore(getStatValue(player, "passes_defended"), 5)
         ) / 3
       );
+    case "pass_block": {
+      // Positive signal: PFF pass-block grade (primary OL quality signal)
+      const blockGradeScore = gradeToScore(toNumber(pffStats?.grades_pass_block ?? null));
+
+      // Negative signals: pressures and sacks allowed — scored as rates per snap
+      // to avoid punishing players with high volume.
+      // Pressure rate: elite OL < 1%, good < 3%, average ~5%
+      // Sack rate:     elite OL < 0.4%, good < 1%, average ~2%
+      const blockSnaps = toNumber(pffStats?.stats_pass_block_snaps) ?? 0;
+      const pressures = toNumber(pffStats?.stats_pressures_allowed) ?? null;
+      const sacks = toNumber(pffStats?.stats_sacks_allowed) ?? null;
+
+      const pressureScore =
+        pressures != null && blockSnaps > 0
+          ? inverseMetricScore(pressures / blockSnaps, 0.05, 0.01)
+          : blockSnaps === 0 && pressures != null
+            ? inverseMetricScore(pressures, 5, 1)  // raw count fallback
+            : 50;
+
+      const sackScore =
+        sacks != null && blockSnaps > 0
+          ? inverseMetricScore(sacks / blockSnaps, 0.02, 0.004)
+          : blockSnaps === 0 && sacks != null
+            ? inverseMetricScore(sacks, 2, 0)
+            : 55;
+
+      // Also reward pass-block snap volume as a proxy for starter usage
+      const snapVolumeScore = blockSnaps > 0 ? clamp(35 + Math.min(blockSnaps, 400) / 400 * 65) : 45;
+
+      // Weighted: grade is primary, pressure/sack rates are meaningful penalties,
+      // snap volume confirms real starter experience
+      return Math.round(
+        blockGradeScore * 0.45 +
+        pressureScore  * 0.28 +
+        sackScore      * 0.17 +
+        snapVolumeScore * 0.10
+      );
+    }
   }
 }
 
@@ -1572,6 +1693,10 @@ function preferredGradeEvidence(
       case "ball_skills":
         addCandidate("Coverage", pffStats.grades_coverage_db ?? pffStats.grades_coverage_lb);
         break;
+      case "pass_block":
+        addCandidate("Pass Block", pffStats.grades_pass_block);
+        addCandidate("Run Block", pffStats.grades_run_block);
+        break;
       case "explosive":
       case "big_body":
         break;
@@ -1744,6 +1869,33 @@ function buildFeaturedStats(
         pushFeaturedStat(featured, "INTs", getStatValue(player, "interceptions") != null ? formatStatValue(getStatValue(player, "interceptions")!) : null, ratioScore(getStatValue(player, "interceptions"), 2));
         pushFeaturedStat(featured, "PBUs", getStatValue(player, "passes_defended") != null ? formatStatValue(getStatValue(player, "passes_defended")!) : null, ratioScore(getStatValue(player, "passes_defended"), 5));
         break;
+      case "pass_block": {
+        const blockGrade = toNumber(pffStats?.grades_pass_block);
+        pushFeaturedStat(featured, "Pass Block", blockGrade != null ? blockGrade.toFixed(1) : null, gradeToScore(blockGrade));
+
+        const pressures = toNumber(pffStats?.stats_pressures_allowed);
+        const blockSnaps = toNumber(pffStats?.stats_pass_block_snaps) ?? 0;
+        if (pressures != null) {
+          const pressureLabel = blockSnaps > 0
+            ? `${pressures} pressures (${((pressures / blockSnaps) * 100).toFixed(1)}%)`
+            : `${pressures} pressures`;
+          // Score inversely — fewer pressures = better
+          const pressureScore = blockSnaps > 0
+            ? inverseMetricScore(pressures / blockSnaps, 0.05, 0.01)
+            : inverseMetricScore(pressures, 5, 1);
+          pushFeaturedStat(featured, "Pressures Allowed", pressureLabel, pressureScore);
+        }
+
+        const sacks = toNumber(pffStats?.stats_sacks_allowed);
+        if (sacks != null) {
+          pushFeaturedStat(featured, "Sacks Allowed", formatStatValue(sacks), inverseMetricScore(sacks, 2, 0));
+        }
+
+        if (blockSnaps > 0) {
+          pushFeaturedStat(featured, "Pass Pro Snaps", `${Math.round(blockSnaps)}`, clamp(35 + Math.min(blockSnaps, 400) / 400 * 65));
+        }
+        break;
+      }
     }
   }
 
