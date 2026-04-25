@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/sync-portal",
       "schedule": "0 6 * * *"
+    },
+    {
+      "path": "/api/cron/enrich-queue",
+      "schedule": "0 */2 * * *"
     }
   ]
 }

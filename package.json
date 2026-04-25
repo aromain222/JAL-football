@@ -45,7 +45,12 @@
     "pff:merge-snaps": "tsx scripts/merge-pff-snap-counts-xlsx.ts",
     "pff:sync-players": "tsx scripts/pff-sync-players.ts",
     "pff:import-positions": "tsx scripts/import-pff-position-tables.ts",
-    "pff:all": "npm run pff:download && npm run pff:import && npm run pff:sync-players && npm run pff:spreadsheet"
+    "pff:all": "npm run pff:download && npm run pff:import && npm run pff:sync-players && npm run pff:spreadsheet",
+    "pipeline:sync-portal": "tsx scripts/pipeline/sync-portal.ts",
+    "pipeline:enrich": "tsx scripts/pipeline/run-enrichment.ts",
+    "pipeline:scrape-pff": "tsx scripts/pipeline/scrape-pff-batch.ts",
+    "pipeline:requeue-failed": "tsx scripts/pipeline/requeue-failed.ts",
+    "pipeline:run-all": "npm run pipeline:sync-portal && npm run pipeline:enrich && npm run pipeline:scrape-pff"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

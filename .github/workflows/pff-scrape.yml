@@ -1,0 +1,79 @@
+name: PFF Nightly Scrape
+
+on:
+  schedule:
+    # 7 AM UTC daily — after the 6 AM Vercel cron (portal sync + ESPN enrichment)
+    - cron: "0 7 * * *"
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: "Number of players to scrape per run"
+        required: false
+        default: "10"
+      reset_attempts:
+        description: "Reset attempt counts before running (true/false)"
+        required: false
+        default: "false"
+
+jobs:
+  scrape-pff:
+    name: Scrape PFF grades
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
+      - name: Restore Playwright session cache
+        uses: actions/cache@v4
+        with:
+          path: .playwright-pff
+          key: pff-session-${{ runner.os }}
+          restore-keys: pff-session-
+
+      - name: Re-queue failed entries (if reset_attempts)
+        if: ${{ github.event.inputs.reset_attempts == 'true' }}
+        run: npm run pipeline:requeue-failed
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          RESET_ATTEMPTS: "true"
+
+      - name: Sync portal (ensure queue is up to date)
+        run: npm run pipeline:sync-portal
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          SPORTRADAR_API_KEY: ${{ secrets.SPORTRADAR_API_KEY }}
+          SPORTRADAR_ACCESS_LEVEL: ${{ secrets.SPORTRADAR_ACCESS_LEVEL }}
+          TRANSFER_YEAR: ${{ secrets.TRANSFER_YEAR }}
+
+      - name: Scrape PFF grades
+        run: npm run pipeline:scrape-pff
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          PFF_EMAIL: ${{ secrets.PFF_EMAIL }}
+          PFF_PASSWORD: ${{ secrets.PFF_PASSWORD }}
+          PFF_SEASON: "2025"
+          PLAYWRIGHT_USER_DATA_DIR: ".playwright-pff"
+          BATCH_SIZE: ${{ github.event.inputs.batch_size || '10' }}
+          WORKER_ID: "github-actions-${{ github.run_id }}"
+
+      - name: Save Playwright session cache
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: .playwright-pff
+          key: pff-session-${{ runner.os }}
