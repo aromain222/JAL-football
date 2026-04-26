@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Migration 002: Transfer Portal Data Pipeline Tables
--- Run in Supabase SQL Editor or via supabase db push
+-- Run in Supabase SQL Editor AFTER schema.sql has been applied.
+-- Safe to re-run (idempotent throughout).
 -- ============================================================================
 
 -- ── player_portal_events ─────────────────────────────────────────────────────
@@ -8,7 +9,7 @@
 
 CREATE TABLE IF NOT EXISTS public.player_portal_events (
   id             UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-  player_id      UUID         NOT NULL REFERENCES public.players(id) ON DELETE CASCADE,
+  player_id      UUID         NOT NULL,
   sportradar_id  TEXT,
   event_type     TEXT         NOT NULL
                    CHECK (event_type IN ('entered','committed','withdrawn','updated','re_entered')),
@@ -29,7 +30,7 @@ CREATE INDEX IF NOT EXISTS idx_portal_events_player
 
 CREATE TABLE IF NOT EXISTS public.enrichment_queue (
   id            UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
-  player_id     UUID         NOT NULL REFERENCES public.players(id) ON DELETE CASCADE,
+  player_id     UUID         NOT NULL,
   status        TEXT         NOT NULL DEFAULT 'pending'
                   CHECK (status IN ('pending','claimed','done','failed','skipped')),
   priority      INT          NOT NULL DEFAULT 5 CHECK (priority BETWEEN 1 AND 10),
@@ -58,7 +59,7 @@ CREATE INDEX IF NOT EXISTS idx_enrichment_queue_poll
 CREATE TABLE IF NOT EXISTS public.enrichment_runs (
   id              UUID         PRIMARY KEY DEFAULT gen_random_uuid(),
   queue_entry_id  UUID         REFERENCES public.enrichment_queue(id) ON DELETE SET NULL,
-  player_id       UUID         NOT NULL REFERENCES public.players(id) ON DELETE CASCADE,
+  player_id       UUID         NOT NULL,
   step            TEXT         NOT NULL
                     CHECK (step IN (
                       'espn_resolve',
@@ -103,30 +104,73 @@ CREATE TABLE IF NOT EXISTS public.sync_cursors (
   updated_at  TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
--- ── players table additions ───────────────────────────────────────────────────
--- Extend existing players table with pipeline-specific columns.
+-- ── FK constraints + players table additions (requires players to exist) ──────
+-- Wrapped in a DO block so this is skipped gracefully if schema.sql hasn't
+-- been applied yet.  On a live database these will all execute normally.
 
-ALTER TABLE public.players
-  ADD COLUMN IF NOT EXISTS portal_entered_at   TIMESTAMPTZ,
-  ADD COLUMN IF NOT EXISTS committed_at        TIMESTAMPTZ,
-  ADD COLUMN IF NOT EXISTS destination_school  TEXT,
-  ADD COLUMN IF NOT EXISTS enrichment_status   TEXT NOT NULL DEFAULT 'unenriched'
-    CHECK (enrichment_status IN ('unenriched','partial','complete'));
+DO $$
+BEGIN
+  -- ── Foreign keys to public.players ──────────────────────────────────────
 
--- Update status column to allow new states (if it was previously only 'Portal')
--- This assumes status is TEXT; if it's an enum you must ALTER TYPE separately.
--- The existing CHECK constraint (if any) should be dropped and re-added:
-ALTER TABLE public.players
-  DROP CONSTRAINT IF EXISTS players_status_check;
+  IF EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'players') THEN
 
-ALTER TABLE public.players
-  ADD CONSTRAINT players_status_check
-    CHECK (status IN ('Portal','Committed','Withdrawn','Enrolled','Archived'));
+    -- player_portal_events → players
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_constraint
+      WHERE conname = 'player_portal_events_player_id_fkey'
+    ) THEN
+      ALTER TABLE public.player_portal_events
+        ADD CONSTRAINT player_portal_events_player_id_fkey
+        FOREIGN KEY (player_id) REFERENCES public.players(id) ON DELETE CASCADE;
+    END IF;
 
--- Index for the most common query pattern: active portal players
-CREATE INDEX IF NOT EXISTS idx_players_active_portal
-  ON public.players(status, position, eligibility_remaining)
-  WHERE status = 'Portal';
+    -- enrichment_queue → players
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_constraint
+      WHERE conname = 'enrichment_queue_player_id_fkey'
+    ) THEN
+      ALTER TABLE public.enrichment_queue
+        ADD CONSTRAINT enrichment_queue_player_id_fkey
+        FOREIGN KEY (player_id) REFERENCES public.players(id) ON DELETE CASCADE;
+    END IF;
+
+    -- enrichment_runs → players
+    IF NOT EXISTS (
+      SELECT 1 FROM pg_constraint
+      WHERE conname = 'enrichment_runs_player_id_fkey'
+    ) THEN
+      ALTER TABLE public.enrichment_runs
+        ADD CONSTRAINT enrichment_runs_player_id_fkey
+        FOREIGN KEY (player_id) REFERENCES public.players(id) ON DELETE CASCADE;
+    END IF;
+
+    -- ── players table additions ────────────────────────────────────────────
+
+    ALTER TABLE public.players
+      ADD COLUMN IF NOT EXISTS portal_entered_at   TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS committed_at        TIMESTAMPTZ,
+      ADD COLUMN IF NOT EXISTS destination_school  TEXT,
+      ADD COLUMN IF NOT EXISTS enrichment_status   TEXT NOT NULL DEFAULT 'unenriched'
+        CHECK (enrichment_status IN ('unenriched','partial','complete'));
+
+    -- Widen the status CHECK constraint to include all pipeline states.
+    ALTER TABLE public.players
+      DROP CONSTRAINT IF EXISTS players_status_check;
+
+    ALTER TABLE public.players
+      ADD CONSTRAINT players_status_check
+        CHECK (status IN ('Portal','Committed','Withdrawn','Enrolled','Archived'));
+
+    -- Index for the most common query pattern: active portal players.
+    CREATE INDEX IF NOT EXISTS idx_players_active_portal
+      ON public.players(status, position, eligibility_remaining)
+      WHERE status = 'Portal';
+
+  ELSE
+    RAISE NOTICE 'public.players does not exist yet — skipping FK constraints and player column additions. Run schema.sql first, then re-run this migration.';
+  END IF;
+
+END $$;
 
 -- ── Atomic batch claim function ───────────────────────────────────────────────
 -- Uses FOR UPDATE SKIP LOCKED so concurrent workers never claim the same row.
@@ -185,23 +229,65 @@ ALTER TABLE public.enrichment_runs      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.enrichment_jobs      ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sync_cursors         ENABLE ROW LEVEL SECURITY;
 
--- Service role bypasses RLS; anon/authenticated users read-only on monitoring tables.
-CREATE POLICY "authenticated read portal_events"
-  ON public.player_portal_events FOR SELECT
-  TO authenticated USING (true);
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'player_portal_events'
+      AND policyname = 'authenticated read portal_events'
+  ) THEN
+    EXECUTE $p$
+      CREATE POLICY "authenticated read portal_events"
+        ON public.player_portal_events FOR SELECT
+        TO authenticated USING (true)
+    $p$;
+  END IF;
 
-CREATE POLICY "authenticated read enrichment_queue"
-  ON public.enrichment_queue FOR SELECT
-  TO authenticated USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'enrichment_queue'
+      AND policyname = 'authenticated read enrichment_queue'
+  ) THEN
+    EXECUTE $p$
+      CREATE POLICY "authenticated read enrichment_queue"
+        ON public.enrichment_queue FOR SELECT
+        TO authenticated USING (true)
+    $p$;
+  END IF;
 
-CREATE POLICY "authenticated read enrichment_runs"
-  ON public.enrichment_runs FOR SELECT
-  TO authenticated USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'enrichment_runs'
+      AND policyname = 'authenticated read enrichment_runs'
+  ) THEN
+    EXECUTE $p$
+      CREATE POLICY "authenticated read enrichment_runs"
+        ON public.enrichment_runs FOR SELECT
+        TO authenticated USING (true)
+    $p$;
+  END IF;
 
-CREATE POLICY "authenticated read enrichment_jobs"
-  ON public.enrichment_jobs FOR SELECT
-  TO authenticated USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'enrichment_jobs'
+      AND policyname = 'authenticated read enrichment_jobs'
+  ) THEN
+    EXECUTE $p$
+      CREATE POLICY "authenticated read enrichment_jobs"
+        ON public.enrichment_jobs FOR SELECT
+        TO authenticated USING (true)
+    $p$;
+  END IF;
 
-CREATE POLICY "authenticated read sync_cursors"
-  ON public.sync_cursors FOR SELECT
-  TO authenticated USING (true);
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_policies
+    WHERE schemaname = 'public' AND tablename = 'sync_cursors'
+      AND policyname = 'authenticated read sync_cursors'
+  ) THEN
+    EXECUTE $p$
+      CREATE POLICY "authenticated read sync_cursors"
+        ON public.sync_cursors FOR SELECT
+        TO authenticated USING (true)
+    $p$;
+  END IF;
+END $$;
